@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
+import { Routes,RouterModule } from '@angular/router';
+const appRoutes: Routes = [
+  {path:'',component: LoginComponent},
+  {path:'login',component: LoginComponent},
+];
 
 @NgModule({
   declarations: [
@@ -12,7 +17,8 @@ import { LoginComponent } from './login/login.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]

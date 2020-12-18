@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "AdvDevProject"
+  "defaultProject": "AdvDevProject",
+  "cli": {
+    "analytics": "7f148012-da1a-4569-b35a-1ad2bdea67a9"
+  }
 }
