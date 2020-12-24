@@ -1,33 +1,29 @@
+<app-header></app-header>
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
 
-<div class="sidenav">
-         <div class="login-main-text">
-            <!-- <img src="../../assets/logopage.png" alt="" width="50px">&nbsp;&nbsp; -->
-            <h2>UP2U<br></h2>
-            <p>เดี่ยวใส่รูป</p>
-            <p>This site is for the imaginary person.
-               Share your imagination here.</p>
-         </div>
-      </div>
-      <div class="main">
-         <div class="col-md-6 col-sm-12">
-            <div class="login-form">
-               <form>
-                  <div class="form-group">
-                     <label>User Name</label>
-                     <input type="text" class="form-control" placeholder="User Name">
-                  </div>
-                  <div class="form-group">
-                     <label>Password</label>
-                     <input type="password" class="form-control" placeholder="Password">
-                  </div>
-                  <a routerLink="/home"><button type="submit" class="btn btn-black">Login</button>&nbsp;&nbsp;</a>
-                  <a routerLink="/register"><button type="submit" class="btn btn-secondary">Register</button></a>
-               </form>
-            </div>
-         </div>
-      </div>
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+    <!-- Login Form -->
+    
+    <form>
+      
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username">
+      <input type="text" id="password" class="fadeIn third" name="login" placeholder="password"><br><br>
+      <div class="text-center mt-4 mt-md-0">
+         <button class="btn btn-outline-primary">Login</button>&nbsp;&nbsp;
+         <button class="btn btn-primary">Register</button><br><br>
+       </div>
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>
