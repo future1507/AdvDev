@@ -10,15 +10,18 @@
     <!-- Tabs Titles -->
     <!-- Login Form -->
     <form>
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="firstname">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="lastname">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="birthday">
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username"  [(ngModel)]="userid">
+      <input type="text" id="login" class="fadeIn third" name="login" placeholder="password"  [(ngModel)]="password">
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="firstname"  [(ngModel)]="fname">
+      <input type="text" id="password" class="fadeIn third" name="login" placeholder="lastname"  [(ngModel)]="lname">
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="birthday"  [(ngModel)]="birthday">
+      <!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown>&nbsp;&nbsp;
+      <p-dropdown [options]="months" [(ngModel)]="Month" placeholder="{{Month}}" [virtualScroll]="true" [itemSize]="12" [filter]="false"></p-dropdown>&nbsp;&nbsp;
+      <p-dropdown [options]="years" [(ngModel)]="Year" placeholder="{{Year}}" [virtualScroll]="true" [itemSize]="33" [filter]="false"></p-dropdown> -->
       <br> <br>
       <div class="text-center mt-4 mt-md-0">
-         <button class="btn btn-outline-primary">Login</button>&nbsp;&nbsp;
-         <button class="btn btn-primary">Register</button><br><br>
+         <a routerLink='/login'><button class="btn btn-outline-primary">Login</button>&nbsp;&nbsp;</a>
+         <button class="btn btn-primary" (click)="Register()">Register</button><br><br>
        </div>
       
     </form>

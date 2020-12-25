@@ -13,11 +13,13 @@ import {MenuItem} from 'primeng/api';
 import { SelectTagComponent } from './select-tag/select-tag.component';
 import {CalendarModule} from 'primeng/calendar';
 import { ProfileComponent } from './profile/profile.component';
+import {FormsModule} from '@angular/forms';
+import {HttpClientModule} from '@angular/common/http';
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
   {path:'login',component: LoginComponent},
   {path:'register',component: RegisterComponent},
-  {path:'home',component: HomeComponent},
+  {path:'home/:id',component: HomeComponent},
   {path:'header',component: HeaderComponent},
   {path:'selectTag',component: SelectTagComponent},
   {path:'profile',component: ProfileComponent}
@@ -36,6 +38,9 @@ const appRoutes: Routes = [
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    CalendarModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [],
