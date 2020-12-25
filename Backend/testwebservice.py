@@ -1,11 +1,13 @@
 from flask  import Flask,jsonify,request
 from flaskext.mysql import MySQL
+from flask_cors import CORS
 import json
 import pymysql
 import datetime
 import hashlib, binascii, os
 
 app = Flask(__name__)
+CORS(app)
 
 mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = '203.154.83.62'
@@ -45,7 +47,8 @@ def verify_password(stored_password, provided_password):
 @app.route('/login', methods=['POST'])
 def Login():
     conn = mysql.connect()
-    result = request.get_json()
+    #result = request.get_json()
+    result = request.get_json(force=True)
     pwd = getPasswordFromDB(result['UserID'])
     if verify_password(pwd,result['Password']) == True:
         cur = conn.cursor(pymysql.cursors.DictCursor)
@@ -61,7 +64,8 @@ def Signup():
     date = datetime.datetime.now()
     sdate = str(date.year)+"-"+str(date.month)+"-"+str(date.day)
     conn = mysql.connect()
-    result = request.get_json()
+    #result = request.get_json()
+    result = request.get_json(force=True)
     pwd = hash_password(str(result['Password']))
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
@@ -82,19 +86,20 @@ def UserAll():
     return jsonify(data)
 
 ##Get one
-@app.route('/<string:userid>', methods=['GET'])
-def User(userid):
-    conn = mysql.connect()
-    cur = conn.cursor() 
-    cur.execute("select * from User where UserID = %s",(userid))
-    data = cur.fetchall()
-    return jsonify(data)
+# @app.route('/<string:userid>', methods=['GET'])
+# def User(userid):
+#     conn = mysql.connect()
+#     cur = conn.cursor() 
+#     cur.execute("select * from User where UserID = %s",(userid))
+#     data = cur.fetchall()
+#     return jsonify(data)
 
 @app.route('/addpost', methods=['POST'])
 def AddPost():
     date = datetime.datetime.now()
     conn = mysql.connect()
-    result = request.get_json()
+    #result = request.get_json()
+    result = request.get_json(force=True)
     postname = str(result['Postname'])
     postid = str(result['UserID'])+"?"+postname[0:3]+postname[-1]
     #postid = str(result['UserID'])
@@ -116,5 +121,5 @@ def ShowPost(userid):
 
 
 if __name__ == "__main__":
-    #app.run(debug=True)    
+    #8app.run(debug=True)    
     app.run(debug=True,port=1507,host='0.0.0.0')   
