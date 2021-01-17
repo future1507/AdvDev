@@ -8,7 +8,6 @@ import hashlib, binascii, os
 
 app = Flask(__name__)
 CORS(app)
-
 mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = '203.154.83.62'
 app.config['MYSQL_DATABASE_USER'] = 'future'
