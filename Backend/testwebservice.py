@@ -1,10 +1,18 @@
-from flask  import Flask,jsonify,request
+from flask  import Flask,jsonify,request,send_file
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 import json
 import pymysql
 import datetime
 import hashlib, binascii, os
+import jwt
+import datetime
+from authenticate import token_required
+import base64
+
+
+SECRET_KEY = "781f00adac61902359fb34caf3214af0a8738f20e347e1c10f00e0d23ce175d7"
+#SECRET_KEY = "1507"
 
 app = Flask(__name__)
 CORS(app)
@@ -51,10 +59,18 @@ def Login():
     result = request.get_json(force=True)
     pwd = getPasswordFromDB(result['UserID'])
     if verify_password(pwd,result['Password']) == True:
-        cur = conn.cursor(pymysql.cursors.DictCursor)
-        cur.execute("select * from User where UserID = %s",(result['UserID']))
-        data = cur.fetchone()
-        return jsonify(data)
+        timeLimit= datetime.datetime.utcnow() + datetime.timedelta(minutes=300) #set limit for user
+        payload = {"user_id": str(result['UserID']),"exp":timeLimit}
+        token = jwt.encode(payload,SECRET_KEY)
+        print(str(result['UserID']))
+        return_data = {
+            "UserID" : str(result['UserID']),
+            "error": "0",
+            "message": "Successful",
+            "token": token.decode("UTF-8"),
+            "Elapse_time": str(timeLimit)
+        }
+        return app.response_class(response=json.dumps(return_data), mimetype='application/json')
     else :
         return 'Login Fail'
 
@@ -64,7 +80,6 @@ def Signup():
     date = datetime.datetime.now()
     sdate = str(date.year)+"-"+str(date.month)+"-"+str(date.day)
     conn = mysql.connect()
-    #result = request.get_json()
     result = request.get_json(force=True)
     pwd = hash_password(str(result['Password']))
     cur = conn.cursor(pymysql.cursors.DictCursor)
@@ -74,7 +89,30 @@ def Signup():
         "values(%s,%s,%s,%s,%s,%s)",(str(result['UserID']),pwd,str(result['Firstname']),str(result['Lastname']),str(result['Birthday']),sdate))
     conn.commit()
     return 'Record Inserted Successfully'
-    
+
+@app.route('/editprofile', methods=['POST'],endpoint='Edprofile')
+@token_required
+def EditProfile():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    profileimg = None
+    if result['Profileimg'] != None:
+        profileimg = str(result['Profileimg'])
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("UPDATE User SET Firstname=%s,Lastname=%s,Birthday=%s,Profileimg=%s WHERE UserID =%s",
+    (result['Firstname'],result['Lastname'],result['Birthday'],profileimg,result['UserID']))
+    conn.commit()
+    return 'Record Update Successfully'
+
+@app.route('/choosetag', methods=['POST'],endpoint='choosetag123')
+@token_required
+def ChooseTag():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("UPDATE User SET `Tag1`=%s,`Tag2`=%s,`Tag3`=%s WHERE UserID =%s",(result['Tag1'],result['Tag2'],result['Tag3'],result['UserID']))
+    conn.commit()
+    return 'Record Update Successfully'
 
 ##Get all
 @app.route('/', methods=['GET'])
@@ -85,31 +123,75 @@ def UserAll():
     data = cur.fetchall()
     return jsonify(data)
 
-##Get one
-# @app.route('/<string:userid>', methods=['GET'])
-# def User(userid):
-#     conn = mysql.connect()
-#     cur = conn.cursor() 
-#     cur.execute("select * from User where UserID = %s",(userid))
-#     data = cur.fetchall()
-#     return jsonify(data)
+#Get one
+@app.route('/<string:userid>', methods=['GET'],endpoint='user')
+@token_required
+def User(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor) 
+    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Profileimg` FROM User WHERE UserID = %s",(userid))
+    data = cur.fetchall()
+    return jsonify(data)
 
-@app.route('/addpost', methods=['POST'])
-def AddPost():
+@app.route('/newstory', methods=['POST'],endpoint='addstory')
+@token_required
+def AddnewStory():
+    coverphoto = None
+    desc = None
+   
     date = datetime.datetime.now()
     conn = mysql.connect()
-    #result = request.get_json()
     result = request.get_json(force=True)
-    postname = str(result['Postname'])
-    postid = str(result['UserID'])+"?"+postname[0:3]+postname[-1]
-    #postid = str(result['UserID'])
+    postname = str(result['Storyname'])
+    #postname = 'กางแต๊ด'
+    postid = str(result['UserID'])+"?"+postname[0:5]
+    print(postid)
+    if result['Coverphoto'] != None:
+        coverphoto = str(result['Coverphoto'])
+    if result['StoryDesc'] != None:
+        desc = str(result['StoryDesc'])
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
-        "Insert INTO Post"+
-        "(PostID,Postname,UserID,PostTime,Tag,Targetgroup)"+
-        "values(%s,%s,%s,%s,%s,%s)",(postid,postname,str(result['UserID']),date,str(result['Tag']),str(result['Targetgroup'])))
+        "Insert INTO Story"+
+        "(StoryID,Storyname,Section,UserID,StoryTime,Tag,Targetgroup,StoryDesc,Coverphoto)"+
+        "values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(postid,postname,1,str(result['UserID']),
+        date,result['Tag'],str(result['Targetgroup']),desc,coverphoto))
     conn.commit()
     return 'Record Inserted Successfully'   
+
+@app.route('/story', methods=['POST'],endpoint='story')
+@token_required
+def ContinueStory():
+    coverphoto = None
+    desc = None
+   
+    date = datetime.datetime.now()
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    postname = str(result['Storyname'])
+    #postname = 'กางแต๊ด'
+    postid = str(result['UserID'])+"?"+postname[0:5]
+    #print(postid)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT MAX(Section) AS Recentsection FROM Story where StoryID = %s",(postid))
+    data = cur.fetchone()
+    # print('========================')
+    # print(int(data['Recentsection']))
+    # return int(data['Recentsection'])
+    section = int(data['Recentsection'])+1
+
+    if result['Coverphoto'] != None:
+        coverphoto = str(result['Coverphoto'])
+    if result['StoryDesc'] != None:
+        desc = str(result['StoryDesc'])
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+        "Insert INTO Story"+
+        "(StoryID,Storyname,Section,UserID,StoryTime,Tag,Targetgroup,StoryDesc,Coverphoto)"+
+        "values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(postid,postname,section,str(result['UserID']),
+        date,result['Tag'],str(result['Targetgroup']),desc,coverphoto))
+    conn.commit()
+    return 'Record Inserted Successfully' 
 
 @app.route('/showpost/<string:userid>', methods=['GET'])
 def ShowPost(userid):
@@ -118,6 +200,23 @@ def ShowPost(userid):
     cur.execute("select * from Post where UserID = %s ",(userid))
     data = cur.fetchall()
     return jsonify(data)
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    try:
+        result = request.get_json(force=True)
+        imgdata = base64.b64decode(result["base64"])
+        filename = 'some_image.jpg'
+        with open(filename, 'wb') as f:
+            f.write(imgdata)
+        return result["base64"]
+    except Exception as e:
+        print(str(e))
+        return str(e)+"0"
+
+@app.route('/photo')
+def photo():
+  return send_file("some_image.jpg")
 
 
 if __name__ == "__main__":
