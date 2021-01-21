@@ -9,6 +9,9 @@ import  {Router} from '@angular/router'
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  date1: any;
+
+  siteKey: string;
   dates : SelectItem[];
   months : SelectItem[];
   years : SelectItem[];
@@ -16,6 +19,7 @@ export class RegisterComponent implements OnInit {
   Month ='';
   Year ='';
   constructor(private http : HttpClient,private router : Router) {
+    this.siteKey = '6LfREzAaAAAAAOzackpc2DNAVyXBLPmVEKZ16RGM';
     this.dates = [];
       for (let i = 1; i <= 31; i++) {
           this.dates.push({label:''+  i, value: i});
@@ -37,8 +41,11 @@ export class RegisterComponent implements OnInit {
       this.years=[];
         for (let i = 2530; i <= 2563; i++) {
           this.years.push({label:''+ i, value: i});
-      } 
-   }
+      
+     
+        } 
+        
+  }
 
   ngOnInit(): void {
   }

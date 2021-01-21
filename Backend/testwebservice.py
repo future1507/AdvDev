@@ -16,7 +16,6 @@ SECRET_KEY = "781f00adac61902359fb34caf3214af0a8738f20e347e1c10f00e0d23ce175d7"
 
 app = Flask(__name__)
 CORS(app)
-
 mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = '203.154.83.62'
 app.config['MYSQL_DATABASE_USER'] = 'future'

@@ -9,15 +9,28 @@
   <div id="formContent">
     <!-- Tabs Titles -->
     <!-- Login Form -->
-    <form>
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username"  [(ngModel)]="userid">
-      <input type="text" id="login" class="fadeIn third" name="login" placeholder="password"  [(ngModel)]="password">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="firstname"  [(ngModel)]="fname">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="lastname"  [(ngModel)]="lname">
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="birthday"  [(ngModel)]="birthday">
-      <!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown>&nbsp;&nbsp;
-      <p-dropdown [options]="months" [(ngModel)]="Month" placeholder="{{Month}}" [virtualScroll]="true" [itemSize]="12" [filter]="false"></p-dropdown>&nbsp;&nbsp;
-      <p-dropdown [options]="years" [(ngModel)]="Year" placeholder="{{Year}}" [virtualScroll]="true" [itemSize]="33" [filter]="false"></p-dropdown> -->
+    
+    <form >
+      <br><br>
+        <div class="form-group" >
+          <div class="container">
+            <input id="login" class="form-control" name="login" placeholder="username"  [(ngModel)]="userid"><br>
+            <input type="password" id="password" class="form-control" name="login" placeholder="password"  [(ngModel)]="password"><br>
+            <input id="login" class="form-control" name="login" placeholder="firstname"  [(ngModel)]="fname"><br>
+            <input id="login" class="form-control" name="login" placeholder="lastname"  [(ngModel)]="lname">
+          </div>
+        </div>
+      <div class="p-fluid p-grid p-formgrid" >
+        <div class="p-field p-col-12 p-md-4" style="text-align: center;">
+            <p-calendar [(ngModel)]="date1" [monthNavigator]="true" [yearNavigator]="true" yearRange="2000:2030" 
+            inputId="navigators" placeholder="birthday" ></p-calendar>
+        </div>
+      </div>
+      <div class="container">
+          <ngx-recaptcha2 #captchaElem [siteKey]="siteKey" >
+          </ngx-recaptcha2>
+      </div>
+        
       <br> <br>
       <div class="text-center mt-4 mt-md-0">
          <a routerLink='/login'><button class="btn btn-outline-primary">Login</button>&nbsp;&nbsp;</a>
