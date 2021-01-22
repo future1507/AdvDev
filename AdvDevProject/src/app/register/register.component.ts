@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SelectItem } from 'primeng/api';
 import { HttpClient } from '@angular/common/http';
 import  {Router} from '@angular/router'
+import { ReCaptchaV3Service } from 'ngx-captcha';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,8 @@ import  {Router} from '@angular/router'
 })
 export class RegisterComponent implements OnInit {
   date1 = new Date;
-
+  checkk: any;
+  captcha : any;
   siteKey: string;
   dates : SelectItem[];
   months : SelectItem[];
@@ -19,7 +21,7 @@ export class RegisterComponent implements OnInit {
   Month ='';
   Year ='';
   constructor(private http : HttpClient,private router : Router) {
-    this.siteKey = '6LfREzAaAAAAAOzackpc2DNAVyXBLPmVEKZ16RGM';
+    this.siteKey = '6Ld8DTAaAAAAAFrxvwe95t3Rb2R0mFJWkJ4oPMhl';
     this.dates = [];
       for (let i = 1; i <= 31; i++) {
           this.dates.push({label:''+  i, value: i});
@@ -55,22 +57,32 @@ export class RegisterComponent implements OnInit {
   fname:any;
   lname:any;
   birthday:any;
+  
   Register(){
-    let json = {
-      UserID : this.userid,
-      Password : this.password,
-      Firstname : this.fname,
-      Lastname : this.lname,
-      Birthday : '2000-10-10',  
-    };
-    console.log(this.birthday);
-    console.log(JSON.stringify(json));
-    this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json))
-    .subscribe(response =>{
-      console.log(response);
-      this.router.navigateByUrl('/selectTag');
-    }, error => {
-      console.log(error);
-    });
+    console.log(this.captcha);
+    if (this.checkk) {
+      let json = {
+          UserID : this.userid,
+          Password : this.password,
+          Firstname : this.fname,
+          Lastname : this.lname,
+          Birthday : this.birthday,  
+        };
+        // console.log(this.Birthday);
+        console.log(this.birthday);
+        console.log(JSON.stringify(json));
+        this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json))
+        .subscribe(response =>{
+          console.log(response);
+          this.router.navigateByUrl('/selectTag');
+        }, error => {
+          console.log(error);
+        });
+    }
   }
+    check(){
+      this.checkk = true;
+      console.log(this.checkk);
+    }
+  
 }
