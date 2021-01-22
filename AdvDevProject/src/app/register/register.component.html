@@ -18,17 +18,17 @@
             <input type="password" id="password" class="form-control" name="login" placeholder="password"  [(ngModel)]="password"><br>
             <input id="login" class="form-control" name="login" placeholder="firstname"  [(ngModel)]="fname"><br>
             <input id="login" class="form-control" name="login" placeholder="lastname"  [(ngModel)]="lname"> <br>
-            <!-- <input type="date" id="login" class="form-control" name="login" placeholder="birthday"  [(ngModel)]="lname"> -->
+            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday"  [(ngModel)]="birthday">
           </div>
         </div>
-      <div class="p-fluid p-grid p-formgrid" >
+      <!-- <div class="p-fluid p-grid p-formgrid" >
         <div class="p-field p-col-12 p-md-4" style="text-align: center;">
             <p-calendar [(ngModel)]="birthday" [monthNavigator]="true" [yearNavigator]="true" yearRange="1970:2020" 
             inputId="navigators" placeholder="Birthday" ></p-calendar>
         </div>
-      </div>
+      </div> -->
       <div class="container">
-          <ngx-recaptcha2 #captchaElem [siteKey]="siteKey" [ngModel] = 'captchaElem' >
+          <ngx-recaptcha2 #captchaElem [siteKey]="siteKey" [(ngModel)] = 'captcha' (success)=check() >
           </ngx-recaptcha2>
       </div>
         
