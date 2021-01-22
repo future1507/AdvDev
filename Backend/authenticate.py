@@ -12,9 +12,11 @@ SECRET_KEY = "781f00adac61902359fb34caf3214af0a8738f20e347e1c10f00e0d23ce175d7"
 def token_required(something):
     def wrap(*args, **kwargs):
         try:
-            token_passed = request.headers['TOKEN']
-            if request.headers['TOKEN'] != '' and request.headers['TOKEN'] != None:
+
+            
+            if request.headers['Authorization'] != '' and request.headers['Authorization'] != None:
                 try:
+                    token_passed = request.headers['Authorization'].spilt(" ")[1]
                     data = jwt.decode(token_passed,SECRET_KEY, algorithms=['HS256'])
                     return something(*args, **kwargs)
                 except jwt.exceptions.ExpiredSignatureError:

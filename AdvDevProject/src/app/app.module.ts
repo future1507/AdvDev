@@ -26,8 +26,12 @@ const appRoutes: Routes = [
   {path:'home/:id',component: HomeComponent},
   {path:'header',component: HeaderComponent},
   {path:'selectTag',component: SelectTagComponent},
-  {path:'profile',component: ProfileComponent},
-  {path:'info',component:InfoComponent}
+
+
+  {path:'info',component:InfoComponent},
+
+  {path:'profile/:userid',component: ProfileComponent}
+
 
 ];
 
