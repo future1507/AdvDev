@@ -9,7 +9,7 @@ import  {Router} from '@angular/router'
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  date1: any;
+  date1 = new Date;
 
   siteKey: string;
   dates : SelectItem[];
@@ -61,13 +61,14 @@ export class RegisterComponent implements OnInit {
       Password : this.password,
       Firstname : this.fname,
       Lastname : this.lname,
-      Birthday : this.birthday,  
+      Birthday : '2000-10-10',  
     };
-    console.log(JSON.stringify(json))
+    console.log(this.birthday);
+    console.log(JSON.stringify(json));
     this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json))
     .subscribe(response =>{
       console.log(response);
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/selectTag');
     }, error => {
       console.log(error);
     });
