@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import  {Router} from '@angular/router'
+import  {ActivatedRoute, Router} from '@angular/router'
+import {DatapassService} from '../datapass.service';
+import { HttpHeaders } from '@angular/common/http';
+import { ObjectUnsubscribedError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -11,12 +14,20 @@ export class LoginComponent implements OnInit {
   
   userid:any;
   password:any;
-  constructor(private http : HttpClient,private router : Router) { }
-
+  constructor(private http : HttpClient,private router : Router,
+    private data : DatapassService,private route : ActivatedRoute) { }
+    
   ngOnInit(): void {
+    const headerDict = {
+      'TOKEN': this.data.token
+    }
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict), 
+    };
   }
 
   Login(){
+    console.log('hee');
     console.log(this.userid)
     console.log(this.password)
     let json = {
@@ -26,8 +37,16 @@ export class LoginComponent implements OnInit {
     console.log(JSON.stringify(json))
     this.http.post('http://203.154.83.62:1507/login',JSON.stringify(json))
     .subscribe(response =>{
-      console.log(response);
+      
+      //console.log(response);
+      //console.log(JSON.stringify(response))
       if(response != 'Login Fail'){
+        this.data.userid = this.userid;
+        var array = Object.values(response);
+        console.log(array[3]);
+        this.data.token = array[3];
+        //let obj = JSON.parse(response);
+        
         this.router.navigateByUrl('/home/'+this.userid);
       }
     }, error => {
