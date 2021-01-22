@@ -11,12 +11,17 @@
     <!-- Login Form -->
     
     <form>
+      <div class="form-group" >
+        <div class="container">
+          <br>
+            <input id="login" class="form-control" name="login" placeholder="username"  [(ngModel)]="userid"><br>
+            <input type="password" id="password" class="form-control" name="login" placeholder="password"  [(ngModel)]="password"><br>
+        </div>
+      </div>
       
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username" [(ngModel)]="userid">
-      <input type="text" id="login" class="fadeIn third" name="login" placeholder="password" [(ngModel)]="password"><br><br>
       <div class="text-center mt-4 mt-md-0">
          <button class="btn btn-outline-primary" (click)="Login()">Login</button>&nbsp;&nbsp;
-         <a routerLink='/register'><button class="btn btn-primary" >Register</button><br></a>
+         <a routerLink='/register'><button class="btn btn-primary" >Register</button><br></a> <br><br>
        </div>
     </form>
 
