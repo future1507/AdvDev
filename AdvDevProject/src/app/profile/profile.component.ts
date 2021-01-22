@@ -37,7 +37,7 @@ export class ProfileComponent implements OnInit {
   }
   TokenUser(token:any){
     const headerDict = {
-      'TOKEN': token
+      'Authorization': "Bearer "+token
     }
     const requestOptions = {
       headers: new HttpHeaders(headerDict), 
