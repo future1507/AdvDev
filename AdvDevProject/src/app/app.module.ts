@@ -18,6 +18,7 @@ import { HttpClientModule} from '@angular/common/http';
 // import {EditorModule} from 'primeng/editor';
 import {DropdownModule} from 'primeng/dropdown';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { InfoComponent } from './info/info.component';
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
   {path:'login',component: LoginComponent},
@@ -25,7 +26,12 @@ const appRoutes: Routes = [
   {path:'home/:id',component: HomeComponent},
   {path:'header',component: HeaderComponent},
   {path:'selectTag',component: SelectTagComponent},
+
+
+  {path:'info',component:InfoComponent},
+
   {path:'profile/:userid',component: ProfileComponent}
+
 
 ];
 
@@ -37,7 +43,8 @@ const appRoutes: Routes = [
     HeaderComponent,
     HomeComponent,
     SelectTagComponent,
-    ProfileComponent
+    ProfileComponent,
+    InfoComponent
   ],
   imports: [
     BrowserModule,
