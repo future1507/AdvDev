@@ -13,11 +13,13 @@ def token_required(something):
     def wrap(*args, **kwargs):
         try:
 
-            
+            print(request.headers['Authorization'])
+            token_passed = request.headers['Authorization'].split(" ")[1]
+            print(token_passed)
             if request.headers['Authorization'] != '' and request.headers['Authorization'] != None:
                 try:
-                    token_passed = request.headers['Authorization'].spilt(" ")[1]
-                    print(token_passed)
+                    
+                    
                     data = jwt.decode(token_passed,SECRET_KEY, algorithms=['HS256'])
                     return something(*args, **kwargs)
                 except jwt.exceptions.ExpiredSignatureError:
