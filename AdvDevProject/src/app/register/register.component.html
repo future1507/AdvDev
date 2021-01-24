@@ -14,11 +14,12 @@
       <br><br>
         <div class="form-group" >
           <div class="container">
-            <input id="login" class="form-control" name="login" placeholder="username"  [(ngModel)]="userid"><br>
-            <input type="password" id="password" class="form-control" name="login" placeholder="password"  [(ngModel)]="password"><br>
-            <input id="login" class="form-control" name="login" placeholder="firstname"  [(ngModel)]="fname"><br>
-            <input id="login" class="form-control" name="login" placeholder="lastname"  [(ngModel)]="lname"> <br>
-            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday"  [(ngModel)]="birthday">
+        
+            <input id="login" class="form-control" name="username" placeholder="username"  [(ngModel)]="this.userid" ><br>
+            <input type="password" id="password" class="form-control" name="password" placeholder="password"  [(ngModel)]="this.password"><br>
+            <input id="login" class="form-control" name="firstname" placeholder="firstname"  [(ngModel)]="this.fname"><br>
+            <input id="login" class="form-control" name="lastname" placeholder="lastname"  [(ngModel)]="this.lname"> <br>
+            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday"  [(ngModel)]="this.birthday">
           </div>
         </div>
       <!-- <div class="p-fluid p-grid p-formgrid" >
@@ -28,7 +29,7 @@
         </div>
       </div> -->
       <div class="container">
-          <ngx-recaptcha2 #captchaElem [siteKey]="siteKey" [(ngModel)] = 'captcha' (success)=check() >
+          <ngx-recaptcha2 #captchaElem [siteKey]="siteKey" [(ngModel)] = "this.captcha" (success)=check() name ='capcha'>
           </ngx-recaptcha2>
       </div>
         

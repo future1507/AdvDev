@@ -18,12 +18,6 @@ export class LoginComponent implements OnInit {
     private data : DatapassService,private route : ActivatedRoute) { }
     
   ngOnInit(): void {
-    const headerDict = {
-      'TOKEN': this.data.token
-    }
-    const requestOptions = {
-      headers: new HttpHeaders(headerDict), 
-    };
   }
 
   Login(){

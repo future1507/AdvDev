@@ -25,7 +25,7 @@ const appRoutes: Routes = [
   {path:'register',component: RegisterComponent},
   {path:'home/:id',component: HomeComponent},
   {path:'header',component: HeaderComponent},
-  {path:'selectTag',component: SelectTagComponent},
+  {path:'selectTag/:id',component: SelectTagComponent},
 
 
   {path:'info',component:InfoComponent},

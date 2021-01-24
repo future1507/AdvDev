@@ -71,16 +71,18 @@ def Login():
         }
         return app.response_class(response=json.dumps(return_data), mimetype='application/json')
     else :
-        return 'Login Fail'
+
+        return jsonify('Login Fail')
 
 
 @app.route('/signup', methods=['POST'])
 def Signup():
+    conn = mysql.connect()
     date = datetime.datetime.now()
     sdate = str(date.year)+"-"+str(date.month)+"-"+str(date.day)
-    conn = mysql.connect()
     result = request.get_json(force=True)
     pwd = hash_password(str(result['Password']))
+    #pwd = str(result['Password'])
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
         "Insert INTO User"+
