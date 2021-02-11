@@ -72,7 +72,7 @@ def Login():
         return app.response_class(response=json.dumps(return_data), mimetype='application/json')
     else :
 
-        return jsonify('Login Fail')
+        return 'Login Fail'
 
 
 @app.route('/signup', methods=['POST'])
@@ -89,7 +89,7 @@ def Signup():
         "(UserID,Password,Firstname,Lastname,Birthday,Signupdate)"+
         "values(%s,%s,%s,%s,%s,%s)",(str(result['UserID']),pwd,str(result['Firstname']),str(result['Lastname']),str(result['Birthday']),sdate))
     conn.commit()
-    return 'Record Inserted Successfully'
+    return jsonify('Record Inserted Successfully')
 
 @app.route('/editprofile', methods=['POST'],endpoint='Edprofile')
 @token_required

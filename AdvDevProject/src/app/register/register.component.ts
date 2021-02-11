@@ -63,6 +63,7 @@ export class RegisterComponent implements OnInit {
       };
       let response = await this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json)).toPromise();
       this.router.navigateByUrl('/selectTag/'+this.userid);
+      console.log(response);
     }
   }
   check(){
