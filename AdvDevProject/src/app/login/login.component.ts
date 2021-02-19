@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   }
 
   Login(){
-    console.log('hee');
+    //console.log('hee');
     console.log(this.userid)
     console.log(this.password)
     let json = {
@@ -35,10 +35,12 @@ export class LoginComponent implements OnInit {
       //console.log(response);
       //console.log(JSON.stringify(response))
       if(response != 'Login Fail'){
-        this.data.userid = this.userid;
+        //this.data.userid = this.userid;
+        localStorage.setItem('UserID',this.userid);
         var array = Object.values(response);
         console.log(array[3]);
-        this.data.token = array[3];
+        //this.data.token = array[3];
+        localStorage.setItem('TOKEN',array[3]);
         //let obj = JSON.parse(response);
         
         this.router.navigateByUrl('/home/'+this.userid);

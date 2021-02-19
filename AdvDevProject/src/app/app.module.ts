@@ -19,6 +19,7 @@ import { HttpClientModule} from '@angular/common/http';
 import {DropdownModule} from 'primeng/dropdown';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { InfoComponent } from './info/info.component';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
   {path:'login',component: LoginComponent},
@@ -60,7 +61,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

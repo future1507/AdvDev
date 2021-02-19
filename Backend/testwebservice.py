@@ -111,7 +111,18 @@ def ChooseTag():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("UPDATE User SET `Tag1`=%s,`Tag2`=%s,`Tag3`=%s WHERE UserID =%s",(result['Tag1'],result['Tag2'],result['Tag3'],result['UserID']))
+    tag = [None,None,None,None,None]
+    if result['Tag1'] != None:
+        tag[0] = str(result['Tag1'])
+    if result['Tag2'] != None:
+        tag[1] = str(result['Tag2'])
+    if result['Tag3'] != None:
+        tag[2] = str(result['Tag3'])
+    if result['Tag4'] != None:
+        tag[3] = str(result['Tag4'])
+    if result['Tag5'] != None:
+        tag[4] = str(result['Tag5'])
+    cur.execute("UPDATE User SET `Tag1`=%s,`Tag2`=%s,`Tag3`=%s,`Tag4`=%s,`Tag5`=%s WHERE UserID =%s",(tag[0],tag[1],tag[2],tag[3],tag[4],result['UserID']))
     conn.commit()
     return 'Record Update Successfully'
 
@@ -130,7 +141,7 @@ def UserAll():
 def User(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor) 
-    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Profileimg` FROM User WHERE UserID = %s",(userid))
+    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Tag4`,`Tag5`,`Profileimg` FROM User WHERE UserID = %s",(userid))
     data = cur.fetchall()
     return jsonify(data)
 

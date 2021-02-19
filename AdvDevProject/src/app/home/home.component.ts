@@ -12,7 +12,7 @@ export class HomeComponent implements OnInit {
   token : any;
   constructor(private http : HttpClient,private router : Router,
     public data : DatapassService,private route : ActivatedRoute) {
-      this.token = this.TokenUser(this.data.token);
+      this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.User();
      }
 
@@ -21,9 +21,11 @@ export class HomeComponent implements OnInit {
   fname : any;
   lname : any;
   name : any;
+  userid : any;
   User(){
-    console.log(this.data.token);
-    this.http.get('http://203.154.83.62:1507/'+this.data.userid,this.token).subscribe(response =>{
+    console.log(localStorage.getItem('TOKEN'));
+    this.userid  = localStorage.getItem('UserID');
+    this.http.get('http://203.154.83.62:1507/'+localStorage.getItem('UserID'),this.token).subscribe(response =>{
       console.log(response);
       var array = Object.values(response);
       console.log(array[0]['Firstname']);
