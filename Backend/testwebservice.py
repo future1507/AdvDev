@@ -103,10 +103,10 @@ def EditProfile():
     cur.execute("UPDATE User SET Firstname=%s,Lastname=%s,Birthday=%s,Profileimg=%s WHERE UserID =%s",
     (result['Firstname'],result['Lastname'],result['Birthday'],profileimg,result['UserID']))
     conn.commit()
-    return 'Record Update Successfully'
+    return jsonify('Record Update Successfully')
 
 @app.route('/choosetag', methods=['POST'],endpoint='choosetag123')
-@token_required
+#@token_required
 def ChooseTag():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -124,7 +124,7 @@ def ChooseTag():
         tag[4] = str(result['Tag5'])
     cur.execute("UPDATE User SET `Tag1`=%s,`Tag2`=%s,`Tag3`=%s,`Tag4`=%s,`Tag5`=%s WHERE UserID =%s",(tag[0],tag[1],tag[2],tag[3],tag[4],result['UserID']))
     conn.commit()
-    return 'Record Update Successfully'
+    return jsonify('Record Update Successfully')
 
 ##Get all
 @app.route('/', methods=['GET'])
