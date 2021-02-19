@@ -11,9 +11,10 @@ import { HttpHeaders } from '@angular/common/http';
 })
 export class ProfileComponent implements OnInit {
   token : any;
+  setButTrue = true;
   constructor(private http : HttpClient,private router : Router,
-    public data : DatapassService,private route : ActivatedRoute) { 
-      this.token = this.TokenUser(this.data.token);
+    private route : ActivatedRoute) { 
+      this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.User();
     }
 
@@ -21,14 +22,17 @@ export class ProfileComponent implements OnInit {
   }
   name : any;
   birthday : any;
+  profile : any;
   User(){
-    console.log(this.data.token);
-    this.http.get('http://203.154.83.62:1507/'+this.data.userid,this.token).subscribe(response =>{
+    console.log(localStorage.getItem('TOKEN'));
+    console.log(localStorage.getItem('UserID'));
+    this.http.get('http://203.154.83.62:1507/'+localStorage.getItem('UserID'),this.token).subscribe(response =>{
       console.log(response);
       var array = Object.values(response);
       console.log(array[0]['Firstname']);
       console.log(array[0]['Lastname']);
       this.name = array[0]['Firstname']+"   "+array[0]['Lastname']
+      this.profile = 'http://203.154.83.62:1507/img/profile/'+array[0]['Profileimg']
       var d = new Date(array[0]['Birthday']);
       this.birthday = d.getDate()+"/"+d.getMonth()+"/"+d.getFullYear()
       }, error =>{
@@ -43,5 +47,25 @@ export class ProfileComponent implements OnInit {
       headers: new HttpHeaders(headerDict), 
     };
     return requestOptions;
+  }
+  uploadedFiles: any[] = [];
+  myUploader(event:any) { 
+    for(let files of event.files) {
+      this.uploadedFiles.push(files);
+    }
+    const file = this.uploadedFiles[0];
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('userid',""+localStorage.getItem('UserID'));
+    formData.append('folder','profile');
+    this.http.post("http://203.154.83.62:1507/upload", formData)
+    .subscribe(response => {
+      this.uploadedFiles=[];
+      //this.upload_img = (response).toString();
+      window.location.reload();
+    }, err => {
+      //handle error
+    });
+
   }
 }

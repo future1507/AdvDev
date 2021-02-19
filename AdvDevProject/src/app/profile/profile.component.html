@@ -25,7 +25,17 @@
               <div class="row">
                 <div class="col-lg-4">
                   <div class="border-bottom text-center pb-4">
-                    <img src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" alt="profile" class="img-xs rounded-circle" width="300" >
+                    <img src="{{this.profile}}" alt="profile" class="img-xs rounded-circle" width="230" >
+                    <div style="margin-top: -50px;">
+                      <p-fileUpload     
+                          mode="basic"
+                          [auto]="setButTrue" 
+                          chooseLabel=" "
+                          [customUpload]="setButTrue" 
+                          accept="image/*"
+                          (uploadHandler)="myUploader($event)">
+                      </p-fileUpload>
+                  </div>
                     <div class="mb-3">
                       <h3>{{this.name}}</h3>
                       <div class="d-flex align-items-center justify-content-center">

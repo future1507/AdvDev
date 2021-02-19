@@ -18,8 +18,7 @@ def token_required(something):
             print(token_passed)
             if request.headers['Authorization'] != '' and request.headers['Authorization'] != None:
                 try:
-                    
-                    
+
                     data = jwt.decode(token_passed,SECRET_KEY, algorithms=['HS256'])
                     return something(*args, **kwargs)
                 except jwt.exceptions.ExpiredSignatureError:

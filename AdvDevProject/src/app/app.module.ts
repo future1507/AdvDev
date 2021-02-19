@@ -18,6 +18,7 @@ import { HttpClientModule} from '@angular/common/http';
 // import {EditorModule} from 'primeng/editor';
 import {DropdownModule} from 'primeng/dropdown';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import {FileUploadModule} from 'primeng/fileupload';
 import { InfoComponent } from './info/info.component';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 const appRoutes: Routes = [
@@ -27,12 +28,9 @@ const appRoutes: Routes = [
   {path:'home/:id',component: HomeComponent},
   {path:'header',component: HeaderComponent},
   {path:'selectTag/:id',component: SelectTagComponent},
-
-
   {path:'info',component:InfoComponent},
 
-  {path:'profile/:userid',component: ProfileComponent}
-
+  {path:'profile/:id',component: ProfileComponent}
 
 ];
 
@@ -59,6 +57,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     CalendarModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],

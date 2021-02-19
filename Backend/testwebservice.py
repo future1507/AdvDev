@@ -1,4 +1,4 @@
-from flask  import Flask,jsonify,request,send_file
+from flask  import Flask,jsonify,request,send_file,redirect, url_for,flash
 from flaskext.mysql import MySQL
 from flask_cors import CORS
 import json
@@ -9,19 +9,28 @@ import jwt
 import datetime
 from authenticate import token_required
 import base64
+from werkzeug.utils import secure_filename
+from random import randrange
 
 
 SECRET_KEY = "781f00adac61902359fb34caf3214af0a8738f20e347e1c10f00e0d23ce175d7"
 #SECRET_KEY = "1507"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+UPLOAD_FOLDER = '/home/future/img/'
+
 
 app = Flask(__name__)
 CORS(app)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 mysql = MySQL()
 app.config['MYSQL_DATABASE_HOST'] = '203.154.83.62'
 app.config['MYSQL_DATABASE_USER'] = 'future'
 app.config['MYSQL_DATABASE_PASSWORD'] = '1507'
 app.config['MYSQL_DATABASE_DB'] = 'db_future'
+
 mysql.init_app(app)
+
 ##conn = mysql.connect()
 ##cursor = conn.cursor()       
 
@@ -89,6 +98,17 @@ def Signup():
         "(UserID,Password,Firstname,Lastname,Birthday,Signupdate)"+
         "values(%s,%s,%s,%s,%s,%s)",(str(result['UserID']),pwd,str(result['Firstname']),str(result['Lastname']),str(result['Birthday']),sdate))
     conn.commit()
+    path = 'img/'+str(result['UserID'])
+    try:   
+        os.makedirs(path)
+    except OSError:
+        if os.path.exists(path):
+            pass
+        print ("Creation of the directory %s failed" % path)
+    else:
+        raise
+        #print ("Successfully created the directory %s " % path)
+        
     return jsonify('Record Inserted Successfully')
 
 @app.route('/editprofile', methods=['POST'],endpoint='Edprofile')
@@ -136,12 +156,12 @@ def UserAll():
     return jsonify(data)
 
 #Get one
-@app.route('/<string:userid>', methods=['GET'],endpoint='user')
+@app.route('/<string:userid>', methods=['GET'],endpoint='User')
 @token_required
 def User(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor) 
-    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Tag4`,`Tag5`,`Profileimg` FROM User WHERE UserID = %s",(userid))
+    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Tag4`,`Tag5`,`Profileimg` FROM User WHERE UserID = %s",(str(userid)))
     data = cur.fetchall()
     return jsonify(data)
 
@@ -213,22 +233,58 @@ def ShowPost(userid):
     data = cur.fetchall()
     return jsonify(data)
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    try:
-        result = request.get_json(force=True)
-        imgdata = base64.b64decode(result["base64"])
-        filename = 'some_image.jpg'
-        with open(filename, 'wb') as f:
-            f.write(imgdata)
-        return result["base64"]
-    except Exception as e:
-        print(str(e))
-        return str(e)+"0"
 
-@app.route('/photo')
-def photo():
-  return send_file("some_image.jpg")
+folder = ''
+@app.route('/upload', methods=['POST'],endpoint = 'Upload')
+def upload_file():
+    userid = request.form['userid']
+    if request.form['folder'] != None:
+        folder = request.form['folder']
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            print("1")
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            print("2")
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            number = ""
+            for i in range(40):
+                number += str(randrange(10))
+            filename = (secure_filename(file.filename)).split(".")
+            if len(filename) == 2:
+                filename = filename[1]
+            else:
+                filename = filename[0]
+
+            if folder == 'profile':
+                file.save(os.path.join(app.config['UPLOAD_FOLDER']+"/profile", number+".jpg"))
+                conn = mysql.connect()
+                cur = conn.cursor(pymysql.cursors.DictCursor)
+                cur.execute("UPDATE User SET Profileimg = %s where Userid = %s",(number,userid))
+                conn.commit()
+            else:
+                file.save(os.path.join(app.config['UPLOAD_FOLDER']+userid, number+".jpg"))
+            resp = jsonify(number)
+            resp.headers['Access-Control-Allow-Origin'] = '*'
+            resp.content_type = "application/json"
+            return resp
+
+    resp = jsonify("Error")
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    resp.content_type = "application/json"
+    return resp
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/img/profile/<filename>', methods=['GET'])
+def photoProfile(filename):
+    return send_file("img/profile/"+filename+".jpg")
 
 
 if __name__ == "__main__":

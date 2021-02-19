@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
   lname : any;
   name : any;
   userid : any;
+  profileimg : any;
   User(){
     console.log(localStorage.getItem('TOKEN'));
     this.userid  = localStorage.getItem('UserID');
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
       console.log(array[0]['Firstname']);
       console.log(array[0]['Lastname']);
       this.name = array[0]['Firstname']+"   "+array[0]['Lastname']
+      this.profileimg = 'http://203.154.83.62:1507/img/profile/'+array[0]['Profileimg'];
       }, error =>{
       console.log(error);
       });
