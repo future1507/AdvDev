@@ -45,7 +45,7 @@ const appRoutes: Routes = [
     SelectTagComponent,
     ProfileComponent,
     InfoComponent,
-    DialogModule
+    
   ],
   imports: [
     BrowserModule,
@@ -60,6 +60,7 @@ const appRoutes: Routes = [
     CalendarModule,
     BrowserAnimationsModule,
     FileUploadModule,
+    DialogModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
