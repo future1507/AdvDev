@@ -186,10 +186,15 @@ def Follow():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute(
-        "Insert INTO Subscribe"+
-        "(UserID,FollowerID)"+
-        "values(%s,%s)",(str(result['UserID']),str(result['FollowerID'])))
+    if(result['choice']=='add'):
+        cur.execute(
+            "Insert INTO Subscribe"+
+            "(UserID,FollowerID)"+
+            "values(%s,%s)",(str(result['UserID']),str(result['FollowerID'])))
+    elif(result['choice']=='cancle'):
+        cur.execute(
+            "DELETE FROM Subscribe"+
+            "WHERE UserID = %s and FollowerID = %s",(str(result['UserID']),str(result['FollowerID'])))
     conn.commit()
     return jsonify('Record Update Successfully')
 
@@ -204,7 +209,9 @@ def AddnewStory():
     result = request.get_json(force=True)
     postname = str(result['Storyname'])
     #postname = 'กางแต๊ด'
-    postid = str(result['UserID'])+"?"+postname[0:5]
+    postid = ''
+    for i in range(50):
+        postid += str(randrange(10))
     print(postid)
     if result['Coverphoto'] != None:
         coverphoto = str(result['Coverphoto'])
@@ -213,8 +220,8 @@ def AddnewStory():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
         "Insert INTO Story"+
-        "(StoryID,Storyname,Section,UserID,StoryTime,Tag,Targetgroup,StoryDesc,Coverphoto)"+
-        "values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(postid,postname,1,str(result['UserID']),
+        "(StoryID,Storyname,UserID,StoryTime,Tag,Targetgroup,StoryDesc,Coverphoto)"+
+        "values(%s,%s,%s,%s,%s,%s,%s,%s)",(postid,postname,str(result['UserID']),
         date,result['Tag'],str(result['Targetgroup']),desc,coverphoto))
     conn.commit()
     return 'Record Inserted Successfully'   
@@ -253,14 +260,36 @@ def ContinueStory():
     conn.commit()
     return 'Record Inserted Successfully' 
 
-@app.route('/showpost/<string:userid>', methods=['GET'])
-def ShowPost(userid):
+@token_required
+@app.route('/showpost', methods=['Post'],endpoint='showallposts')
+def ShowallPost():
     conn = mysql.connect()
-    cur = conn.cursor() 
-    cur.execute("select * from Post where UserID = %s ",(userid))
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("select * from Story "+ 
+    "WHERE Tag = %s or Tag = %s or Tag = %s or Tag = %s or Tag = %s "+
+    "and Targetgroup = 'public' UNION select * from Story WHERE UserID = %s" 
+    ,(result['Tag1'],result['Tag2'],result['Tag3'],result['Tag4'],result['Tag5'],result['UserID']))
     data = cur.fetchall()
     return jsonify(data)
 
+@token_required
+@app.route('/showselfpost/<userid>', methods=['GET'],endpoint='showselfposts')
+def ShowSelfPost(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("select * from Story WHERE UserID = %s",str(userid))
+    data = cur.fetchall()
+    return jsonify(data)
+
+@token_required
+@app.route('/showpost/<userid>', methods=['GET'],endpoint='showposts')
+def ShowPost(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("select * from Story WHERE UserID = %s and Targetgroup = 'public' ",str(userid))
+    data = cur.fetchall()
+    return jsonify(data)
 
 folder = ''
 @app.route('/upload', methods=['POST'],endpoint = 'Upload')
