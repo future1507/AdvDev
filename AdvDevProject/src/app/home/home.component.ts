@@ -3,19 +3,46 @@ import {DatapassService} from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import  {ActivatedRoute, Router} from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faImage } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  icon = faImage;
+  iconimg = faImage;
+  iconset = faCog;
+  tags: any[];
+  privacy: any[];
+  manage: any[];
+  items: any[] ;
   token : any;
   constructor(private http : HttpClient,private router : Router,
     public data : DatapassService,private route : ActivatedRoute,) {
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.User();
+      
+      this.items = [];
+        for (let i = 0; i < 10000; i++) {
+            this.items.push({label: 'Item ' + i, value: 'Item ' + i});
+        }
+      this.tags = [
+        {name: 'ศิลปะ', code: 'NY'},
+        {name: 'ดนตรี', code: 'RM'},
+        {name: 'นิยาย', code: 'LDN'},
+        {name: 'ท่องเที่ยว', code: 'IST'},
+        {name: 'ออกแบบ', code: 'PRS'}
+      ];
+      this.privacy = [
+        {name: 'public', code: 'pb'},
+        {name: 'private', code: 'pv'},
+        {name: 'protected', code: 'pt'},
+      ];
+      this.manage = [
+        {name: 'ลบ', code: 'del'},
+        {name: 'แก้ไข', code: 'edi'},
+        {name: 'แก้ไขความเป็นส่วนตัว', code: 'pri'},
+      ];
      }
 
   ngOnInit(): void {
@@ -80,7 +107,8 @@ export class HomeComponent implements OnInit {
   }
   showBasicDialog() {
     this.displayBasic = true;
-}
+  }
+  
   
 }
 

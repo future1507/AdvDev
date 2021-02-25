@@ -46,14 +46,27 @@
         		<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"></textarea>
         		<div class="mar-top clearfix" >
         			<button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
-					<fa-icon [icon]="icon" style="width: 20px;" (click)="showBasicDialog()" ></fa-icon>
+					<fa-icon [icon]="iconimg" style="width: 20px;" (click)="showBasicDialog()" ></fa-icon>
 						
 					<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+						<div class="right">
+							<div class="col-md-7 col-md-offset-2">
+								  <input id="login" class="form-control" name="login" placeholder="name"><br>
+							  </div>
+							<p-dropdown [options]="tags" [(ngModel)]="items" 
+								placeholder="Select Tags" optionLabel="name" [showClear]="true"><br>
+							</p-dropdown> &nbsp;
+							<p-dropdown [options]="privacy" [(ngModel)]="items" 
+								placeholder="Privacy" optionLabel="name" [showClear]="true"><br>
+							</p-dropdown>
+
+						</div>
+						<br><br>
 						<div class="panel-body" type="button" (click)="showBasicDialog()">
 							<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"></textarea>
 							<div class="mar-top clearfix" >
 								<button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
-								<fa-icon [icon]="icon" style="width: 20px;" ></fa-icon>
+								<fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon>
 								<!-- <i class="" (click)="showBasicDialog() "></i> -->
 							</div>
 						</div>
@@ -84,6 +97,9 @@
     				</div>
     				<div class="timeline-label">
                         <p class="mar-no pad-btm"><a routerLink="/profile" class="btn-link text-semibold">ประยุทธ์ จันทร์อังคารพุธ</a> shared an image</p>
+						<p-dropdown class="right" [options]="manage" [(ngModel)]="items" 
+								placeholder="จัดการโพสต์" optionLabel="name" [showClear]="true"><br>
+						</p-dropdown>
                         <p>
                             ฝากติดตามเรื่องต่อไป >> อย่าลืมเเเวะมาช่วยแต่เติมเนื้อเรื่องด้วยกันนะครับผม
                         </p>
