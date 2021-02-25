@@ -3,12 +3,14 @@ import {DatapassService} from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import  {ActivatedRoute, Router} from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+  icon = faImage;
   token : any;
   constructor(private http : HttpClient,private router : Router,
     public data : DatapassService,private route : ActivatedRoute,) {
@@ -18,6 +20,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
   }
+ 
+  displayBasic: boolean = false;
   display: boolean = false;
   fname : any;
   lname : any;
@@ -73,6 +77,9 @@ export class HomeComponent implements OnInit {
   }
   showDialog() {
     this.display = true;
+  }
+  showBasicDialog() {
+    this.displayBasic = true;
 }
   
 }

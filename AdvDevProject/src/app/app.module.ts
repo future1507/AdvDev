@@ -22,6 +22,7 @@ import {FileUploadModule} from 'primeng/fileupload';
 import { InfoComponent } from './info/info.component';
 import {DialogModule} from 'primeng/dialog';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
   {path:'login',component: LoginComponent},
@@ -61,6 +62,7 @@ const appRoutes: Routes = [
     BrowserAnimationsModule,
     FileUploadModule,
     DialogModule,
+    FontAwesomeModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],
