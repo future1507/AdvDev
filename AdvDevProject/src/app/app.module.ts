@@ -20,6 +20,7 @@ import {DropdownModule} from 'primeng/dropdown';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import {FileUploadModule} from 'primeng/fileupload';
 import { InfoComponent } from './info/info.component';
+import {DialogModule} from 'primeng/dialog';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
@@ -43,7 +44,8 @@ const appRoutes: Routes = [
     HomeComponent,
     SelectTagComponent,
     ProfileComponent,
-    InfoComponent
+    InfoComponent,
+    DialogModule
   ],
   imports: [
     BrowserModule,

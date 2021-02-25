@@ -11,13 +11,14 @@ import { HttpHeaders } from '@angular/common/http';
 export class HomeComponent implements OnInit {
   token : any;
   constructor(private http : HttpClient,private router : Router,
-    public data : DatapassService,private route : ActivatedRoute) {
+    public data : DatapassService,private route : ActivatedRoute,) {
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.User();
      }
 
   ngOnInit(): void {
   }
+  display: boolean = false;
   fname : any;
   lname : any;
   name : any;
@@ -70,4 +71,9 @@ export class HomeComponent implements OnInit {
       return data;
     } 
   }
+  showDialog() {
+    this.display = true;
 }
+  
+}
+
