@@ -116,7 +116,7 @@ def Signup():
     return jsonify('Record Inserted Successfully')
 
 @app.route('/editprofile', methods=['POST'],endpoint='Edprofile')
-#@token_required
+@token_required
 def EditProfile():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -179,6 +179,19 @@ def User(userid):
     cur.execute("SELECT * FROM User WHERE UserID = %s",(str(userid)))
     data = cur.fetchall()
     return jsonify(data)
+
+@app.route('/follow', methods=['POST'],endpoint='follows')
+#@token_required
+def Follow():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+        "Insert INTO Subscribe"+
+        "(UserID,FollowerID)"+
+        "values(%s,%s)",(str(result['UserID']),str(result['FollowerID'])))
+    conn.commit()
+    return jsonify('Record Update Successfully')
 
 @app.route('/newstory', methods=['POST'],endpoint='addstory')
 @token_required
