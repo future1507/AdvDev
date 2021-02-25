@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import  {Router} from '@angular/router'
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-info',
@@ -6,10 +9,57 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./info.component.css']
 })
 export class InfoComponent implements OnInit {
+  fname = localStorage.getItem('Firstname');
+  lname = localStorage.getItem('Lastname');
+  bday = localStorage.getItem('Birthday');
+  udesc = localStorage.getItem('UserDesc');
+  country = localStorage.getItem('Country');
+  skills = localStorage.getItem('Skills');
+  phone = localStorage.getItem('Phone');
+  mail = localStorage.getItem('Mail');
+  fb = localStorage.getItem('Facebook');
+  twitter = localStorage.getItem('Twitter');
 
-  constructor() { }
+  token : any;
+  constructor(private http : HttpClient,private router : Router) {
+    this.token = this.TokenUser(localStorage.getItem('TOKEN'));
 
-  ngOnInit(): void {
   }
 
+  ngOnInit(): void {
+    
+  }
+  Edit(){
+    let json = {
+      UserID : localStorage.getItem('UserID'),
+      Firstname : this.fname,
+      Lastname : this.lname,
+      Birthday : this.bday,  
+      UserDesc : this.udesc,
+      Country : this.country,
+      Skills : this.skills,
+      Phone : this.phone,
+      Mail : this.mail,
+      Facebook : this.fb,
+      Twitter : this.twitter
+    };
+    // console.log(this.Birthday);
+    console.log(JSON.stringify(json));
+    this.http.post('http://203.154.83.62:1507/editprofile',JSON.stringify(json),this.token)
+    .subscribe(response =>{
+      console.log(response);
+      this.router.navigateByUrl('/profile/'+localStorage.getItem('UserID'));
+    }, error => {
+      console.log(error);
+    });
+  }
+  TokenUser(token:any){
+    const headerDict = {
+      'Authorization': "Bearer "+token
+    }
+    const requestOptions = {
+      headers: new HttpHeaders(headerDict), 
+    };
+    return requestOptions;
+  }
 }

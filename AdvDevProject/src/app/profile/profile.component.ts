@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import  {ActivatedRoute, Router} from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
 
+
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -15,14 +16,25 @@ export class ProfileComponent implements OnInit {
   constructor(private http : HttpClient,private router : Router,
     private route : ActivatedRoute) { 
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
-      this.User();
+      //this.User();
     }
-
+  profile = 'http://203.154.83.62:1507/img/profile/'+localStorage.getItem('Profileimg')
+  fname = localStorage.getItem('Firstname');
+  lname = localStorage.getItem('Lastname');
+  birthday = localStorage.getItem('Birthday');
+  udesc = localStorage.getItem('UserDesc');
+  country = localStorage.getItem('Country');
+  skills = localStorage.getItem('Skills');
+  phone = localStorage.getItem('Phone');
+  mail = localStorage.getItem('Mail');
+  fb = localStorage.getItem('Facebook');
+  twitter = localStorage.getItem('Twitter');
   ngOnInit(): void {
   }
-  name : any;
-  birthday : any;
-  profile : any;
+  name = this.fname+" "+this.lname;
+  //spbday = this.bday?.split("-");
+  //birthday = this.spbday[2]+"/"+'';
+
   User(){
     console.log(localStorage.getItem('TOKEN'));
     console.log(localStorage.getItem('UserID'));

@@ -9,27 +9,31 @@
   <div id="formContent">
     <!-- Tabs Titles -->
     <!-- Login Form -->
-    
+    <h1>Info</h1>
     <form >
       <br><br>
         <div class="form-group" >
           <div class="container">
-            <input id="login" class="form-control" name="login" placeholder="username"><br>
-            <input type="password" id="password" class="form-control" name="login" placeholder="password"><br>
-            <input id="login" class="form-control" name="login" placeholder="firstname"><br>
-            <input id="login" class="form-control" name="login" placeholder="lastname"> <br>
-            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday">
+            <input id="form" class="form-control" name="fname" placeholder="Firstname" [(ngModel)]="this.fname"><br>
+            <input id="form" class="form-control" name="lname" placeholder="Lastname" [(ngModel)]="this.lname"> <br>
+            <input id="form" class="form-control" name="country" placeholder="Country" [(ngModel)]="this.country"><br>
+            <input id="form" class="form-control" name="udesc" placeholder="Description" [(ngModel)]="this.udesc"> <br>
+            <input id="form" class="form-control" name="skills" placeholder="Skills" [(ngModel)]="this.skills"><br>
+            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="Birthday" [(ngModel)]="this.bday"><br>
+            <input id="form" class="form-control" name="phone" placeholder="Phone" [(ngModel)]="this.phone"> <br>
+            <input id="form" class="form-control" name="mail" placeholder="Mail" [(ngModel)]="this.mail"><br>
+            <input id="form" class="form-control" name="fb" placeholder="Facebook" [(ngModel)]="this.fb"> <br>
+            <input id="form" class="form-control" name="twitter" placeholder="Twitter" [(ngModel)]="this.twitter"> <br>
+            
           </div>
         </div>
-      
-        
-      <br> <br>
       <div class="text-center mt-4 mt-md-0">
-         <a routerLink='/login'><button class="btn btn-outline-primary">Edit</button>&nbsp;&nbsp;</a>
+         <button class="btn btn-primary" (click)="Edit()">Save</button>&nbsp;&nbsp;
          <!-- <button class="btn btn-primary" (click)="">Register</button><br><br> -->
        </div>
       
     </form>
+    <br> 
 
     <!-- Remind Passowrd -->
 </div>

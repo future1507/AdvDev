@@ -34,6 +34,10 @@ mysql.init_app(app)
 ##conn = mysql.connect()
 ##cursor = conn.cursor()       
 
+def checkNone(reqdata):
+    if reqdata!= None:
+        return reqdata
+
 def getPasswordFromDB(userid):
     conn = mysql.connect()
     cur = conn.cursor() 
@@ -112,16 +116,27 @@ def Signup():
     return jsonify('Record Inserted Successfully')
 
 @app.route('/editprofile', methods=['POST'],endpoint='Edprofile')
-@token_required
+#@token_required
 def EditProfile():
     conn = mysql.connect()
     result = request.get_json(force=True)
-    profileimg = None
-    if result['Profileimg'] != None:
-        profileimg = str(result['Profileimg'])
+
+    fname,lname,bday,udesc,country,skills,phone,mail,fb,twitter = None,None,None,None,None,None,None,None,None,None
+    fname = checkNone(result['Firstname'])
+    lname = checkNone(result['Lastname'])
+    bday = checkNone(result['Birthday'])
+    udesc = checkNone(result['UserDesc'])
+    country = checkNone(result['Country'])
+    skills = checkNone(result['Skills'])
+    phone = checkNone(result['Phone'])
+    mail = checkNone(result['Mail'])
+    fb = checkNone(result['Facebook'])
+    twitter = checkNone(result['Twitter'])
+
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("UPDATE User SET Firstname=%s,Lastname=%s,Birthday=%s,Profileimg=%s WHERE UserID =%s",
-    (result['Firstname'],result['Lastname'],result['Birthday'],profileimg,result['UserID']))
+    cur.execute("UPDATE User SET Firstname=%s,Lastname=%s,Birthday=%s,UserDesc=%s"+
+    ",Country=%s,Skills=%s,Phone=%s,Mail=%s,Facebook=%s,Twitter=%s  WHERE UserID =%s",
+    (fname,lname,bday,udesc,country,skills,phone,mail,fb,twitter,result['UserID']))
     conn.commit()
     return jsonify('Record Update Successfully')
 
@@ -161,7 +176,7 @@ def UserAll():
 def User(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor) 
-    cur.execute("SELECT `Firstname`, `Lastname`, `Birthday`, `Tag1`, `Tag2`, `Tag3`,`Tag4`,`Tag5`,`Profileimg` FROM User WHERE UserID = %s",(str(userid)))
+    cur.execute("SELECT * FROM User WHERE UserID = %s",(str(userid)))
     data = cur.fetchall()
     return jsonify(data)
 

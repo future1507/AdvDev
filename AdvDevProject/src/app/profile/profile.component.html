@@ -39,7 +39,7 @@
                     <div class="mb-3">
                       <h3>{{this.name}}</h3>
                       <div class="d-flex align-items-center justify-content-center">
-                        <h5 class="mb-0 mr-2 text-muted">Thailand</h5>
+                        <h5 class="mb-0 mr-2 text-muted">{{this.country}}</h5>
                         <div class="br-wrapper br-theme-css-stars"><select id="profile-rating" name="rating" autocomplete="off" style="display: none;">
                           <option value="1">1</option>
                           <option value="2">2</option>
@@ -49,21 +49,21 @@
                         </select><div class="br-widget"><a href="#" data-rating-value="1" data-rating-text="1" class="br-selected br-current"></a><a href="#" data-rating-value="2" data-rating-text="2"></a><a href="#" data-rating-value="3" data-rating-text="3"></a><a href="#" data-rating-value="4" data-rating-text="4"></a><a href="#" data-rating-value="5" data-rating-text="5"></a></div></div>
                       </div>
                     </div>
-                    <p class="w-75 mx-auto mb-3">นักเขียนการ์ตูนโง่ๆ และไส้แห้ง อยากเป็นนายกครับผม </p>
+                    <p class="w-75 mx-auto mb-3">{{this.udesc}}</p>
                     <div class="text-center mt-4 mt-md-0">
                         <button class="btn btn-outline-primary">Follow</button>&nbsp;&nbsp;
-                        <button class="btn btn-primary">Message</button>
+                        <!-- <button class="btn btn-primary">Message</button> -->
                     </div>
                   </div>
 
                   <div class="border-bottom py-4">
                     <p>Skills</p>
                     <div>
+                      <label class="badge badge-outline-dark">{{this.skills}}</label>
+                      <!-- <label class="badge badge-outline-dark">รักชาติ</label>
                       <label class="badge badge-outline-dark">รักชาติ</label>
                       <label class="badge badge-outline-dark">รักชาติ</label>
-                      <label class="badge badge-outline-dark">รักชาติ</label>
-                      <label class="badge badge-outline-dark">รักชาติ</label>
-                      <label class="badge badge-outline-dark">รักชาติ</label>  
+                      <label class="badge badge-outline-dark">รักชาติ</label>   -->
                     </div>                                                               
                   </div>
                   <div class="border-bottom py-4">
@@ -92,15 +92,15 @@
                         Phone
                       </span>
                       <span class="float-right text-muted">
-                        006 3435 22
+                        {{this.phone}}
                       </span>
                     </p>
                     <p class="clearfix">
                       <span class="float-left">
-                        Mail
+                          Mail
                       </span>
                       <span class="float-right text-muted">
-                        Jacod@testmail.com
+                        {{this.mail}}
                       </span>
                     </p>
                     <p class="clearfix">
@@ -108,7 +108,7 @@
                         Facebook
                       </span>
                       <span class="float-right text-muted">
-                        <a href="#">David Grey</a>
+                        <a href="#">{{this.fb}}</a>
                       </span>
                     </p>
                     <p class="clearfix">
@@ -116,7 +116,7 @@
                         Twitter
                       </span>
                       <span class="float-right text-muted">
-                        <a href="#">@davidgrey</a>
+                        <a href="#">{{this.twitter}}</a>
                       </span>
                     </p>
                   </div>

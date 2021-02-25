@@ -32,24 +32,24 @@ export class RegisterComponent implements OnInit {
   // Register(){
   //   console.log(this.captcha);
   //   if (this.checkk) {
-  //     let json = {
-  //         UserID : this.userid,
-  //         Password : this.password,
-  //         Firstname : this.fname,
-  //         Lastname : this.lname,
-  //         Birthday : this.birthday,  
-  //       };
-  //       // console.log(this.Birthday);
-  //       console.log(this.birthday);
-  //       console.log(JSON.stringify(json));
-  //       this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json))
-  //       .subscribe(response =>{
-  //         console.log(response);
-  //         this.router.navigateByUrl('/selectTag/'+this.userid);
-  //       }, error => {
-  //         console.log(error);
+      // let json = {
+      //     UserID : this.userid,
+      //     Password : this.password,
+      //     Firstname : this.fname,
+      //     Lastname : this.lname,
+      //     Birthday : this.birthday,  
+      //   };
+      //   // console.log(this.Birthday);
+      //   console.log(this.birthday);
+      //   console.log(JSON.stringify(json));
+      //   this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json))
+      //   .subscribe(response =>{
+      //     console.log(response);
+      //     this.router.navigateByUrl('/selectTag/'+this.userid);
+      //   }, error => {
+      //     console.log(error);
           
-  //       });
+      //   });
   //   }
   // }
   async Register(){
