@@ -198,6 +198,15 @@ def Follow():
     conn.commit()
     return jsonify('Record Update Successfully')
 
+@app.route('/follower/<userid>', methods=['get'],endpoint='followers')
+#@token_required
+def Follow(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT COUNT(UserID) as Follower,COUNT(FollowerID) as Following from Subscribe WHERE UserID = %s",(str(userid)))
+    conn.commit()
+    return jsonify('Record Update Successfully')
+
 @app.route('/newstory', methods=['POST'],endpoint='addstory')
 @token_required
 def AddnewStory():

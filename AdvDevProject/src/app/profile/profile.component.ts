@@ -80,4 +80,22 @@ export class ProfileComponent implements OnInit {
     });
 
   }
+  followbtcolor = 'btn btn-outline-primary';
+  followtext = 'Follow';
+  isfollow = false;
+  follower = 0;
+  following = 0;
+  SwitchFollow(){
+    this.isfollow = !this.isfollow;
+    if(this.isfollow == false){
+      this.follower -= 1;
+      this.followbtcolor = 'btn btn-outline-primary';
+      this.followtext = 'Follow';
+    }
+    else{
+      this.follower += 1;
+      this.followbtcolor = 'btn btn-primary';
+      this.followtext = 'Followed';
+    }
+  }
 }
