@@ -51,21 +51,21 @@
 					<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
 						<div class="right">
 							<div class="col-md-7 col-md-offset-2">
-								  <input id="login" class="form-control" name="login" placeholder="Storyname"><br>
+								  <input id="login" class="form-control" name="login" placeholder="Storyname" [(ngModel)]="this.storyname"><br>
 							  </div>
-							<p-dropdown [options]="tags" [(ngModel)]="items" 
-								placeholder="Select Tags" optionLabel="name" [showClear]="true"><br>
+							<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5"
+								placeholder="Select Tags"  [showClear]="true"><br>
 							</p-dropdown> &nbsp;
-							<p-dropdown [options]="privacy" [(ngModel)]="items" 
-								placeholder="Privacy" optionLabel="name" [showClear]="true"><br>
+							<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2"
+								placeholder="Privacy"  [showClear]="true"><br>
 							</p-dropdown>
 
 						</div>
 						<br><br>
 						<div class="panel-body" type="button" (click)="showBasicDialog()">
-							<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"></textarea>
+							<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??" [(ngModel)]="this.storydesc"></textarea>
 							<div class="mar-top clearfix" >
-								<button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
+								<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="CreatePost()"><i class="fa fa-pencil fa-fw"></i> Share</button>
 								<fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon>
 								<!-- <i class="" (click)="showBasicDialog() "></i> -->
 							</div>
@@ -97,9 +97,10 @@
     				</div>
     				<div class="timeline-label">
                         <p class="mar-no pad-btm"><a routerLink="/profile/{{post.UserID}}" class="btn-link text-semibold">{{post.UserID}}</a> shared {{post.Storyname}}</p>
-						<p-dropdown class="align-right" [options]="manage" [(ngModel)]="items" *ngIf="this.userid==post.UserID"
-								placeholder="จัดการโพสต์" optionLabel="name" [showClear]="true"><br>
+						<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage" *ngIf="this.userid==post.UserID"  [itemSize]="3"
+								placeholder="จัดการโพสต์"  [showClear]="true" (click)="ManagePost(post.StoryID)"><br>
 						</p-dropdown>
+						<!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown> -->
                         <p>
                             {{post.StoryDesc}}
                         </p>

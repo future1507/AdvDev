@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
       console.log(this.selfid+"  "+this.uid)
       if (this.selfid != this.uid){
         this.User();
+        this.Followed();
       }
       this.ShowPost();
     }
@@ -106,7 +107,18 @@ export class ProfileComponent implements OnInit {
       this.follower += 1;
       this.followbtcolor = 'btn btn-primary';
       this.followtext = 'Followed';
+
     }
+    let json = {
+      UserID : this.uid,
+      FollowerID : this.selfid,
+      choice : this.followtext
+    }
+    this.http.post('http://203.154.83.62:1507/follow',JSON.stringify(json),this.token).subscribe(response =>{
+      console.log(response)
+      }, error =>{
+      console.log(error);
+      });
   }
 
   allpost :any ;
@@ -114,6 +126,7 @@ export class ProfileComponent implements OnInit {
   StoryDesc = [];
   UserID = [];
   async ShowPost(){
+  
     this.allpost = undefined;
     let response = await this.http
       .get('http://203.154.83.62:1507/showselfpost'+this.uid,this.token).toPromise();
@@ -121,4 +134,23 @@ export class ProfileComponent implements OnInit {
     this.allpost = response;
     return response;
 }
+  Followed(){
+    let json = {
+      UserID : this.uid,
+      FollowerID : this.selfid
+    }
+    this.http.post('http://203.154.83.62:1507/followed',JSON.stringify(json),this.token).subscribe(response =>{
+      if(response.toString() == 'yes'){
+        this.followbtcolor = 'btn btn-primary';
+        this.followtext = 'Followed';
+      }
+      else{
+        this.followbtcolor = 'btn btn-outline-primary';
+        this.followtext = 'Follow';
+      }
+      console.log('follow : '+response)
+      }, error =>{
+      console.log(error);
+      });
+  }
 }

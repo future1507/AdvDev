@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import  {ActivatedRoute, Router} from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
 import { faCog, faImage } from '@fortawesome/free-solid-svg-icons';
+import { SelectItem } from 'primeng/api/selectitem';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -12,10 +13,9 @@ import { faCog, faImage } from '@fortawesome/free-solid-svg-icons';
 export class HomeComponent implements OnInit {
   iconimg = faImage;
   iconset = faCog;
-  tags: any[];
-  privacy: any[];
-  manage: any[];
-  items: any[] ;
+  tags:  SelectItem[];
+  privacy: SelectItem[];
+  manage: SelectItem[];
   token : any;
   constructor(private http : HttpClient,private router : Router,
     public data : DatapassService,private route : ActivatedRoute,) {
@@ -23,25 +23,23 @@ export class HomeComponent implements OnInit {
       this.User();
       this.ShowPost();
       
-      this.items = [];
-        for (let i = 0; i < 10000; i++) {
-            this.items.push({label: 'Item ' + i, value: 'Item ' + i});
-        }
+      
       this.tags = [
-        {name: 'ศิลปะ', code: '1'},
-        {name: 'การออกแบบ', code: '2'},
-        {name: 'นิยาย', code: '3'},
-        {name: 'ดนตรี', code: '4'},
-        {name: 'ท่องเที่ยว', code: '5'}
+        {label: 'ศิลปะ', value: '1'},
+        {label: 'การออกแบบ', value: '2'},
+        {label: 'นิยาย', value: '3'},
+        {label: 'ดนตรี', value: '4'},
+        {label: 'ท่องเที่ยว', value: '5'}
       ];
+      
       this.privacy = [
-        {name: 'public', code: 'pb'},
-        {name: 'private', code: 'pv'}
+        {label: 'public', value: 'public'},
+        {label: 'private', value: 'private'}
       ];
       this.manage = [
-        {name: 'ลบ', code: 'del'},
-        {name: 'แก้ไข', code: 'edi'},
-        {name: 'แก้ไขความเป็นส่วนตัว', code: 'pri'},
+        {label: 'ลบ', value: 'del'},
+        {label: 'แก้ไข', value: 'edit'},
+        {label: 'แก้ไขความเป็นส่วนตัว', value: 'pri'},
       ];
      }
 
@@ -116,6 +114,7 @@ export class HomeComponent implements OnInit {
   allpost :any ;
   Storyname = [];
   StoryDesc = [];
+  StoryID = [];
   UserID = [];
 
   async ShowPost(){
@@ -129,11 +128,36 @@ export class HomeComponent implements OnInit {
       Tag5 : localStorage.getItem('Tag5')
     };
     let response = await this.http
-      .post('http://203.154.83.62:1507/showpost',JSON.stringify(json)).toPromise();
+      .post('http://203.154.83.62:1507/showpost',JSON.stringify(json),this.token).toPromise();
     console.log(response);
     this.allpost = response;
     return response;
 }
-  
+  storyname : any
+  tag = '';
+  target = '';
+  storydesc : any
+  coverphoto : any
+  async CreatePost(){
+    let json = {
+      Storyname : this.storyname,
+      UserID : this.userid,
+      Tag : this.tag,
+      Targetgroup : this.target,
+      StoryDesc : this.storydesc,
+      Coverphoto : null
+    };
+    console.log(json)
+    let response = await this.http.post('http://203.154.83.62:1507/newstory',JSON.stringify(json),this.token).toPromise();
+    this.displayBasic = false;
+    console.log(response);
+}
+  slmanage = '';
+  async ManagePost(storyid:any){
+    if(this.slmanage =='del'){
+      let response = await this.http.get('http://203.154.83.62:1507/deletestory/'+storyid,this.token).toPromise();
+      console.log(response);
+    }
+  }
 }
 

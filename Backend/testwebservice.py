@@ -186,14 +186,14 @@ def Follow():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    if(result['choice']=='add'):
+    if(result['choice']=='Follow'):
         cur.execute(
-            "Insert INTO Subscribe"+
+            "Insert INTO Subscribe "+
             "(UserID,FollowerID)"+
             "values(%s,%s)",(str(result['UserID']),str(result['FollowerID'])))
-    elif(result['choice']=='cancle'):
+    elif(result['choice']=='Followed'):
         cur.execute(
-            "DELETE FROM Subscribe"+
+            "DELETE FROM Subscribe "+
             "WHERE UserID = %s and FollowerID = %s",(str(result['UserID']),str(result['FollowerID'])))
     conn.commit()
     return jsonify('Record Update Successfully')
@@ -206,6 +206,20 @@ def Follow(userid):
     cur.execute("SELECT COUNT(UserID) as Follower,COUNT(FollowerID) as Following from Subscribe WHERE UserID = %s",(str(userid)))
     conn.commit()
     return jsonify('Record Update Successfully')
+
+@app.route('/followed', methods=['Post'],endpoint='followed')
+#@token_required
+def Followed():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT * from Subscribe WHERE UserID = %s and FollowerID = %s",(result['UserID'],result['FollowerID']))
+    data = cur.fetchall()
+    if(len(data) == 1):
+        return jsonify('yes')
+    else:
+        return jsonify('no')
+
 
 @app.route('/newstory', methods=['POST'],endpoint='addstory')
 @token_required
@@ -233,7 +247,18 @@ def AddnewStory():
         "values(%s,%s,%s,%s,%s,%s,%s,%s)",(postid,postname,str(result['UserID']),
         date,result['Tag'],str(result['Targetgroup']),desc,coverphoto))
     conn.commit()
-    return 'Record Inserted Successfully'   
+    return jsonify('Record Inserted Successfully')  
+
+@app.route('/deletestory/<storyid>', methods=['get'],endpoint='deletepost')
+#@token_required
+def DeleteStory(storyid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+            "DELETE FROM Story "+
+            "WHERE StoryID = %s",(str(storyid)))
+    conn.commit()
+    return jsonify('Record Delete Successfully')
 
 @app.route('/story', methods=['POST'],endpoint='story')
 @token_required
