@@ -13,10 +13,18 @@ import { HttpHeaders } from '@angular/common/http';
 export class ProfileComponent implements OnInit {
   token : any;
   setButTrue = true;
+  selfid : any;
+  uid : any;
   constructor(private http : HttpClient,private router : Router,
     private route : ActivatedRoute) { 
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
-      //this.User();
+      this.selfid = localStorage.getItem('UserID');
+      this.uid = this.route.snapshot.params['id'];
+      console.log(this.selfid+"  "+this.uid)
+      if (this.selfid != this.uid){
+        this.User();
+      }
+      this.ShowPost();
     }
   profile = 'http://203.154.83.62:1507/img/profile/'+localStorage.getItem('Profileimg')
   fname = localStorage.getItem('Firstname');
@@ -35,10 +43,12 @@ export class ProfileComponent implements OnInit {
   //spbday = this.bday?.split("-");
   //birthday = this.spbday[2]+"/"+'';
 
+
   User(){
     console.log(localStorage.getItem('TOKEN'));
-    console.log(localStorage.getItem('UserID'));
-    this.http.get('http://203.154.83.62:1507/'+localStorage.getItem('UserID'),this.token).subscribe(response =>{
+    //console.log(localStorage.getItem('UserID'));
+
+    this.http.get('http://203.154.83.62:1507/'+this.route.snapshot.params['id'],this.token).subscribe(response =>{
       console.log(response);
       var array = Object.values(response);
       console.log(array[0]['Firstname']);
@@ -98,4 +108,17 @@ export class ProfileComponent implements OnInit {
       this.followtext = 'Followed';
     }
   }
+
+  allpost :any ;
+  Storyname = [];
+  StoryDesc = [];
+  UserID = [];
+  async ShowPost(){
+    this.allpost = undefined;
+    let response = await this.http
+      .get('http://203.154.83.62:1507/showselfpost'+this.uid,this.token).toPromise();
+    console.log(response);
+    this.allpost = response;
+    return response;
+}
 }

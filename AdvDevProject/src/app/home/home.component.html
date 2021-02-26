@@ -51,7 +51,7 @@
 					<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
 						<div class="right">
 							<div class="col-md-7 col-md-offset-2">
-								  <input id="login" class="form-control" name="login" placeholder="name"><br>
+								  <input id="login" class="form-control" name="login" placeholder="Storyname"><br>
 							  </div>
 							<p-dropdown [options]="tags" [(ngModel)]="items" 
 								placeholder="Select Tags" optionLabel="name" [showClear]="true"><br>
@@ -87,7 +87,7 @@
     				<div class="timeline-header-title bg-success" >Now</div>
     			</div>
     
-    			<div class="timeline-entry">
+    			<div class="timeline-entry" *ngFor="let post of allpost; let i = index;">
     				<div class="timeline-stat">
     					<div class="timeline-icon"> <a routerLink="/profile" class="btn-link text-semibold">
 							<img src="https://www.posttoday.com/media/content/2016/12/28/BB5B5C39B42749668D77807DB9821F75.jpg" 
@@ -96,19 +96,19 @@
     					<div class="timeline-time">30 Min ago</div>
     				</div>
     				<div class="timeline-label">
-                        <p class="mar-no pad-btm"><a routerLink="/profile" class="btn-link text-semibold">ประยุทธ์ จันทร์อังคารพุธ</a> shared an image</p>
-						<p-dropdown class="right" [options]="manage" [(ngModel)]="items" 
+                        <p class="mar-no pad-btm"><a routerLink="/profile/{{post.UserID}}" class="btn-link text-semibold">{{post.UserID}}</a> shared {{post.Storyname}}</p>
+						<p-dropdown class="align-right" [options]="manage" [(ngModel)]="items" *ngIf="this.userid==post.UserID"
 								placeholder="จัดการโพสต์" optionLabel="name" [showClear]="true"><br>
 						</p-dropdown>
                         <p>
-                            ฝากติดตามเรื่องต่อไป >> อย่าลืมเเเวะมาช่วยแต่เติมเนื้อเรื่องด้วยกันนะครับผม
+                            {{post.StoryDesc}}
                         </p>
     					<div class="img-holder">
     						<img src="https://wallpaperboat.com/wp-content/uploads/2019/09/anime-art-Sao1.jpg" alt="Image">
     					</div>
     				</div>
     			</div>
-    			<div class="timeline-entry">
+    			<!-- <div class="timeline-entry">
     				<div class="timeline-stat">
     					<div class="timeline-icon bg-danger"><i class="fa fa-building fa-lg"></i>
     					</div>
@@ -141,10 +141,10 @@
     					<img class="img-xs img-circle" src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="Profile picture">
     					<a href="#" class="btn-link text-semibold">Bobby Marz</a> followed you.
     				</div>
-    			</div>
+    			</div> -->
     
     			<!-- Timeline header -->
-    			<div class="timeline-header">
+    			<!-- <div class="timeline-header">
     				<div class="timeline-header-title bg-dark">Yesterday</div>
     			</div>
     
@@ -178,7 +178,7 @@
     				<div class="timeline-label">
     					<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.</p>
     				</div>
-    			</div>
+    			</div> -->
     		</div>
     		<!--===================================================-->
     		<!-- End Timeline -->

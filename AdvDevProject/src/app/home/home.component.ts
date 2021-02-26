@@ -21,22 +21,22 @@ export class HomeComponent implements OnInit {
     public data : DatapassService,private route : ActivatedRoute,) {
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.User();
+      this.ShowPost();
       
       this.items = [];
         for (let i = 0; i < 10000; i++) {
             this.items.push({label: 'Item ' + i, value: 'Item ' + i});
         }
       this.tags = [
-        {name: 'ศิลปะ', code: 'NY'},
-        {name: 'ดนตรี', code: 'RM'},
-        {name: 'นิยาย', code: 'LDN'},
-        {name: 'ท่องเที่ยว', code: 'IST'},
-        {name: 'ออกแบบ', code: 'PRS'}
+        {name: 'ศิลปะ', code: '1'},
+        {name: 'การออกแบบ', code: '2'},
+        {name: 'นิยาย', code: '3'},
+        {name: 'ดนตรี', code: '4'},
+        {name: 'ท่องเที่ยว', code: '5'}
       ];
       this.privacy = [
         {name: 'public', code: 'pb'},
-        {name: 'private', code: 'pv'},
-        {name: 'protected', code: 'pt'},
+        {name: 'private', code: 'pv'}
       ];
       this.manage = [
         {name: 'ลบ', code: 'del'},
@@ -73,6 +73,11 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('Mail',this.CheckNull(array[0]['Mail']));
       localStorage.setItem('Facebook',this.CheckNull(array[0]['Facebook']));
       localStorage.setItem('Twitter',this.CheckNull(array[0]['Twitter']));
+      localStorage.setItem('Tag1',(array[0]['Tag1']));
+      localStorage.setItem('Tag2',(array[0]['Tag2']));
+      localStorage.setItem('Tag3',(array[0]['Tag3']));
+      localStorage.setItem('Tag4',(array[0]['Tag4']));
+      localStorage.setItem('Tag5',(array[0]['Tag5']));
       this.name = array[0]['Firstname']+"   "+array[0]['Lastname']
       console.log('profileid = '+array[0]['Profileimg']);
       if(array[0]['Profileimg'] !=null && array[0]['Profileimg'] !='' && array[0]['Profileimg'] !='null'){
@@ -108,7 +113,27 @@ export class HomeComponent implements OnInit {
   showBasicDialog() {
     this.displayBasic = true;
   }
-  
+  allpost :any ;
+  Storyname = [];
+  StoryDesc = [];
+  UserID = [];
+
+  async ShowPost(){
+    this.allpost = undefined;
+    let json = {
+      UserID : localStorage.getItem('UserID'),
+      Tag1 : localStorage.getItem('Tag1'),
+      Tag2 : localStorage.getItem('Tag2'),
+      Tag3 : localStorage.getItem('Tag3'),
+      Tag4 : localStorage.getItem('Tag4'),
+      Tag5 : localStorage.getItem('Tag5')
+    };
+    let response = await this.http
+      .post('http://203.154.83.62:1507/showpost',JSON.stringify(json)).toPromise();
+    console.log(response);
+    this.allpost = response;
+    return response;
+}
   
 }
 
