@@ -28,7 +28,6 @@ export class InfoComponent implements OnInit {
       this.router.navigateByUrl('/login');
     }
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
-
   }
 
   ngOnInit(): void {
