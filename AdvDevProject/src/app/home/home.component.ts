@@ -21,7 +21,6 @@ export class HomeComponent implements OnInit {
     public data: DatapassService, private route: ActivatedRoute,) {
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
     this.User();
-    this.ShowPost();
     console.log(localStorage.getItem('TOKEN'));
 
     this.tags = [
@@ -83,6 +82,7 @@ export class HomeComponent implements OnInit {
       else {
         console.log('profile=null');
       }
+      this.ShowPost();
     }, error => {
       console.log(error);
       this.router.navigateByUrl('/login');

@@ -202,12 +202,12 @@ def Follow():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    if(result['choice'] == 'Follow'):
+    if(result['choice'] == 'Followed'):
         cur.execute(
             "Insert INTO Subscribe " +
             "(UserID,FollowerID)" +
             "values(%s,%s)", (str(result['UserID']), str(result['FollowerID'])))
-    elif(result['choice'] == 'Followed'):
+    elif(result['choice'] == 'Follow'):
         cur.execute(
             "DELETE FROM Subscribe " +
             "WHERE UserID = %s and FollowerID = %s", (str(result['UserID']), str(result['FollowerID'])))
@@ -354,7 +354,7 @@ def ShowallPost():
 def ShowSelfPost(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("select * from Story WHERE UserID = %s", str(userid))
+    cur.execute("select * from Story WHERE UserID = %s ORDER BY `Story`.`StoryTime` DESC", str(userid))
     data = cur.fetchall()
     return jsonify(data)
 
@@ -365,7 +365,7 @@ def ShowPost(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
-        "select * from Story WHERE UserID = %s and Targetgroup = 'public' ", str(userid))
+        "select * from Story WHERE UserID = %s and Targetgroup = 'public' ORDER BY `Story`.`StoryTime` DESC", str(userid))
     data = cur.fetchall()
     return jsonify(data)
 
