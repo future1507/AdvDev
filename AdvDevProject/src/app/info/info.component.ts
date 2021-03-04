@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import  {Router} from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
+import { DatapassService } from '../datapass.service';
 
 @Component({
   selector: 'app-info',
@@ -21,7 +22,11 @@ export class InfoComponent implements OnInit {
   twitter = localStorage.getItem('Twitter');
 
   token : any;
-  constructor(private http : HttpClient,private router : Router) {
+  constructor(private http : HttpClient,private router : Router,
+    public data: DatapassService) {
+    if(this.data.token != localStorage.getItem('TOKEN')){
+      this.router.navigateByUrl('/login');
+    }
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
 
   }
@@ -48,6 +53,16 @@ export class InfoComponent implements OnInit {
     this.http.post('http://203.154.83.62:1507/editprofile',JSON.stringify(json),this.token)
     .subscribe(response =>{
       console.log(response);
+      localStorage.setItem('Firstname',""+this.fname);
+      localStorage.setItem('Lastname',""+this.lname);
+      localStorage.setItem('Birthday',""+this.bday);
+      localStorage.setItem('UserDesc',""+this.udesc);
+      localStorage.setItem('Country',""+this.country);
+      localStorage.setItem('Skills',""+this.skills);
+      localStorage.setItem('Phone',""+this.phone);
+      localStorage.setItem('Mail',""+this.mail);
+      localStorage.setItem('Facebook',""+this.fb);
+      localStorage.setItem('Twitter',""+this.twitter);
       this.router.navigateByUrl('/profile/'+localStorage.getItem('UserID'));
     }, error => {
       console.log(error);

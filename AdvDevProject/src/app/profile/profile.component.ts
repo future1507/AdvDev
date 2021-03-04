@@ -16,7 +16,13 @@ export class ProfileComponent implements OnInit {
   selfid : any;
   uid : any;
   constructor(private http : HttpClient,private router : Router,
-    private route : ActivatedRoute) { 
+    public data: DatapassService,private route : ActivatedRoute) { 
+      console.log(this.data.token);
+      console.log(localStorage.getItem('TOKEN'));
+      if(this.data.token != localStorage.getItem('TOKEN')){
+        
+        this.router.navigateByUrl('/login');
+      }
       this.token = this.TokenUser(localStorage.getItem('TOKEN'));
       this.selfid = localStorage.getItem('UserID');
       this.uid = this.route.snapshot.params['id'];
@@ -25,6 +31,7 @@ export class ProfileComponent implements OnInit {
         this.User();
         this.Followed();
       }
+      this.AmontFollow();
       this.ShowPost();
     }
   profile = 'http://203.154.83.62:1507/img/profile/'+localStorage.getItem('Profileimg')
@@ -41,9 +48,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
   }
   name = this.fname+" "+this.lname;
-  //spbday = this.bday?.split("-");
-  //birthday = this.spbday[2]+"/"+'';
-
+ 
 
   User(){
     console.log(localStorage.getItem('TOKEN'));
@@ -58,6 +63,13 @@ export class ProfileComponent implements OnInit {
       this.profile = 'http://203.154.83.62:1507/img/profile/'+array[0]['Profileimg']
       var d = new Date(array[0]['Birthday']);
       this.birthday = d.getDate()+"/"+d.getMonth()+"/"+d.getFullYear()
+      this.udesc = array[0]['UserDesc'];
+      this.country = array[0]['Country'];
+      this.skills = array[0]['Skills'];
+      this.phone = array[0]['Phone'];
+      this.mail = array[0]['Mail'];
+      this.fb = array[0]['Facebook'];
+      this.twitter = array[0]['Twitter'];
       }, error =>{
       console.log(error);
       });
@@ -85,6 +97,7 @@ export class ProfileComponent implements OnInit {
     .subscribe(response => {
       this.uploadedFiles=[];
       //this.upload_img = (response).toString();
+      localStorage.setItem('Profileimg',(response).toString());
       window.location.reload();
     }, err => {
       //handle error
@@ -127,9 +140,9 @@ export class ProfileComponent implements OnInit {
   UserID = [];
   async ShowPost(){
   
-    this.allpost = undefined;
+    //this.allpost = undefined;
     let response = await this.http
-      .get('http://203.154.83.62:1507/showselfpost'+this.uid,this.token).toPromise();
+      .get('http://203.154.83.62:1507/showselfpost/'+this.uid,this.token).toPromise();
     console.log(response);
     this.allpost = response;
     return response;
@@ -143,14 +156,24 @@ export class ProfileComponent implements OnInit {
       if(response.toString() == 'yes'){
         this.followbtcolor = 'btn btn-primary';
         this.followtext = 'Followed';
+        this.isfollow = true;
       }
       else{
         this.followbtcolor = 'btn btn-outline-primary';
         this.followtext = 'Follow';
+        this.isfollow = false;
       }
       console.log('follow : '+response)
       }, error =>{
       console.log(error);
       });
+  }
+  async AmontFollow(){
+    let response = await this.http
+      .get('http://203.154.83.62:1507/follower/'+this.uid,this.token).toPromise();
+    console.log(response);
+    var array = Object.values(response);
+    this.follower = +array[0]['Follower'];
+    this.following = +array[0]['Following'];
   }
 }

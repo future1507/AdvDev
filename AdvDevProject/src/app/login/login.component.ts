@@ -12,10 +12,10 @@ import { ObjectUnsubscribedError } from 'rxjs';
 })
 export class LoginComponent implements OnInit {
   
-  userid:any;
-  password:any;
+  userid = "abc123";
+  password = "1234";
   constructor(private http : HttpClient,private router : Router,
-    private data : DatapassService,private route : ActivatedRoute) { }
+    public data: DatapassService,private route : ActivatedRoute) { }
     
   ngOnInit(): void {
   }
@@ -41,6 +41,7 @@ export class LoginComponent implements OnInit {
         console.log(array[3]);
         //this.data.token = array[3];
         localStorage.setItem('TOKEN',array[3]);
+        this.data.token = array[3];
         //let obj = JSON.parse(response);
         
         this.router.navigateByUrl('/home/'+this.userid);

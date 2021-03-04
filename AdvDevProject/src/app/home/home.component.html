@@ -9,107 +9,132 @@
 </div> -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
-    
-    <meta charset="utf-8">
-	
-    <!--  This file has been downloaded from bootdey.com    @bootdey on twitter -->
-    <!--  All snippets are MIT license http://bootdey.com/license -->
-	
-    <title>Social Network timeline feed - Bootdey.com</title>
-	
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    </style>
-</head>
-<body>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="form-group" >
-	<div class="col-md-7 col-md-offset-2">
-	  <br>
-		<input id="login" class="form-control" name="login" placeholder="Search"><br>
-	</div>
-  </div>
-<div class="container bootstrap snippets bootdeys">
-    <div class="col-md-7 col-md-offset-2">
-        <div class="panel">
-			<div class="Profile picture" style="text-align: center;"> <a routerLink="/profile/{{this.userid}}" class="btn-link text-semibold">
-				<img src="{{this.profileimg}}" 
-				alt="Profile picture" width="200"></a>
-			</div>
-			<div style="text-align: center;">
-				<a routerLink="/profile/{{this.userid}}" class="btn-link text-semibold">{{this.name}}</a>
-			</div>
-            <div class="panel-body" type="button" (click)="showBasicDialog()">
-        		<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"></textarea>
-        		<div class="mar-top clearfix" >
-        			<button class="btn btn-sm btn-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
-					<fa-icon [icon]="iconimg" style="width: 20px;" (click)="showBasicDialog()" ></fa-icon>
-						
-					<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
-						<div class="right">
-							<div class="col-md-7 col-md-offset-2">
-								  <input id="login" class="form-control" name="login" placeholder="Storyname" [(ngModel)]="this.storyname"><br>
-							  </div>
-							<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5"
-								placeholder="Select Tags"  [showClear]="true"><br>
-							</p-dropdown> &nbsp;
-							<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2"
-								placeholder="Privacy"  [showClear]="true"><br>
-							</p-dropdown>
 
+	<meta charset="utf-8">
+
+	<!--  This file has been downloaded from bootdey.com    @bootdey on twitter -->
+	<!--  All snippets are MIT license http://bootdey.com/license -->
+
+	<title>Social Network timeline feed - Bootdey.com</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<style type="text/css">
+	</style>
+</head>
+
+<body>
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+	<div class="form-group">
+		<div class="col-md-7 col-md-offset-2">
+			<br>
+			<input id="login" class="form-control" name="login" placeholder="Search"><br>
+		</div>
+	</div>
+	<div class="container bootstrap snippets bootdeys">
+		<div class="col-md-7 col-md-offset-2">
+			<div class="panel">
+				<div class="Profile picture" style="text-align: center;"> <a routerLink="/profile/{{this.userid}}"
+						class="btn-link text-semibold">
+						<img src="{{this.profileimg}}" alt="Profile picture" width="200"></a>
+				</div>
+				<div style="text-align: center;">
+					<a routerLink="/profile/{{this.userid}}" class="btn-link text-semibold">{{this.name}}</a>
+				</div>
+				<div class="panel-body" type="button" (click)="showBasicDialog()">
+					<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"></textarea>
+					<div class="mar-top clearfix">
+						<button class="btn btn-sm btn-primary pull-right" type="submit"><i
+								class="fa fa-pencil fa-fw"></i> Share</button>
+						<fa-icon [icon]="iconimg" style="width: 20px;" (click)="showBasicDialog()"></fa-icon>
+
+						<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}"
+							[baseZIndex]="10000">
+							<div class="right">
+								<div class="col-md-7 col-md-offset-2">
+									<input id="login" class="form-control" name="login" placeholder="Storyname"
+										[(ngModel)]="this.storyname"><br>
+								</div>
+								<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
+									[showClear]="true"><br>
+								</p-dropdown> &nbsp;
+								<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2"
+									placeholder="Privacy" [showClear]="true"><br>
+								</p-dropdown>
+
+							</div>
+							<br><br>
+							<div class="panel-body" type="button" (click)="showBasicDialog()">
+								<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+									[(ngModel)]="this.storydesc"></textarea>
+								<div class="mar-top clearfix">
+									<button class="btn btn-sm btn-primary pull-right" type="submit"
+										(click)="CreatePost()"><i class="fa fa-pencil fa-fw"></i> Share</button>
+									<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
+									<p-fileUpload     
+										mode="basic"
+										[auto]="setButTrue" 
+										chooseLabel=" "
+										[customUpload]="setButTrue" 
+										accept="image/*"
+										(uploadHandler)="UploadCoverPhoto($event)">
+									</p-fileUpload>
+									<!-- <i class="" (click)="showBasicDialog() "></i> -->
+								</div>
+							</div>
+							<ng-template pTemplate="footer">
+
+							</ng-template>
+						</p-dialog>
+					</div>
+				</div>
+			</div>
+			<div class="panel panel-body">
+				<!-- Timeline -->
+				<!--===================================================-->
+				<div class="timeline">
+
+					<!-- Timeline header -->
+					<div class="timeline-header">
+						<div class="timeline-header-title bg-success">Now</div>
+					</div>
+
+					<div class="timeline-entry" *ngFor="let post of allpost; let i = index;">
+						<div class="timeline-stat">
+							<div class="timeline-icon"> <a routerLink="/profile/{{post.UserID}}"
+									class="btn-link text-semibold" *ngIf="post.Profileimg != null;else elseblock">
+									<img src="http://203.154.83.62:1507/img/profile/{{post.Profileimg}}"
+										alt="Profile picture" width="500"></a>
+								<ng-template #elseblock>
+									<a routerLink="/profile/{{post.UserID}}" class="btn-link text-semibold">
+										<img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+											alt="Profile picture" width="500"></a>
+								</ng-template>
+							</div>
+							<div class="timeline-time">30 Min ago</div>
 						</div>
-						<br><br>
-						<div class="panel-body" type="button" (click)="showBasicDialog()">
-							<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??" [(ngModel)]="this.storydesc"></textarea>
-							<div class="mar-top clearfix" >
-								<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="CreatePost()"><i class="fa fa-pencil fa-fw"></i> Share</button>
-								<fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon>
-								<!-- <i class="" (click)="showBasicDialog() "></i> -->
+						<div class="timeline-label">
+							<p class="mar-no pad-btm"><a routerLink="/profile/{{post.UserID}}"
+									class="btn-link text-semibold">{{post.Firstname}} {{post.Lastname}}</a> posted
+								{{post.Storyname}}</p>
+							<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
+								*ngIf="this.userid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์"
+								[showClear]="true" (click)="ManagePost(post.StoryID)"><br>
+							</p-dropdown>
+							<!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown> -->
+							<p>
+								{{post.StoryDesc}}
+							</p>
+							<div class="img-holder" *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">
+								<img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}"
+									alt="Image" width="500">
 							</div>
 						</div>
-						<ng-template pTemplate="footer">
-							
-						</ng-template>
-					</p-dialog>
-        		</div>
-        	</div>
-        </div>
-        <div class="panel panel-body">
-    		<!-- Timeline -->
-    		<!--===================================================-->
-    		<div class="timeline">
-    
-    			<!-- Timeline header -->
-    			<div class="timeline-header">
-    				<div class="timeline-header-title bg-success" >Now</div>
-    			</div>
-    
-    			<div class="timeline-entry" *ngFor="let post of allpost; let i = index;">
-    				<div class="timeline-stat">
-    					<div class="timeline-icon"> <a routerLink="/profile" class="btn-link text-semibold">
-							<img src="https://www.posttoday.com/media/content/2016/12/28/BB5B5C39B42749668D77807DB9821F75.jpg" 
-							alt="Profile picture" width="500"></a>
-						</div>
-    					<div class="timeline-time">30 Min ago</div>
-    				</div>
-    				<div class="timeline-label">
-                        <p class="mar-no pad-btm"><a routerLink="/profile/{{post.UserID}}" class="btn-link text-semibold">{{post.UserID}}</a> shared {{post.Storyname}}</p>
-						<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage" *ngIf="this.userid==post.UserID"  [itemSize]="3"
-								placeholder="จัดการโพสต์"  [showClear]="true" (click)="ManagePost(post.StoryID)"><br>
-						</p-dropdown>
-						<!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown> -->
-                        <p>
-                            {{post.StoryDesc}}
-                        </p>
-    					<div class="img-holder">
-    						<img src="https://wallpaperboat.com/wp-content/uploads/2019/09/anime-art-Sao1.jpg" alt="Image">
-    					</div>
-    				</div>
-    			</div>
-    			<!-- <div class="timeline-entry">
+					</div>
+					<!-- <div class="timeline-entry">
     				<div class="timeline-stat">
     					<div class="timeline-icon bg-danger"><i class="fa fa-building fa-lg"></i>
     					</div>
@@ -143,9 +168,9 @@
     					<a href="#" class="btn-link text-semibold">Bobby Marz</a> followed you.
     				</div>
     			</div> -->
-    
-    			<!-- Timeline header -->
-    			<!-- <div class="timeline-header">
+
+					<!-- Timeline header -->
+					<!-- <div class="timeline-header">
     				<div class="timeline-header-title bg-dark">Yesterday</div>
     			</div>
     
@@ -180,16 +205,17 @@
     					<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt.</p>
     				</div>
     			</div> -->
-    		</div>
-    		<!--===================================================-->
-    		<!-- End Timeline -->
-    	</div>
-    </div>
-</div>
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<script type="text/javascript">
-	
-</script>
+				</div>
+				<!--===================================================-->
+				<!-- End Timeline -->
+			</div>
+		</div>
+	</div>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+
+	</script>
 </body>
+
 </html>
