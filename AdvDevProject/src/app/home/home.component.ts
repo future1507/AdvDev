@@ -3,8 +3,10 @@ import { DatapassService } from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
-import { faCog, faImage } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faComment, faImage, faThumbsDown, faThumbsUp} from '@fortawesome/free-solid-svg-icons';
 import { SelectItem } from 'primeng/api/selectitem';
+
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -13,6 +15,8 @@ import { SelectItem } from 'primeng/api/selectitem';
 export class HomeComponent implements OnInit {
   iconimg = faImage;
   iconset = faCog;
+  iconlike = faThumbsUp;
+  comment = faComment;
   tags: SelectItem[];
   privacy: SelectItem[];
   manage: SelectItem[];

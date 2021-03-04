@@ -132,6 +132,26 @@
 								<img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}"
 									alt="Image" width="500">
 							</div>
+							<br>
+							<div>
+								<fa-icon [icon]="iconlike" style="width: 20px;"></fa-icon> &nbsp;
+								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon>
+									<p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}"
+									[baseZIndex]="10000">
+									<div class="right">
+										<div class="col-md-7 col-md-offset-2">
+											<input id="login" class="form-control" name="login" placeholder="new comment"
+												[(ngModel)]="this.storyname"><br>
+										</div>
+									</div>
+									<br><br>
+									
+									<ng-template pTemplate="footer">
+		
+									</ng-template>
+								</p-dialog>
+								 
+							</div>
 						</div>
 					</div>
 					<!-- <div class="timeline-entry">
