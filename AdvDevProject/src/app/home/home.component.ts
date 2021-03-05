@@ -217,6 +217,7 @@ export class HomeComponent implements OnInit {
       let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
       console.log(response);
       this.ShowPost();
+      this.slmanage = '';
     }
     else if (this.slmanage == 'edit') {
       this.displayBasic2 = true;
@@ -226,6 +227,7 @@ export class HomeComponent implements OnInit {
       this.storydesc = storydesc;
       this.coverphoto = coverphoto;
       this.storyid = storyid;
+      this.slmanage = '';
     }
   }
   uploadedFiles: any[] = [];
