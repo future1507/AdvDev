@@ -181,8 +181,8 @@ export class ProfileComponent implements OnInit {
       .get('http://203.154.83.62:1507/follow/' + this.uid, this.token).toPromise();
     console.log(response);
     var array = Object.values(response);
-    this.follower = +array[0]['Follower'];
-    this.following = +array[0]['Following'];
+    this.follower = +array[0];
+    this.following = +array[0];
   }
   displayFollowing = false;
   displayFollower = false;

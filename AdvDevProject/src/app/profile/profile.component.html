@@ -30,7 +30,7 @@
                   <img src="{{this.profile}}" alt="profile" class="img-xs rounded-circle" width="230">
                   <div style="margin-top: -50px;">
                     <p-fileUpload mode="basic" [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
-                      accept="image/*" (uploadHandler)="myUploader($event)">
+                      accept="image/*" (uploadHandler)="myUploader($event)" *ngIf='this.uid==this.selfid'>
                     </p-fileUpload>
                   </div>
                   <div class="mb-3">

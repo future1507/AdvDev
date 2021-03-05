@@ -93,7 +93,7 @@ def Login():
         return app.response_class(response=json.dumps(return_data), mimetype='application/json')
     else:
 
-        return 'Login Fail'
+        return jsonify('Login Fail')
 
 
 @app.route('/signup', methods=['POST'])
@@ -221,10 +221,18 @@ def Follow(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
-        "SELECT COUNT(UserID) as Follower,COUNT(FollowerID) as Following from Subscribe WHERE UserID = %s", (str(userid)))
+        "SELECT UserID as Follower from Subscribe WHERE UserID = %s", (str(userid)))
     conn.commit()
-    data = cur.fetchall()
-    return jsonify(data)
+    follower = len(cur.fetchall())
+    cur.execute(
+        "SELECT FollowerID as Following from Subscribe WHERE FollowerID = %s", (str(userid)))
+    conn.commit()
+    following = len(cur.fetchall())
+    returndata = {
+        "Follower" : str(follower),
+        "Following" : str(following)
+    }
+    return jsonify(returndata)
 
 
 @app.route('/follower/<userid>', methods=['get'], endpoint='followers')
