@@ -229,8 +229,8 @@ def Follow(userid):
     conn.commit()
     following = len(cur.fetchall())
     returndata = {
-        "Follower" : str(follower),
-        "Following" : str(following)
+        "Follower": str(follower),
+        "Following": str(following)
     }
     return jsonify(returndata)
 
@@ -254,9 +254,9 @@ def Follower(userid):
 def Following(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
-                "FROM User, Subscribe "+
-                "WHERE User.UserID=Subscribe.UserID "+
+    cur.execute("SELECT Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                "FROM User, Subscribe " +
+                "WHERE User.UserID=Subscribe.UserID " +
                 "AND Subscribe.FollowerID=%s", (str(userid)))
     conn.commit()
     data = cur.fetchall()
@@ -306,6 +306,7 @@ def AddnewStory():
     conn.commit()
     return jsonify(postid)
 
+
 @app.route('/editstory', methods=['POST'], endpoint='editstorys')
 @token_required
 def EditStory():
@@ -317,13 +318,14 @@ def EditStory():
     tag = checkNone(result['Tag'])
     targetgroup = checkNone(result['Targetgroup'])
     storydesc = checkNone(result['StoryDesc'])
-  
+
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("UPDATE Story SET Storyname=%s,Tag=%s,Targetgroup=%s,StoryDesc=%s " +
                 "WHERE StoryID =%s",
                 (storyname, tag, targetgroup, storydesc, result['StoryID']))
     conn.commit()
     return jsonify('Record Update Successfully')
+
 
 @app.route('/deletestory/<storyid>', methods=['get'], endpoint='deletepost')
 @token_required
@@ -397,8 +399,19 @@ def ShowallPost():
                 "WHERE User.UserID= %s " +
                 "AND Story.Targetgroup = 'private' " +
                 "ORDER BY Story.StoryTime DESC " +
-                ") b ORDER BY StoryTime DESC",
-                (result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID']))
+                ") b " +
+                "UNION  " +
+                "SELECT c.* " +
+                "FROM( " + 
+                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
+                "from Story, User, Subscribe "+
+                "WHERE User.UserID=Story.UserID "+
+                "and Story.UserID=Subscribe.UserID "+
+                "and User.UserID=Subscribe.UserID "+
+                "and Subscribe.FollowerID=%s"+
+                "ORDER BY Story.StoryTime DESC " +
+                ") c ORDER BY StoryTime DESC ",
+                (result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID'],result['UserID']))
     data = cur.fetchall()
     return jsonify(data)
 
