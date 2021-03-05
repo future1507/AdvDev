@@ -143,7 +143,7 @@ export class ProfileComponent implements OnInit {
         localStorage.clear();
       });
     }
-    else{
+    else {
       this.http.get('http://203.154.83.62:1507/showpost/' + this.uid, this.token).subscribe(response => {
         console.log(response)
         this.allpost = response;
@@ -178,10 +178,36 @@ export class ProfileComponent implements OnInit {
   }
   async AmontFollow() {
     let response = await this.http
-      .get('http://203.154.83.62:1507/follower/' + this.uid, this.token).toPromise();
+      .get('http://203.154.83.62:1507/follow/' + this.uid, this.token).toPromise();
     console.log(response);
     var array = Object.values(response);
     this.follower = +array[0]['Follower'];
     this.following = +array[0]['Following'];
+  }
+  displayFollowing = false;
+  displayFollower = false;
+  allfollower: any;
+  allfollowing: any;
+  showFollowerDialog() {
+    this.displayFollower = true;
+    this.http.get('http://203.154.83.62:1507/follower/' + this.uid, this.token).subscribe(response => {
+      console.log(response)
+      this.allfollower = response;
+    }, error => {
+      console.log(error);
+      this.router.navigateByUrl('/login');
+      localStorage.clear();
+    });
+  }
+  showFollowingDialog() {
+    this.displayFollowing = true;
+    this.http.get('http://203.154.83.62:1507/following/' + this.uid, this.token).subscribe(response => {
+      console.log(response)
+      this.allfollowing = response;
+    }, error => {
+      console.log(error);
+      this.router.navigateByUrl('/login');
+      localStorage.clear();
+    });
   }
 }

@@ -215,13 +215,41 @@ def Follow():
     return jsonify('Record Update Successfully')
 
 
-@app.route('/follower/<userid>', methods=['get'], endpoint='followers')
+@app.route('/follow/<userid>', methods=['get'], endpoint='followss')
 @token_required
 def Follow(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
         "SELECT COUNT(UserID) as Follower,COUNT(FollowerID) as Following from Subscribe WHERE UserID = %s", (str(userid)))
+    conn.commit()
+    data = cur.fetchall()
+    return jsonify(data)
+
+
+@app.route('/follower/<userid>', methods=['get'], endpoint='followers')
+@token_required
+def Follower(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT FollowerID, User.Firstname, User.Lastname, User.Profileimg " +
+                "FROM User, Subscribe " +
+                "WHERE User.UserID=Subscribe.FollowerID " +
+                "AND Subscribe.UserID=%s", (str(userid)))
+    conn.commit()
+    data = cur.fetchall()
+    return jsonify(data)
+
+
+@app.route('/following/<userid>', methods=['get'], endpoint='followings')
+@token_required
+def Following(userid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
+                "FROM User, Subscribe "+
+                "WHERE User.UserID=Subscribe.UserID "+
+                "AND Subscribe.FollowerID=%s", (str(userid)))
     conn.commit()
     data = cur.fetchall()
     return jsonify(data)
@@ -270,6 +298,24 @@ def AddnewStory():
     conn.commit()
     return jsonify(postid)
 
+@app.route('/editstory', methods=['POST'], endpoint='editstorys')
+@token_required
+def EditStory():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+
+    storyname, tag, targetgroup, storydesc = None, None, None, None
+    storyname = checkNone(result['Storyname'])
+    tag = checkNone(result['Tag'])
+    targetgroup = checkNone(result['Targetgroup'])
+    storydesc = checkNone(result['StoryDesc'])
+  
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("UPDATE Story SET Storyname=%s,Tag=%s,Targetgroup=%s,StoryDesc=%s " +
+                "WHERE StoryID =%s",
+                (storyname, tag, targetgroup, storydesc, result['StoryID']))
+    conn.commit()
+    return jsonify('Record Update Successfully')
 
 @app.route('/deletestory/<storyid>', methods=['get'], endpoint='deletepost')
 @token_required
@@ -325,25 +371,25 @@ def ShowallPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT a.* "+
-                "FROM( "+
-                    "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg "+
-                    "FROM Story "+
-                    "INNER JOIN User ON User.UserID=Story.UserID "+
-                    "WHERE Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s "+
-                    "AND Story.Targetgroup = 'public' "+
-                    "ORDER BY Story.StoryTime DESC "+
-                ") a "+
-                "UNION  "+
-                "SELECT b.* "+
-                "FROM( "+
-                    "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg "+
-                    "FROM Story "+
-                    "INNER JOIN User ON User.UserID=Story.UserID "+
-                    "WHERE User.UserID= %s "+
-                    "AND Story.Targetgroup = 'private' "+
-                    "ORDER BY Story.StoryTime DESC "+
-                ") b ORDER BY StoryTime DESC", 
+    cur.execute("SELECT a.* " +
+                "FROM( " +
+                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                "FROM Story " +
+                "INNER JOIN User ON User.UserID=Story.UserID " +
+                "WHERE Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s " +
+                "AND Story.Targetgroup = 'public' " +
+                "ORDER BY Story.StoryTime DESC " +
+                ") a " +
+                "UNION  " +
+                "SELECT b.* " +
+                "FROM( " +
+                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                "FROM Story " +
+                "INNER JOIN User ON User.UserID=Story.UserID " +
+                "WHERE User.UserID= %s " +
+                "AND Story.Targetgroup = 'private' " +
+                "ORDER BY Story.StoryTime DESC " +
+                ") b ORDER BY StoryTime DESC",
                 (result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID']))
     data = cur.fetchall()
     return jsonify(data)
@@ -354,7 +400,8 @@ def ShowallPost():
 def ShowSelfPost(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("select * from Story WHERE UserID = %s ORDER BY `Story`.`StoryTime` DESC", str(userid))
+    cur.execute(
+        "select * from Story WHERE UserID = %s ORDER BY `Story`.`StoryTime` DESC", str(userid))
     data = cur.fetchall()
     return jsonify(data)
 
@@ -438,9 +485,11 @@ def allowed_file(filename):
 def photoProfile(filename):
     return send_file("img/profile/"+filename+".jpg")
 
+
 @app.route('/img/coverphoto/<filename>', methods=['GET'])
 def photoCover(filename):
     return send_file("img/coverphoto/"+filename+".jpg")
+
 
 if __name__ == "__main__":
     # 8app.run(debug=True)

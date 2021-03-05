@@ -3,7 +3,7 @@ import { DatapassService } from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
-import { faCog, faComment, faImage, faThumbsDown, faThumbsUp} from '@fortawesome/free-solid-svg-icons';
+import { faCog, faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { SelectItem } from 'primeng/api/selectitem';
 
 
@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
     this.manage = [
       { label: 'ลบ', value: 'del' },
       { label: 'แก้ไข', value: 'edit' },
-      { label: 'แก้ไขความเป็นส่วนตัว', value: 'pri' },
+      //{ label: 'แก้ไขความเป็นส่วนตัว', value: 'pri' },
     ];
   }
 
@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
   }
 
   displayBasic: boolean = false;
+  displayBasic2: boolean = false;
   display: boolean = false;
   fname: any;
   lname: any;
@@ -65,7 +66,7 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('Profileimg', this.CheckNull(array[0]['Profileimg']));
       localStorage.setItem('Firstname', array[0]['Firstname']);
       localStorage.setItem('Lastname', array[0]['Lastname']);
-      localStorage.setItem('Birthday', bday.getFullYear() + '-' +"0"+ bday.getMonth() + '-' + bday.getDate());
+      localStorage.setItem('Birthday', bday.getFullYear() + '-' + "0" + bday.getMonth() + '-' + bday.getDate());
       localStorage.setItem('UserDesc', this.CheckNull(array[0]['UserDesc']));
       localStorage.setItem('Country', this.CheckNull(array[0]['Country']));
       localStorage.setItem('Skills', this.CheckNull(array[0]['Skills']));
@@ -121,7 +122,7 @@ export class HomeComponent implements OnInit {
   StoryID = [];
   UserID = [];
   FirstName = [];
-  LastName =[];
+  LastName = [];
   Profileime = [];
   Coverphoto = [];
 
@@ -138,7 +139,7 @@ export class HomeComponent implements OnInit {
     };
     console.log(json);
     let response = await this.http
-      .post('http://203.154.83.62:1507/showpost', JSON.stringify(json),this.token).toPromise();
+      .post('http://203.154.83.62:1507/showpost', JSON.stringify(json), this.token).toPromise();
     console.log(response);
     this.allpost = response;
     return response;
@@ -148,6 +149,7 @@ export class HomeComponent implements OnInit {
   target = '';
   storydesc: any
   coverphoto: any
+  storyid: any
   async CreatePost() {
     let json = {
       Storyname: this.storyname,
@@ -161,34 +163,61 @@ export class HomeComponent implements OnInit {
     let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json), this.token).toPromise();
     this.displayBasic = false;
     console.log(response);
-    this.formData.append('storyid',""+response);
+    this.formData.append('storyid', "" + response);
     this.http.post("http://203.154.83.62:1507/upload", this.formData)
-    .subscribe(response => {
-      this.uploadedFiles=[];
-      //this.upload_img = (response).toString();
-      window.location.reload();
-    }, err => {
-      //handle error
-    });
+      .subscribe(response => {
+        this.uploadedFiles = [];
+        //this.upload_img = (response).toString();
+        window.location.reload();
+      }, err => {
+        //handle error
+      });
+  }
+  async EditPost() {
+    let json = {
+      Storyname: this.storyname,
+      Tag: this.tag,
+      Targetgroup: this.target,
+      StoryDesc: this.storydesc,
+      Storyid: this.storyid
+    };
+    let response = await this.http.get('http://203.154.83.62:1507/editstory/' + JSON.stringify(json), this.token).toPromise();
+    console.log(response);
+    this.formData.append('storyid', "" + this.storyid);
+    this.http.post("http://203.154.83.62:1507/upload", this.formData)
+      .subscribe(response => {
+        this.uploadedFiles = [];
+        //window.location.reload();
+      }, err => {
+      });
   }
   slmanage = '';
-  async ManagePost(storyid: any) {
+  async ManagePost(storyid: any, storyname: any, tag: any, target: any, storydesc: any, coverphoto: any) {
     if (this.slmanage == 'del') {
       let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
       console.log(response);
+    }
+    else if (this.slmanage == 'edit') {
+      this.displayBasic2 = true;
+      this.storyname = storyname;
+      this.tag = tag;
+      this.target = target;
+      this.storydesc = storydesc;
+      this.coverphoto = coverphoto;
+      this.storyid = storyid;
     }
   }
   uploadedFiles: any[] = [];
   setButTrue = true;
   formData = new FormData();
-  UploadCoverPhoto(event:any){
+  UploadCoverPhoto(event: any) {
     console.log('upload');
-    for(let files of event.files) {
+    for (let files of event.files) {
       this.uploadedFiles.push(files);
     }
     const file = this.uploadedFiles[0];
     this.formData.append('file', file, file.name);
-    this.formData.append('folder','coverphoto');
+    this.formData.append('folder', 'coverphoto');
   }
 }
 

@@ -39,3 +39,27 @@ body {
   transform: translateY(-50%);
   float: right;
 }
+.timeline-icon {
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px #ebeef0;
+  display: block;
+  margin: 0 auto;
+  height: 46px;
+  line-height: 46px;
+  text-align: center;
+  width: 46px
+}
+
+.timeline-icon img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  vertical-align: top
+}
+
+.timeline-icon:empty {
+  height: 10px;
+  width: 10px;
+  margin-top: 20px;
+  background-color: #a4b4c7
+}

@@ -49,48 +49,72 @@
 					<div class="mar-top clearfix">
 						<button class="btn btn-sm btn-primary pull-right" type="submit"><i
 								class="fa fa-pencil fa-fw"></i> Share</button>
-						<fa-icon [icon]="iconimg" style="width: 20px;" (click)="showBasicDialog()"></fa-icon>
+						<fa-icon [icon]="iconimg" style="width: 20px;"></fa-icon>
 
-						<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}"
-							[baseZIndex]="10000">
-							<div class="right">
-								<div class="col-md-7 col-md-offset-2">
-									<input id="login" class="form-control" name="login" placeholder="Storyname"
-										[(ngModel)]="this.storyname"><br>
-								</div>
-								<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
-									[showClear]="true"><br>
-								</p-dropdown> &nbsp;
-								<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2"
-									placeholder="Privacy" [showClear]="true"><br>
-								</p-dropdown>
 
-							</div>
-							<br><br>
-							<div class="panel-body" type="button" (click)="showBasicDialog()">
-								<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
-									[(ngModel)]="this.storydesc"></textarea>
-								<div class="mar-top clearfix">
-									<button class="btn btn-sm btn-primary pull-right" type="submit"
-										(click)="CreatePost()"><i class="fa fa-pencil fa-fw"></i> Share</button>
-									<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
-									<p-fileUpload     
-										mode="basic"
-										[auto]="setButTrue" 
-										chooseLabel=" "
-										[customUpload]="setButTrue" 
-										accept="image/*"
-										(uploadHandler)="UploadCoverPhoto($event)">
-									</p-fileUpload>
-									<!-- <i class="" (click)="showBasicDialog() "></i> -->
-								</div>
-							</div>
-							<ng-template pTemplate="footer">
 
-							</ng-template>
-						</p-dialog>
 					</div>
 				</div>
+				<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
+					<div class="right">
+						<div class="col-md-7 col-md-offset-2">
+							<input id="login" class="form-control" name="login" placeholder="Storyname"
+								[(ngModel)]="this.storyname"><br>
+						</div>
+						<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
+							[showClear]="true"><br>
+						</p-dropdown> &nbsp;
+						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2" placeholder="Privacy"
+							[showClear]="true"><br>
+						</p-dropdown>
+					</div>
+					<br><br>
+					<div class="panel-body" type="button">
+						<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+							[(ngModel)]="this.storydesc"></textarea>
+						<div class="mar-top clearfix">
+							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="CreatePost()"><i
+									class="fa fa-pencil fa-fw"></i> Share</button>
+							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
+							<p-fileUpload mode="basic" [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
+								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
+							</p-fileUpload>
+							<!-- <i class="" (click)="showBasicDialog() "></i> -->
+						</div>
+					</div>
+					<ng-template pTemplate="footer">
+					</ng-template>
+				</p-dialog>
+				<p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '50vw'}" [baseZIndex]="10000">
+					<div class="right">
+						<div class="col-md-7 col-md-offset-2">
+							<input id="login" class="form-control" name="login" placeholder="Storyname"
+								[(ngModel)]="this.storyname"><br>
+						</div>
+						<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
+							[showClear]="true"><br>
+						</p-dropdown> &nbsp;
+						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2" placeholder="Privacy"
+							[showClear]="true"><br>
+						</p-dropdown>
+					</div>
+					<br><br>
+					<div class="panel-body" type="button">
+						<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+							[(ngModel)]="this.storydesc"></textarea>
+						<div class="mar-top clearfix">
+							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="EditPost()"><i
+									class="fa fa-pencil fa-fw"></i> Save</button>
+							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
+							<p-fileUpload mode="basic" [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
+								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
+							</p-fileUpload>
+							<!-- <i class="" (click)="showBasicDialog() "></i> -->
+						</div>
+					</div>
+					<ng-template pTemplate="footer">
+					</ng-template>
+				</p-dialog>
 			</div>
 			<div class="panel panel-body">
 				<!-- Timeline -->
@@ -122,35 +146,37 @@
 								{{post.Storyname}}</p>
 							<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
 								*ngIf="this.userid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์"
-								[showClear]="true" (click)="ManagePost(post.StoryID)"><br>
+								[showClear]="true"
+								(click)="ManagePost(post.StoryID,post.Storyname,post.Tag,post.Targetgroup,post.StoryDesc,post.Coverphoto)">
+								<br>
 							</p-dropdown>
 							<!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown> -->
 							<p>
 								{{post.StoryDesc}}
 							</p>
 							<div class="img-holder" *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">
-								<img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}"
-									alt="Image" width="500">
+								<img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}" alt="Image"
+									width="500">
 							</div>
 							<br>
 							<div>
 								<fa-icon [icon]="iconlike" style="width: 20px;"></fa-icon> &nbsp;
 								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon>
-									<p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}"
+								<p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}"
 									[baseZIndex]="10000">
 									<div class="right">
 										<div class="col-md-7 col-md-offset-2">
-											<input id="login" class="form-control" name="login" placeholder="new comment"
-												[(ngModel)]="this.storyname"><br>
+											<input id="login" class="form-control" name="login"
+												placeholder="new comment" [(ngModel)]="this.storyname"><br>
 										</div>
 									</div>
 									<br><br>
-									
+
 									<ng-template pTemplate="footer">
-		
+
 									</ng-template>
 								</p-dialog>
-								 
+
 							</div>
 						</div>
 					</div>
