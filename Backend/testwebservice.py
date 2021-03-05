@@ -397,7 +397,7 @@ def ShowallPost():
                 "FROM Story " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
                 "WHERE User.UserID= %s " +
-                "AND Story.Targetgroup = 'private' " +
+                ##"AND Story.Targetgroup = 'private' " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") b " +
                 "UNION  " +
