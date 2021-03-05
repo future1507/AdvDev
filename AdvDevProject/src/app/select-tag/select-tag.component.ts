@@ -22,18 +22,22 @@ export class SelectTagComponent implements OnInit {
   ngOnInit(): void {
   }
   ChooseTag(tag:boolean,index:any){
-    this.clicktag[index] = tag;
+    //this.clicktag[index] = tag;
     console.log("Tag "+(index)+" = "+tag);
     if(this.clicktag[index] == true){
-      this.tag[index-1] = index;
-      this.countag++;
+      this.tag[index-1] = null;
+      this.clicktag[index-1] = !this.clicktag[index-1];
+      this.countag--;
     }
     else{
-      this.tag[index-1] = null;
-      this.countag--;
+      
+      this.tag[index-1] = index;
+      this.clicktag[index-1] = !this.clicktag[index-1];
+      this.countag++;
     }
   }
   async SaveTag(){
+    console.log(this.countag)
     if(this.countag>=1){
       let json = {
         UserID : this.route.snapshot.params['id'],

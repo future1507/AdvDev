@@ -61,6 +61,7 @@ export class RegisterComponent implements OnInit {
         Lastname : this.lname,
         Birthday : this.birthday,  
       };
+      console.log(json)
       let response = await this.http.post('http://203.154.83.62:1507/signup',JSON.stringify(json)).toPromise();
       this.router.navigateByUrl('/selectTag/'+this.userid);
       localStorage.setItem('SignUpID',this.userid);
