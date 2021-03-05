@@ -115,6 +115,12 @@ export class HomeComponent implements OnInit {
   }
   showBasicDialog() {
     this.displayBasic = true;
+    this.storyname = "";
+    this.tag = "";
+    this.target = "";
+    this.storydesc = "";
+    this.coverphoto = "";
+    //this.storyid = storyid;
   }
   allpost: any;
   Storyname = [];
@@ -164,14 +170,16 @@ export class HomeComponent implements OnInit {
     this.displayBasic = false;
     console.log(response);
     this.formData.append('storyid', "" + response);
-    this.http.post("http://203.154.83.62:1507/upload", this.formData)
-      .subscribe(response => {
-        this.uploadedFiles = [];
-        //this.upload_img = (response).toString();
-        window.location.reload();
-      }, err => {
-        //handle error
-      });
+    if (this.uploadedFiles[0] != null) {
+      this.http.post("http://203.154.83.62:1507/upload", this.formData)
+        .subscribe(response => {
+          this.uploadedFiles = [];
+          //this.upload_img = (response).toString();
+          window.location.reload();
+        }, err => {
+          //handle error
+        });
+    }
   }
   async EditPost() {
     let json = {
@@ -179,23 +187,36 @@ export class HomeComponent implements OnInit {
       Tag: this.tag,
       Targetgroup: this.target,
       StoryDesc: this.storydesc,
-      Storyid: this.storyid
+      StoryID: this.storyid
     };
-    let response = await this.http.get('http://203.154.83.62:1507/editstory/' + JSON.stringify(json), this.token).toPromise();
+    console.log(json);
+    let response = await this.http.post('http://203.154.83.62:1507/editstory',JSON.stringify(json),this.token).toPromise();
+    //let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json),this.token).toPromise();
+
     console.log(response);
-    this.formData.append('storyid', "" + this.storyid);
-    this.http.post("http://203.154.83.62:1507/upload", this.formData)
-      .subscribe(response => {
-        this.uploadedFiles = [];
-        //window.location.reload();
-      }, err => {
-      });
+    if (this.uploadedFiles[0] != null) {
+      this.formData.append('storyid', "" + this.storyid);
+      this.http.post("http://203.154.83.62:1507/upload", this.formData)
+        .subscribe(response => {
+          this.uploadedFiles = [];
+          this.ShowPost();
+          //window.location.reload();
+        }, err => {
+        });
+    }
   }
   slmanage = '';
+  // Estoryname :any;
+  // Etag :any;
+  // Etarget :any;
+  // Estorydesc :any;
+  // Ecoverphoto :any;
+  // Estoryid :any;
   async ManagePost(storyid: any, storyname: any, tag: any, target: any, storydesc: any, coverphoto: any) {
     if (this.slmanage == 'del') {
       let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
       console.log(response);
+      this.ShowPost();
     }
     else if (this.slmanage == 'edit') {
       this.displayBasic2 = true;
