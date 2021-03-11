@@ -192,13 +192,15 @@ export class HomeComponent implements OnInit {
     console.log(json);
     let response = await this.http.post('http://203.154.83.62:1507/editstory',JSON.stringify(json),this.token).toPromise();
     //let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json),this.token).toPromise();
-
+    this.displayBasic2 = false;
+    this.ShowPost();
     console.log(response);
     if (this.uploadedFiles[0] != null) {
       this.formData.append('storyid', "" + this.storyid);
       this.http.post("http://203.154.83.62:1507/upload", this.formData)
         .subscribe(response => {
           this.uploadedFiles = [];
+          this.displayBasic2 = false;
           this.ShowPost();
           //window.location.reload();
         }, err => {

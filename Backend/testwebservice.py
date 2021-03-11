@@ -445,6 +445,7 @@ folder = ''
 def upload_file():
     if request.form['folder'] != None:
         folder = request.form['folder']
+    print(str(folder))
     if request.method == 'POST':
         if 'file' not in request.files:
             print("1")
@@ -472,7 +473,7 @@ def upload_file():
                 conn = mysql.connect()
                 cur = conn.cursor(pymysql.cursors.DictCursor)
                 cur.execute(
-                    "UPDATE User SET Profileimg = %s where Userid = %s", (number, userid))
+                    "UPDATE User SET Profileimg = %s where UserID = %s", (number, userid))
                 conn.commit()
             if folder == 'coverphoto':
                 storyid = request.form['storyid']
@@ -483,9 +484,9 @@ def upload_file():
                 cur.execute(
                     "UPDATE Story SET Coverphoto = %s where StoryID = %s", (number, storyid))
                 conn.commit()
-            else:
-                file.save(os.path.join(
-                    app.config['UPLOAD_FOLDER']+userid, number+".jpg"))
+            # else:
+            #     file.save(os.path.join(
+            #         app.config['UPLOAD_FOLDER']+userid, number+".jpg"))
             resp = jsonify(number)
             resp.headers['Access-Control-Allow-Origin'] = '*'
             resp.content_type = "application/json"

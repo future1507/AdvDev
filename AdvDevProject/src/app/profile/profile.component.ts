@@ -85,18 +85,18 @@ export class ProfileComponent implements OnInit {
     const file = this.uploadedFiles[0];
     const formData = new FormData();
     formData.append('file', file, file.name);
-    formData.append('userid', "" + localStorage.getItem('UserID'));
     formData.append('folder', 'profile');
+    formData.append('userid', ""+localStorage.getItem('UserID'));
     this.http.post("http://203.154.83.62:1507/upload", formData)
       .subscribe(response => {
         this.uploadedFiles = [];
-        //this.upload_img = (response).toString();
+        console.log(response)
         localStorage.setItem('Profileimg', (response).toString());
+        this.profile  = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
         window.location.reload();
       }, err => {
-        //handle error
+        console.log(err)
       });
-
   }
   followbtcolor = 'btn btn-outline-primary';
   followtext = 'Follow';
