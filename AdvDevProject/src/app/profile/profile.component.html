@@ -166,14 +166,17 @@
                     <img src="{{this.profile}}" alt="profile" class="img-xs rounded-circle" width="100">
                     <div class="ml-4">
                       <h6>
-                        {{this.name}}
-                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>10 hours</small>
+                        {{this.name}} posted {{post.Storyname}}
+                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small>
                       </h6>
                       <p>
                         {{post.StoryDesc}}
                       </p>
-                      <img src="https://wallpaperboat.com/wp-content/uploads/2019/09/anime-art-Sao1.jpg" alt="sample"
+                      <div *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">
+                        <img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}" alt="sample"
                         class="rounded mw-100">
+                      </div>
+                    
                       <p class="small text-muted mt-2 mb-0">
                         <span>
                           <i class="mdi mdi-star mr-1"></i>4
