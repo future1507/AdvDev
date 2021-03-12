@@ -148,6 +148,7 @@ export class HomeComponent implements OnInit {
       .post('http://203.154.83.62:1507/showpost', JSON.stringify(json), this.token).toPromise();
     console.log(response);
     this.allpost = response;
+    //var array = Object.values(response);
     return response;
   }
   storyname: any
@@ -243,6 +244,25 @@ export class HomeComponent implements OnInit {
     const file = this.uploadedFiles[0];
     this.formData.append('file', file, file.name);
     this.formData.append('folder', 'coverphoto');
+  }
+  amountlike = 1
+  islike = false;
+  numamountlike = 0;
+  Like(i:any,storyid:any,amountlike:any){
+    this.islike = !this.islike;
+    this.numamountlike = 0;
+    if(this.islike == false){
+      //amountlike -= 1;
+      this.numamountlike = parseInt(amountlike);
+      this.numamountlike -= 1;
+      this.allpost[i].AmountOfLikes = this.numamountlike;
+    }
+    else{
+      this.numamountlike = parseInt(amountlike);
+      this.numamountlike += 1;
+      this.allpost[i].AmountOfLikes = this.numamountlike;
+
+    }
   }
 }
 

@@ -170,8 +170,12 @@
 							</div>
 							<br>
 							<div>
-								<fa-icon [icon]="iconlike" style="width: 20px;"></fa-icon> &nbsp;
-								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon>
+								<span>
+									<fa-icon [icon]="iconlike" style="width: 20px;" (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
+								</span>
+								<span>
+								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon> {{post.AmountOfComments}}
+								</span>
 								<p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}"
 									[baseZIndex]="10000">
 									<div class="right">

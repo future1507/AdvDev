@@ -376,40 +376,52 @@ def ContinueStory():
 
 
 @app.route('/showpost', methods=['POST'], endpoint='showallposts')
-@token_required
+#@token_required
 def ShowallPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute("SELECT a.* " +
                 "FROM( " +
-                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
                 "FROM Story " +
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
                 "INNER JOIN User ON User.UserID=Story.UserID " +
                 "WHERE Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s " +
                 "AND Story.Targetgroup = 'public' " +
+                "GROUP BY Story.StoryID "+
                 "ORDER BY Story.StoryTime DESC " +
                 ") a " +
                 "UNION  " +
                 "SELECT b.* " +
                 "FROM( " +
-                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
                 "FROM Story " +
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
                 "INNER JOIN User ON User.UserID=Story.UserID " +
                 "WHERE User.UserID= %s " +
-                ##"AND Story.Targetgroup = 'private' " +
+                "GROUP BY Story.StoryID "+
                 "ORDER BY Story.StoryTime DESC " +
                 ") b " +
                 "UNION  " +
                 "SELECT c.* " +
                 "FROM( " + 
-                "SELECT StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
-                "from Story, User, Subscribe "+
+                "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
+                "from Story "+
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
+                ", User, Subscribe "+
                 "WHERE User.UserID=Story.UserID "+
                 "and Story.UserID=Subscribe.UserID "+
                 "and User.UserID=Subscribe.UserID "+
                 "and Subscribe.FollowerID=%s"+
-                "ORDER BY Story.StoryTime DESC " +
+                "GROUP BY Story.StoryID "+
+                "ORDER BY Story.StoryTime DESC "+
                 ") c ORDER BY StoryTime DESC ",
                 (result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID'],result['UserID']))
     data = cur.fetchall()
