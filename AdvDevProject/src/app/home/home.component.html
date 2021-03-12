@@ -171,8 +171,11 @@
 							<br>
 							<div>
 								<span>
-									<fa-icon [icon]="iconlike" style="width: 20px;" (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
+									<fa-icon [icon]="iconlike" style={{this.iconstyles[i]}} (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
 								</span>
+								<!-- <span>
+									<i class="fas fa-thumbs-up"  (click)="Like(i,post.StoryID,post.AmountOfLikes)"></i> {{post.AmountOfLikes}} &nbsp;
+								</span> -->
 								<span>
 								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon> {{post.AmountOfComments}}
 								</span>

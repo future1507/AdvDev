@@ -23,6 +23,7 @@
     "@angular/router": "~11.0.5",
     "@fortawesome/angular-fontawesome": "^0.8.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-regular-svg-icons": "^5.15.2",
     "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "angular-calendar": "^0.28.22",
     "bootstrap": "^4.5.3",

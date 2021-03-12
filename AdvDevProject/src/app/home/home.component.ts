@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵCompiler_compileModuleAndAllComponentsSync__POST_R3__ } from '@angular/core';
 import { DatapassService } from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
-import { faCog, faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+//import { faCog, faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { SelectItem } from 'primeng/api/selectitem';
 
 
@@ -14,7 +15,6 @@ import { SelectItem } from 'primeng/api/selectitem';
 })
 export class HomeComponent implements OnInit {
   iconimg = faImage;
-  iconset = faCog;
   iconlike = faThumbsUp;
   comment = faComment;
   tags: SelectItem[];
@@ -148,7 +148,8 @@ export class HomeComponent implements OnInit {
       .post('http://203.154.83.62:1507/showpost', JSON.stringify(json), this.token).toPromise();
     console.log(response);
     this.allpost = response;
-    //var array = Object.values(response);
+    this.length = Object.keys(response).length;
+    this.SetisLike();
     return response;
   }
   storyname: any
@@ -191,7 +192,7 @@ export class HomeComponent implements OnInit {
       StoryID: this.storyid
     };
     console.log(json);
-    let response = await this.http.post('http://203.154.83.62:1507/editstory',JSON.stringify(json),this.token).toPromise();
+    let response = await this.http.post('http://203.154.83.62:1507/editstory', JSON.stringify(json), this.token).toPromise();
     //let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json),this.token).toPromise();
     this.displayBasic2 = false;
     this.ShowPost();
@@ -246,23 +247,37 @@ export class HomeComponent implements OnInit {
     this.formData.append('folder', 'coverphoto');
   }
   amountlike = 1
-  islike = false;
   numamountlike = 0;
-  Like(i:any,storyid:any,amountlike:any){
-    this.islike = !this.islike;
+  length = 0
+  islike : any
+  iconstyles : any
+  SetisLike() {
+    this.iconstyles = new Array(this.length).fill("width: 20px;")
+    this.islike = new Array(this.length).fill(false)
+    for (let i = 0;i < 5;i++) {
+      if (this.allpost[i].Islike == 'YES') {
+        this.iconstyles[i] = "width: 20px;color: dodgerblue;";
+        this.islike[i] = true;
+      }
+    }
+  }
+  Like(i: any, storyid: any, amountlike: any) {
+    this.islike[i] = !this.islike[i];
     this.numamountlike = 0;
-    if(this.islike == false){
+    if (this.islike[i] == false) {
       //amountlike -= 1;
       this.numamountlike = parseInt(amountlike);
       this.numamountlike -= 1;
       this.allpost[i].AmountOfLikes = this.numamountlike;
+      this.iconstyles[i] = "width: 20px;";
     }
-    else{
+    else {
       this.numamountlike = parseInt(amountlike);
       this.numamountlike += 1;
       this.allpost[i].AmountOfLikes = this.numamountlike;
-
+      this.iconstyles[i] = "width: 20px;color: dodgerblue;";
     }
+    console.log(i + " " + this.iconstyles)
   }
 }
 

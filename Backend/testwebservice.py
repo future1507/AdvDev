@@ -376,7 +376,7 @@ def ContinueStory():
 
 
 @app.route('/showpost', methods=['POST'], endpoint='showallposts')
-#@token_required
+# @token_required
 def ShowallPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -384,46 +384,70 @@ def ShowallPost():
     cur.execute("SELECT a.* " +
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
-                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
-                "FROM Story " +
-                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
-                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                "CASE "+
+                "WHEN Likes.PostID is NOT null then 'YES' "+
+                "ELSE 'NO' "+
+                "END AS Islike "+
+                "FROM( "+
+                    "SELECT COUNT(PostID) FROM Likes, Story "+
+                    "WHERE Likes.PostID=Story.StoryID "+
+                    "AND Likes.UserID=%s) as a "+
+                ", Story " +
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
                 "WHERE Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s " +
                 "AND Story.Targetgroup = 'public' " +
-                "GROUP BY Story.StoryID "+
+                "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") a " +
                 "UNION  " +
                 "SELECT b.* " +
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
-                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
-                "FROM Story " +
-                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
-                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                "CASE "+
+                "WHEN Likes.PostID is NOT null then 'YES' "+
+                "ELSE 'NO' "+
+                "END AS Islike "+
+                "FROM( "+
+                    "SELECT COUNT(PostID) FROM Likes, Story "+
+                    "WHERE Likes.PostID=Story.StoryID "+
+                    "AND Likes.UserID=%s) as a "+
+                ", Story " +
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
                 "WHERE User.UserID= %s " +
-                "GROUP BY Story.StoryID "+
+                "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") b " +
                 "UNION  " +
                 "SELECT c.* " +
-                "FROM( " + 
-                "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg "+
-                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments "+
-                "from Story "+
-                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID "+
-                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID "+
-                ", User, Subscribe "+
-                "WHERE User.UserID=Story.UserID "+
-                "and Story.UserID=Subscribe.UserID "+
-                "and User.UserID=Subscribe.UserID "+
-                "and Subscribe.FollowerID=%s"+
-                "GROUP BY Story.StoryID "+
-                "ORDER BY Story.StoryTime DESC "+
+                "FROM( " +
+                "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                "CASE "+
+                "WHEN Likes.PostID is NOT null then 'YES' "+
+                "ELSE 'NO' "+
+                "END AS Islike "+
+                "FROM( "+
+                    "SELECT COUNT(PostID) FROM Likes, Story "+
+                    "WHERE Likes.PostID=Story.StoryID "+
+                    "AND Likes.UserID=%s) as a "+
+                ", Story " +
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
+                ", User, Subscribe " +
+                "WHERE User.UserID=Story.UserID " +
+                "and Story.UserID=Subscribe.UserID " +
+                "and User.UserID=Subscribe.UserID " +
+                "and Subscribe.FollowerID=%s" +
+                "GROUP BY Story.StoryID " +
+                "ORDER BY Story.StoryTime DESC " +
                 ") c ORDER BY StoryTime DESC ",
-                (result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID'],result['UserID']))
+                (result['UserID'], result['Tag1'], result['Tag2'], result['Tag3'], result['Tag4'], result['Tag5'], result['UserID'], result['UserID'], result['UserID'], result['UserID']))
     data = cur.fetchall()
     return jsonify(data)
 
