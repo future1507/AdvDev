@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     
   ngOnInit(): void {
   }
-
+  display: boolean = false;
   Login(){
     //console.log('hee');
     console.log(this.userid)
@@ -43,11 +43,12 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('TOKEN',array[3]);
         this.data.token = array[3];
         //let obj = JSON.parse(response);
-        
         this.router.navigateByUrl('/home/'+this.userid);
+        
       }
     }, error => {
       console.log(error);
+      this.showDialog()
     });
 
     // let request = this.http.get('http://203.154.83.62:1507/abc123')
@@ -56,6 +57,9 @@ export class LoginComponent implements OnInit {
     // }, error => {
     //   console.log(error);
     // });
+  }
+  showDialog() {
+    this.display = true;
   }
 
 }

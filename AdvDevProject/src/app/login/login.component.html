@@ -23,6 +23,8 @@
          <button class="btn btn-outline-primary" (click)="Login()">Login</button>&nbsp;&nbsp;
          <a routerLink='/register'><button class="btn btn-primary" >Register</button><br></a> <br><br>
        </div>
+       <p-dialog header="ผิดพลาด" [(visible)]="display" [style]="{width: '20vw'}" [baseZIndex]="10000">
+       <p>ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องกรุณาลองใหม่อีกครั้ง</p></p-dialog>
     </form>
 
     <!-- Remind Passowrd -->

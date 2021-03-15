@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
   fname:any;
   lname:any;
   birthday:any;
-  
+  display: boolean = false;
   // Register(){
   //   console.log(this.captcha);
   //   if (this.checkk) {
@@ -67,10 +67,15 @@ export class RegisterComponent implements OnInit {
       localStorage.setItem('SignUpID',this.userid);
       console.log(response);
     }
+    
   }
   check(){
       this.checkk = true;
       console.log(this.checkk);
+      this.showDialog()
+  }
+  showDialog() {
+    this.display = true;
   }
   
 }

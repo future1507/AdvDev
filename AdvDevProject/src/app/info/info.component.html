@@ -9,22 +9,32 @@
   <div id="formContent">
     <!-- Tabs Titles -->
     <!-- Login Form -->
-    <h1>Info</h1>
     <form >
       <br><br>
         <div class="form-group" >
           <div class="container">
+            <small class="p-d-block ui-state-error">Firstname</small>
             <input id="form" class="form-control" name="fname" placeholder="Firstname" [(ngModel)]="this.fname"><br>
+            <small class="p-d-block ui-state-error">Lastname</small>
             <input id="form" class="form-control" name="lname" placeholder="Lastname" [(ngModel)]="this.lname"> <br>
+            <small class="p-d-block ui-state-error">Country</small>
             <input id="form" class="form-control" name="country" placeholder="Country" [(ngModel)]="this.country"><br>
+            <small class="p-d-block ui-state-error">Country</small>
             <input id="form" class="form-control" name="udesc" placeholder="Description" [(ngModel)]="this.udesc"> <br>
+            <small class="p-d-block ui-state-error">Country</small>
             <input id="form" class="form-control" name="skills" placeholder="Skills" [(ngModel)]="this.skills"><br>
+            <small class="p-d-block ui-state-error">Birthday</small>
             <input type="date" id="birthday" class="form-control" name="birthday" placeholder="Birthday" [(ngModel)]="this.bday"><br>
+            <small class="p-d-block ui-state-error">Phone</small>
             <input id="form" class="form-control" name="phone" placeholder="Phone" [(ngModel)]="this.phone"> <br>
+            <small class="p-d-block ui-state-error">Email</small>
             <input id="form" class="form-control" name="mail" placeholder="Mail" [(ngModel)]="this.mail"><br>
+            <small class="p-d-block ui-state-error">Facebook</small>
             <input id="form" class="form-control" name="fb" placeholder="Facebook" [(ngModel)]="this.fb"> <br>
-            <input id="form" class="form-control" name="twitter" placeholder="Twitter" [(ngModel)]="this.twitter"> <br>
-            
+            <small class="p-d-block ui-state-error">Twitter</small>
+            <input id="form" class="form-control" name="twitter" placeholder="Twitter" [(ngModel)]="this.twitter"> <br><br>
+            <small class="p-d-block ui-state-error">confirm password</small>
+            <input id="form" class="form-control" name="twitter" placeholder="" [(ngModel)]="this.twitter"> <br>
           </div>
         </div>
       <div class="text-center mt-4 mt-md-0">
