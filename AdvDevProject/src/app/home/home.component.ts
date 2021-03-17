@@ -37,12 +37,12 @@ export class HomeComponent implements OnInit {
 
     this.privacy = [
       { label: 'public', value: 'public' },
+      { label: 'follower', value: 'follower' },
       { label: 'private', value: 'private' }
     ];
     this.manage = [
       { label: 'ลบ', value: 'del' },
       { label: 'แก้ไข', value: 'edit' },
-      //{ label: 'แก้ไขความเป็นส่วนตัว', value: 'pri' },
     ];
   }
 
@@ -193,7 +193,6 @@ export class HomeComponent implements OnInit {
     };
     console.log(json);
     let response = await this.http.post('http://203.154.83.62:1507/editstory', JSON.stringify(json), this.token).toPromise();
-    //let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json),this.token).toPromise();
     this.displayBasic2 = false;
     this.ShowPost();
     console.log(response);
@@ -254,10 +253,15 @@ export class HomeComponent implements OnInit {
   SetisLike() {
     this.iconstyles = new Array(this.length).fill("width: 20px;")
     this.islike = new Array(this.length).fill(false)
-    for (let i = 0;i < 5;i++) {
-      if (this.allpost[i].Islike == 'YES') {
+    for (let i = 0;i < this.length;i++) {
+      //console.log(this.allpost[i].Islike)
+      if (this.allpost[i].Islike == 1) {
         this.iconstyles[i] = "width: 20px;color: dodgerblue;";
         this.islike[i] = true;
+        this.allpost[i].Islike == 'YES'
+      }
+      else{
+        this.allpost[i].Islike == 'NO'
       }
     }
   }
@@ -270,14 +274,29 @@ export class HomeComponent implements OnInit {
       this.numamountlike -= 1;
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;";
+      this.allpost[i].Islike = 'NO'
+      console.log('unlike');
     }
     else {
       this.numamountlike = parseInt(amountlike);
       this.numamountlike += 1;
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;color: dodgerblue;";
+      this.allpost[i].Islike = 'YES'
+      console.log('like');
     }
-    console.log(i + " " + this.iconstyles)
+    let json = {
+      UserID: localStorage.getItem('UserID'),
+      PostID: storyid,
+      choice: this.allpost[i].Islike
+    }
+    console.log(json);
+    this.http.post('http://203.154.83.62:1507/like', JSON.stringify(json), this.token).subscribe(response => {
+      console.log(response)
+    }, error => {
+      console.log(error);
+    });
+    //console.log(i + " " + this.iconstyles)
   }
 }
 

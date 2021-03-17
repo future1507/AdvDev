@@ -64,7 +64,7 @@
 						<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
 							[showClear]="true"><br>
 						</p-dropdown> &nbsp;
-						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2" placeholder="Privacy"
+						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="3" placeholder="Privacy"
 							[showClear]="true"><br>
 						</p-dropdown>
 					</div>
@@ -99,7 +99,7 @@
 						<p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
 							[showClear]="true"><br>
 						</p-dropdown> &nbsp;
-						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="2" placeholder="Privacy"
+						<p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="3" placeholder="Privacy"
 							[showClear]="true"><br>
 						</p-dropdown>
 					</div>
@@ -172,10 +172,7 @@
 							<div>
 								<span>
 									<fa-icon [icon]="iconlike" style={{this.iconstyles[i]}} (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
-								</span>
-								<!-- <span>
-									<i class="fas fa-thumbs-up"  (click)="Like(i,post.StoryID,post.AmountOfLikes)"></i> {{post.AmountOfLikes}} &nbsp;
-								</span> -->
+								</span>					
 								<span>
 								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon> {{post.AmountOfComments}}
 								</span>

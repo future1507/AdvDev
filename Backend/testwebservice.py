@@ -17,7 +17,7 @@ from random import randrange
 
 SECRET_KEY = "781f00adac61902359fb34caf3214af0a8738f20e347e1c10f00e0d23ce175d7"
 #SECRET_KEY = "1507"
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'webp', 'tif', 'png', 'jpg', 'jpeg', 'gif'}
 UPLOAD_FOLDER = '/home/future/img/'
 
 
@@ -376,7 +376,7 @@ def ContinueStory():
 
 
 @app.route('/showpost', methods=['POST'], endpoint='showallposts')
-# @token_required
+#@token_required
 def ShowallPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -385,19 +385,15 @@ def ShowallPost():
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
-                "CASE "+
-                "WHEN Likes.PostID is NOT null then 'YES' "+
-                "ELSE 'NO' "+
-                "END AS Islike "+
-                "FROM( "+
-                    "SELECT COUNT(PostID) FROM Likes, Story "+
-                    "WHERE Likes.PostID=Story.StoryID "+
-                    "AND Likes.UserID=%s) as a "+
-                ", Story " +
+                "Likes.PostID IN( "+
+                "    SELECT Likes.PostID FROM Likes "+
+                "    WHERE Likes.PostID=Story.StoryID "+
+                "    AND Likes.UserID=%s) as Islike "+
+                "FROM Story "+
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
-                "WHERE Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s OR Tag=%s " +
+                "WHERE Tag in (%s,%s,%s,%s,%s)  " +
                 "AND Story.Targetgroup = 'public' " +
                 "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
@@ -407,15 +403,11 @@ def ShowallPost():
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
-                "CASE "+
-                "WHEN Likes.PostID is NOT null then 'YES' "+
-                "ELSE 'NO' "+
-                "END AS Islike "+
-                "FROM( "+
-                    "SELECT COUNT(PostID) FROM Likes, Story "+
-                    "WHERE Likes.PostID=Story.StoryID "+
-                    "AND Likes.UserID=%s) as a "+
-                ", Story " +
+                "Likes.PostID IN( "+
+                "    SELECT Likes.PostID FROM Likes "+
+                "    WHERE Likes.PostID=Story.StoryID "+
+                "    AND Likes.UserID=%s) as Islike "+
+                "FROM Story "+
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
@@ -428,15 +420,11 @@ def ShowallPost():
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
-                "CASE "+
-                "WHEN Likes.PostID is NOT null then 'YES' "+
-                "ELSE 'NO' "+
-                "END AS Islike "+
-                "FROM( "+
-                    "SELECT COUNT(PostID) FROM Likes, Story "+
-                    "WHERE Likes.PostID=Story.StoryID "+
-                    "AND Likes.UserID=%s) as a "+
-                ", Story " +
+                "Likes.PostID IN( "+
+                "    SELECT Likes.PostID FROM Likes "+
+                "    WHERE Likes.PostID=Story.StoryID "+
+                "    AND Likes.UserID=%s) as Islike "+
+                "FROM Story "+
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
                 ", User, Subscribe " +
@@ -444,6 +432,7 @@ def ShowallPost():
                 "and Story.UserID=Subscribe.UserID " +
                 "and User.UserID=Subscribe.UserID " +
                 "and Subscribe.FollowerID=%s" +
+                "and Story.Targetgroup != 'private' " +
                 "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") c ORDER BY StoryTime DESC ",
@@ -458,20 +447,82 @@ def ShowSelfPost(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
-        "select * from Story WHERE UserID = %s ORDER BY `Story`.`StoryTime` DESC", str(userid))
+        "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                "Likes.PostID IN( "+
+                "    SELECT Likes.PostID FROM Likes "+
+                "    WHERE Likes.PostID=Story.StoryID "+
+                "    AND Likes.UserID=%s) as Islike "+
+                "FROM Story "+
+                "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
+                "INNER JOIN User ON User.UserID=Story.UserID " +
+                "WHERE User.UserID= %s " +
+                "GROUP BY Story.StoryID " +
+                "ORDER BY Story.StoryTime DESC ", (str(userid),str(userid)))
     data = cur.fetchall()
     return jsonify(data)
 
 
-@app.route('/showpost/<userid>', methods=['GET'], endpoint='showposts')
+@app.route('/showsomeonepost', methods=['Post'], endpoint='showsomeoneposts')
 @token_required
-def ShowPost(userid):
+def ShowSomeonePost():
     conn = mysql.connect()
+    result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute(
-        "select * from Story WHERE UserID = %s and Targetgroup = 'public' ORDER BY `Story`.`StoryTime` DESC", str(userid))
+    if result['IsFollow'] == 'Followed':
+        cur.execute(
+            "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                    ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                    "Likes.PostID IN( "+
+                    "    SELECT Likes.PostID FROM Likes "+
+                    "    WHERE Likes.PostID=Story.StoryID "+
+                    "    AND Likes.UserID=%s) as Islike "+
+                    "FROM Story "+
+                    "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                    "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
+                    "INNER JOIN User ON User.UserID=Story.UserID " +
+                    "WHERE User.UserID= %s " +
+                    "AND Targetgroup != 'private' "
+                    "GROUP BY Story.StoryID " +
+                    "ORDER BY Story.StoryTime DESC ", (result['SelfID'],result['UserID']))
+    elif result['IsFollow'] == 'Follow':
+        cur.execute(
+            "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                    ",COUNT(Likes.PostID) AS AmountOfLikes ,COUNT(Comment.PostID) AS AmountOfComments, " +
+                    "Likes.PostID IN( "+
+                    "    SELECT Likes.PostID FROM Likes "+
+                    "    WHERE Likes.PostID=Story.StoryID "+
+                    "    AND Likes.UserID=%s) as Islike "+
+                    "FROM Story "+
+                    "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
+                    "LEFT JOIN Comment ON Story.StoryID = Comment.PostID " +
+                    "INNER JOIN User ON User.UserID=Story.UserID " +
+                    "WHERE User.UserID= %s " +
+                    "AND Targetgroup = 'public' "
+                    "GROUP BY Story.StoryID " +
+                    "ORDER BY Story.StoryTime DESC ", (result['SelfID'],result['UserID']))
     data = cur.fetchall()
     return jsonify(data)
+
+
+@app.route('/like', methods=['POST'], endpoint='likes')
+@token_required
+def Like():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    if(result['choice'] == 'YES'):
+        cur.execute(
+            "Insert INTO Likes " +
+            "(UserID,PostID)" +
+            "values(%s,%s)", (str(result['UserID']), str(result['PostID'])))
+    elif(result['choice'] == 'NO'):
+        cur.execute(
+            "DELETE FROM Likes " +
+            "WHERE UserID = %s and PostID = %s", (str(result['UserID']), str(result['PostID'])))
+    conn.commit()
+    return jsonify('Record Update Successfully')
 
 
 folder = ''

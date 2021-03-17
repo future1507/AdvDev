@@ -3,7 +3,8 @@ import { DatapassService } from '../datapass.service';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
-
+import { faComment, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
+import { SelectItem } from 'primeng/api/selectitem';
 
 @Component({
   selector: 'app-profile',
@@ -11,12 +12,34 @@ import { HttpHeaders } from '@angular/common/http';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+  iconlike = faThumbsUp;
+  comment = faComment;
   token: any;
   setButTrue = true;
   selfid: any;
   uid: any;
+  tags: SelectItem[];
+  privacy: SelectItem[];
+  manage: SelectItem[];
   constructor(private http: HttpClient, private router: Router,
     public data: DatapassService, private route: ActivatedRoute) {
+    this.manage = [
+      { label: 'ลบ', value: 'del' },
+      { label: 'แก้ไข', value: 'edit' },
+    ];
+    this.tags = [
+      { label: 'ศิลปะ', value: '1' },
+      { label: 'การออกแบบ', value: '2' },
+      { label: 'นิยาย', value: '3' },
+      { label: 'ดนตรี', value: '4' },
+      { label: 'ท่องเที่ยว', value: '5' }
+    ];
+
+    this.privacy = [
+      { label: 'public', value: 'public' },
+      { label: 'follower', value: 'follower' },
+      { label: 'private', value: 'private' }
+    ];
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
     this.selfid = localStorage.getItem('UserID');
     this.uid = this.route.snapshot.params['id'];
@@ -24,9 +47,12 @@ export class ProfileComponent implements OnInit {
     if (this.selfid != this.uid) {
       this.User();
       this.Followed();
+      this.AmontFollow();
     }
-    this.AmontFollow();
-    this.ShowPost();
+    else {
+      this.ShowPost();
+      this.AmontFollow();
+    }
   }
   profile = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
   fname = localStorage.getItem('Firstname');
@@ -86,13 +112,13 @@ export class ProfileComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('folder', 'profile');
-    formData.append('userid', ""+localStorage.getItem('UserID'));
+    formData.append('userid', "" + localStorage.getItem('UserID'));
     this.http.post("http://203.154.83.62:1507/upload", formData)
       .subscribe(response => {
         this.uploadedFiles = [];
         console.log(response)
         localStorage.setItem('Profileimg', (response).toString());
-        this.profile  = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
+        this.profile = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
         window.location.reload();
       }, err => {
         console.log(err)
@@ -129,14 +155,16 @@ export class ProfileComponent implements OnInit {
   }
 
   allpost: any;
-  Storyname = [];
-  StoryDesc = [];
-  UserID = [];
+  // Storyname = [];
+  // StoryDesc = [];
+  // UserID = [];
   ShowPost() {
     if (this.selfid == this.uid) {
       this.http.get('http://203.154.83.62:1507/showselfpost/' + this.selfid, this.token).subscribe(response => {
         console.log(response)
         this.allpost = response;
+        this.length = Object.keys(response).length;
+        this.SetisLike();
       }, error => {
         console.log(error);
         this.router.navigateByUrl('/login');
@@ -144,37 +172,43 @@ export class ProfileComponent implements OnInit {
       });
     }
     else {
-      this.http.get('http://203.154.83.62:1507/showpost/' + this.uid, this.token).subscribe(response => {
+      let json = {
+        SelfID: this.selfid,
+        UserID: this.uid,
+        IsFollow: this.followtext
+      }
+      console.log(this.followtext)
+      this.http.post('http://203.154.83.62:1507/showsomeonepost', JSON.stringify(json), this.token).subscribe(response => {
         console.log(response)
         this.allpost = response;
+        this.length = Object.keys(response).length;
+        this.SetisLike();
       }, error => {
         console.log(error);
         this.router.navigateByUrl('/login');
         localStorage.clear();
       });
     }
-
   }
-  Followed() {
+  async Followed() {
     let json = {
       UserID: this.uid,
       FollowerID: this.selfid
     }
-    this.http.post('http://203.154.83.62:1507/followed', JSON.stringify(json), this.token).subscribe(response => {
-      if (response.toString() == 'yes') {
-        this.followbtcolor = 'btn btn-primary';
-        this.followtext = 'Followed';
-        this.isfollow = true;
-      }
-      else {
-        this.followbtcolor = 'btn btn-outline-primary';
-        this.followtext = 'Follow';
-        this.isfollow = false;
-      }
-      console.log('follow : ' + response)
-    }, error => {
-      console.log(error);
-    });
+    let response = await this.http
+      .post('http://203.154.83.62:1507/followed', JSON.stringify(json), this.token).toPromise();
+    if (response.toString() == 'yes') {
+      this.followbtcolor = 'btn btn-primary';
+      this.followtext = 'Followed';
+      this.isfollow = true;
+    }
+    else {
+      this.followbtcolor = 'btn btn-outline-primary';
+      this.followtext = 'Follow';
+      this.isfollow = false;
+    }
+    console.log('follow : ' + response)
+    this.ShowPost();
   }
   async AmontFollow() {
     let response = await this.http
@@ -182,7 +216,7 @@ export class ProfileComponent implements OnInit {
     console.log(response);
     var array = Object.values(response);
     this.follower = +array[0];
-    this.following = +array[0];
+    this.following = +array[1];
   }
   displayFollowing = false;
   displayFollower = false;
@@ -193,6 +227,7 @@ export class ProfileComponent implements OnInit {
     this.http.get('http://203.154.83.62:1507/follower/' + this.uid, this.token).subscribe(response => {
       console.log(response)
       this.allfollower = response;
+
     }, error => {
       console.log(error);
       this.router.navigateByUrl('/login');
@@ -204,10 +239,130 @@ export class ProfileComponent implements OnInit {
     this.http.get('http://203.154.83.62:1507/following/' + this.uid, this.token).subscribe(response => {
       console.log(response)
       this.allfollowing = response;
+
     }, error => {
       console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
+  }
+  amountlike = 1
+  numamountlike = 0;
+  length = 0
+  islike: any
+  iconstyles: any
+  SetisLike() {
+    this.iconstyles = new Array(this.length).fill("width: 20px;")
+    this.islike = new Array(this.length).fill(false)
+    for (let i = 0; i < this.length; i++) {
+      //console.log(this.allpost[i].Islike)
+      if (this.allpost[i].Islike == 1) {
+        this.iconstyles[i] = "width: 20px;color: dodgerblue;";
+        this.islike[i] = true;
+        this.allpost[i].Islike == 'YES'
+      }
+      else {
+        this.allpost[i].Islike == 'NO'
+      }
+    }
+  }
+  Like(i: any, storyid: any, amountlike: any) {
+    this.islike[i] = !this.islike[i];
+    this.numamountlike = 0;
+    if (this.islike[i] == false) {
+      //amountlike -= 1;
+      this.numamountlike = parseInt(amountlike);
+      this.numamountlike -= 1;
+      this.allpost[i].AmountOfLikes = this.numamountlike;
+      this.iconstyles[i] = "width: 20px;";
+      this.allpost[i].Islike = 'NO'
+      console.log('unlike');
+    }
+    else {
+      this.numamountlike = parseInt(amountlike);
+      this.numamountlike += 1;
+      this.allpost[i].AmountOfLikes = this.numamountlike;
+      this.iconstyles[i] = "width: 20px;color: dodgerblue;";
+      this.allpost[i].Islike = 'YES'
+      console.log('like');
+    }
+    let json = {
+      UserID: localStorage.getItem('UserID'),
+      PostID: storyid,
+      choice: this.allpost[i].Islike
+    }
+    console.log(json);
+    this.http.post('http://203.154.83.62:1507/like', JSON.stringify(json), this.token).subscribe(response => {
+      console.log(response)
+    }, error => {
+      console.log(error);
+    });
+    //console.log(i + " " + this.iconstyles)
+  }
+  showDialog() {
+
+  }
+  storyname: any
+  tag = '';
+  target = '';
+  storydesc: any
+  coverphoto: any
+  storyid: any
+  slmanage = '';
+  displayBasic2: boolean = false;
+  async ManagePost(storyid: any, storyname: any, tag: any, target: any, storydesc: any, coverphoto: any) {
+    if (this.slmanage == 'del') {
+      let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
+      console.log(response);
+      this.ShowPost();
+      this.slmanage = '';
+    }
+    else if (this.slmanage == 'edit') {
+      this.displayBasic2 = true;
+      this.storyname = storyname;
+      this.tag = tag;
+      this.target = target;
+      this.storydesc = storydesc;
+      this.coverphoto = coverphoto;
+      this.storyid = storyid;
+      this.slmanage = '';
+    }
+  }
+  uploadedCoverFiles: any[] = [];
+  setButCoverTrue = true;
+  formData = new FormData();
+  UploadCoverPhoto(event: any) {
+    console.log('upload');
+    for (let files of event.files) {
+      this.uploadedCoverFiles.push(files);
+    }
+    const file = this.uploadedCoverFiles[0];
+    this.formData.append('file', file, file.name);
+    this.formData.append('folder', 'coverphoto');
+  }
+  async EditPost() {
+    let json = {
+      Storyname: this.storyname,
+      Tag: this.tag,
+      Targetgroup: this.target,
+      StoryDesc: this.storydesc,
+      StoryID: this.storyid
+    };
+    console.log(json);
+    let response = await this.http.post('http://203.154.83.62:1507/editstory', JSON.stringify(json), this.token).toPromise();
+    this.displayBasic2 = false;
+    this.ShowPost();
+    console.log(response);
+    if (this.uploadedCoverFiles[0] != null) {
+      this.formData.append('storyid', "" + this.storyid);
+      this.http.post("http://203.154.83.62:1507/upload", this.formData)
+        .subscribe(response => {
+          this.uploadedCoverFiles = [];
+          this.displayBasic2 = false;
+          this.ShowPost();
+          //window.location.reload();
+        }, err => {
+      });
+    }
   }
 }

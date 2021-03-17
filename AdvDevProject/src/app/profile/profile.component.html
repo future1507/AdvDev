@@ -167,29 +167,68 @@
                     <div class="ml-4">
                       <h6>
                         {{this.name}} posted {{post.Storyname}}
-                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small>
+                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small> &nbsp;&nbsp;
+                        <p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
+                          *ngIf="this.selfid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์" [showClear]="true"
+                          (click)="ManagePost(post.StoryID,post.Storyname,post.Tag,post.Targetgroup,post.StoryDesc,post.Coverphoto)">
+                          <br>
+                        </p-dropdown>
                       </h6>
                       <p>
                         {{post.StoryDesc}}
                       </p>
                       <div *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">
                         <img src="http://203.154.83.62:1507/img/coverphoto/{{post.Coverphoto}}" alt="sample"
-                        class="rounded mw-100">
+                          class="rounded mw-100">
                       </div>
-                    
+
                       <p class="small text-muted mt-2 mb-0">
                         <span>
-                          <i class="mdi mdi-star mr-1"></i>4
+                          <fa-icon [icon]="iconlike" style={{this.iconstyles[i]}}
+                            (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
                         </span>
-                        <span class="ml-2">
-                          <i class="mdi mdi-comment mr-1"></i>11
-                        </span>
-                        <span class="ml-2">
-                          <i class="mdi mdi-reply"></i>
+                        <span>
+                          <fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon>
+                          {{post.AmountOfComments}}
                         </span>
                       </p>
                     </div>
                   </div>
+                  <p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '50vw'}" [baseZIndex]="10000">
+                    <div class="right">
+                      <div class="col-md-7 col-md-offset-2">
+                        <input id="login" class="form-control" name="login" placeholder="Storyname"
+                          [(ngModel)]="this.storyname"><br>
+                      </div>
+                      <p-dropdown [options]="tags" [(ngModel)]="tag" [itemSize]="5" placeholder="Select Tags"
+                        [showClear]="true"><br>
+                      </p-dropdown> &nbsp;
+                      <p-dropdown [options]="privacy" [(ngModel)]="target" [itemSize]="3" placeholder="Privacy"
+                        [showClear]="true"><br>
+                      </p-dropdown>
+                    </div>
+                    <br><br>
+                    <div class="panel-body" type="button">
+                      <textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+                        [(ngModel)]="this.storydesc"></textarea>
+                      <div class="mar-top clearfix">
+                        <button class="btn btn-sm btn-primary pull-right" type="submit" (click)="EditPost()"><i
+                            class="fa fa-pencil fa-fw"></i> Save</button>
+                        <!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
+                        <p-fileUpload  [auto]="setButCoverTrue" chooseLabel=" " [customUpload]="setButCoverTrue"
+                          accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
+                          <ng-template pTemplate="content">
+                            <ul *ngIf="uploadedCoverFiles.length">
+                              <li *ngFor="let file of uploadedCoverFiles">{{file.name}} - {{file.size}} bytes</li>
+                            </ul>
+                          </ng-template>
+                        </p-fileUpload>
+                        <!-- <i class="" (click)="showBasicDialog() "></i> -->
+                      </div>
+                    </div>
+                    <ng-template pTemplate="footer">
+                    </ng-template>
+                  </p-dialog>
                   <p-dialog header="Following" [(visible)]="displayFollowing" [modal]="true" [style]="{width: '50vw'}"
                     [baseZIndex]="10000" [draggable]="false" [resizable]="false">
                     <div *ngFor="let follow of allfollowing; let i = index;">
@@ -204,6 +243,7 @@
                         </ng-template>
                       </div>
                       <span>{{follow.Firstname}} {{follow.Lastname}}</span>
+                      <button class='btn btn-primary'>Followed</button>
                     </div>
                   </p-dialog>
                   <p-dialog header="Follower" [(visible)]="displayFollower" [modal]="true" [style]="{width: '50vw'}"
