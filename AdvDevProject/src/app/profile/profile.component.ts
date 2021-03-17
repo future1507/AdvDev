@@ -80,7 +80,12 @@ export class ProfileComponent implements OnInit {
       console.log(array[0]['Firstname']);
       console.log(array[0]['Lastname']);
       this.name = array[0]['Firstname'] + "   " + array[0]['Lastname']
-      this.profile = 'http://203.154.83.62:1507/img/profile/' + array[0]['Profileimg']
+      if(array[0]['Profileimg'] != null){
+        this.profile = 'http://203.154.83.62:1507/img/profile/' + array[0]['Profileimg']
+      }
+      else{
+        this.profile = "https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+      }
       var d = new Date(array[0]['Birthday']);
       this.birthday = d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear()
       this.udesc = array[0]['UserDesc'];
@@ -153,7 +158,13 @@ export class ProfileComponent implements OnInit {
       console.log(error);
     });
   }
-
+  GotoUser(userid : any){
+    console.log('Go to '+userid)
+    this.displayFollowing = false;
+    this.router.navigateByUrl('/home/'+this.selfid);
+    //this.router.navigateByUrl('/profile/'+userid);
+    //window.location.reload();
+  }
   allpost: any;
   // Storyname = [];
   // StoryDesc = [];
@@ -299,8 +310,48 @@ export class ProfileComponent implements OnInit {
     });
     //console.log(i + " " + this.iconstyles)
   }
-  showDialog() {
-
+  commenttext = '';
+  displayCantComment = false;
+  display = false;
+  allcomment : any;
+  async showCommentDialog(uid: any,storyid : any) {
+    this.commenttext = '';
+    this.storyid = storyid;
+    if (this.selfid == uid) {
+      this.display = true;
+      let response = await this.http
+        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+      this.allcomment = response;
+    }
+    else {
+      let json = {
+        UserID: uid,
+        FollowerID: this.selfid
+      }
+      let response = await this.http
+        .post('http://203.154.83.62:1507/followed', JSON.stringify(json), this.token).toPromise();
+      if (response.toString() == 'yes') {
+        this.display = true;
+        let response = await this.http
+        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+        this.allcomment = response;
+      }
+      else {
+        this.displayCantComment = true;
+        console.log('please follow this user before')
+      }
+    }
+  }
+  async AddComment(){
+    let json = {
+      PostID : this.storyid,
+      UserID : this.selfid,
+      CommentDes : this.commenttext
+    }
+    console.log(json)
+    let response = await this.http
+        .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
+    this.showCommentDialog(this.selfid,this.storyid)
   }
   storyname: any
   tag = '';

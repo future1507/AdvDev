@@ -50,9 +50,6 @@
 						<button class="btn btn-sm btn-primary pull-right" type="submit"><i
 								class="fa fa-pencil fa-fw"></i> Share</button>
 						<fa-icon [icon]="iconimg" style="width: 20px;"></fa-icon>
-
-
-
 					</div>
 				</div>
 				<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
@@ -76,7 +73,7 @@
 							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="CreatePost()"><i
 									class="fa fa-pencil fa-fw"></i> Share</button>
 							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
-							<p-fileUpload  [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
+							<p-fileUpload [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
 								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
 								<ng-template pTemplate="content">
 									<ul *ngIf="uploadedFiles.length">
@@ -111,7 +108,7 @@
 							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="EditPost()"><i
 									class="fa fa-pencil fa-fw"></i> Save</button>
 							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
-							<p-fileUpload  [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
+							<p-fileUpload [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
 								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
 								<ng-template pTemplate="content">
 									<ul *ngIf="uploadedFiles.length">
@@ -171,26 +168,53 @@
 							<br>
 							<div>
 								<span>
-									<fa-icon [icon]="iconlike" style={{this.iconstyles[i]}} (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
-								</span>					
+									<fa-icon [icon]="iconlike" style={{this.iconstyles[i]}}
+										(click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon>
+									{{post.AmountOfLikes}} &nbsp;
+								</span>
 								<span>
-								<fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon> {{post.AmountOfComments}}
+									<fa-icon [icon]="comment" style="width: 20px;"
+										(click)="showCommentDialog(post.UserID,post.StoryID)"></fa-icon>
+									<!-- {{post.AmountOfComments}} -->
+									Comment
 								</span>
 								<p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}"
 									[baseZIndex]="10000">
 									<div class="right">
+										<div *ngFor="let comments of allcomment; let j = index;">
+											<h5>{{this.comments.Firstname}} {{this.comments.Lastname}}
+												{{this.comments.CommentTime}}</h5>
+											<div class="timeline-icon"> <a routerLink="/profile/{{comments.UserID}}"
+													class="btn-link text-semibold"
+													*ngIf="comments.Profileimg != null;else elseblock">
+													<img src="http://203.154.83.62:1507/img/profile/{{comments.Profileimg}}"
+														alt="Profile picture" width="500"></a>
+												<ng-template #elseblock>
+													<a routerLink="/profile/{{comments.UserID}}"
+														class="btn-link text-semibold">
+														<img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+															alt="Profile picture" width="500"></a>
+												</ng-template>
+
+											</div>
+											<p>{{this.comments.CommentDes}}
+											</p>
+											<hr><br>
+										</div>
 										<div class="col-md-7 col-md-offset-2">
-											<input id="login" class="form-control" name="login"
-												placeholder="new comment" [(ngModel)]="this.storyname"><br>
+											<input id="text" class="form-control" name="comment"
+												placeholder="new comment" [(ngModel)]="this.commenttext"><br>
+											<button class="btn-primary" (click)="AddComment()">Send</button>
 										</div>
 									</div>
 									<br><br>
-
 									<ng-template pTemplate="footer">
-
 									</ng-template>
 								</p-dialog>
-
+								<p-dialog header="ไม่สามารถแสดงความคิดเห็นได้" [(visible)]="displayCantComment"
+									[style]="{width: '20vw'}" [baseZIndex]="10000">
+									<p>คุณต้องติดตามผู้ใช้ท่านนี้ก่อน</p>
+								</p-dialog>
 							</div>
 						</div>
 					</div>

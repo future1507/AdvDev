@@ -167,7 +167,8 @@
                     <div class="ml-4">
                       <h6>
                         {{this.name}} posted {{post.Storyname}}
-                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small> &nbsp;&nbsp;
+                        <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small>
+                        &nbsp;&nbsp;
                         <p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
                           *ngIf="this.selfid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์" [showClear]="true"
                           (click)="ManagePost(post.StoryID,post.Storyname,post.Tag,post.Targetgroup,post.StoryDesc,post.Coverphoto)">
@@ -185,16 +186,20 @@
                       <p class="small text-muted mt-2 mb-0">
                         <span>
                           <fa-icon [icon]="iconlike" style={{this.iconstyles[i]}}
-                            (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon> {{post.AmountOfLikes}} &nbsp;
+                            (click)="Like(i,post.StoryID,post.AmountOfLikes)"></fa-icon>
+                          {{post.AmountOfLikes}} &nbsp;
                         </span>
                         <span>
-                          <fa-icon [icon]="comment" style="width: 20px;" (click)="showDialog()"></fa-icon>
-                          {{post.AmountOfComments}}
+                          <fa-icon [icon]="comment" style="width: 20px;"
+                            (click)="showCommentDialog(post.UserID,post.StoryID)"></fa-icon>
+                          <!-- {{post.AmountOfComments}} -->
+                          Comment
                         </span>
                       </p>
                     </div>
                   </div>
-                  <p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '50vw'}" [baseZIndex]="10000">
+                  <p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '50vw'}"
+                    [baseZIndex]="10000">
                     <div class="right">
                       <div class="col-md-7 col-md-offset-2">
                         <input id="login" class="form-control" name="login" placeholder="Storyname"
@@ -215,7 +220,7 @@
                         <button class="btn btn-sm btn-primary pull-right" type="submit" (click)="EditPost()"><i
                             class="fa fa-pencil fa-fw"></i> Save</button>
                         <!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
-                        <p-fileUpload  [auto]="setButCoverTrue" chooseLabel=" " [customUpload]="setButCoverTrue"
+                        <p-fileUpload [auto]="setButCoverTrue" chooseLabel=" " [customUpload]="setButCoverTrue"
                           accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
                           <ng-template pTemplate="content">
                             <ul *ngIf="uploadedCoverFiles.length">
@@ -234,35 +239,68 @@
                     <div *ngFor="let follow of allfollowing; let i = index;">
                       <div class="timeline-icon"> <a routerLink="/profile/{{follow.UserID}}"
                           class="btn-link text-semibold" *ngIf="follow.Profileimg != null;else elseblock">
-                          <img src="http://203.154.83.62:1507/img/profile/{{follow.Profileimg}}" alt="Profile picture"
+                          <img src="http://203.154.83.62:1507/img/profile/{{follow.Profileimg}}" alt="Profile picture" (click)="GotoUser(follow.UserID)"
                             width="500"></a>
                         <ng-template #elseblock>
                           <a routerLink="/profile/{{follow.UserID}}" class="btn-link text-semibold">
-                            <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+                            <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png" (click)="GotoUser(follow.UserID)"
                               alt="Profile picture" width="500"></a>
                         </ng-template>
                       </div>
                       <span>{{follow.Firstname}} {{follow.Lastname}}</span>
-                      <button class='btn btn-primary'>Followed</button>
+                      <!-- <button class='btn btn-primary'>Followed</button> -->
                     </div>
                   </p-dialog>
-                  <p-dialog header="Follower" [(visible)]="displayFollower" [modal]="true" [style]="{width: '50vw'}"
+                  <p-dialog header="Follower" [(visible)]="displayFollower" [modal]="true" [style]="{width: '50vw'}" 
                     [baseZIndex]="10000" [draggable]="false" [resizable]="false">
                     <div *ngFor="let follow of allfollower; let i = index;">
                       <div class="timeline-icon"> <a routerLink="/profile/{{follow.FollowerID}}"
                           class="btn-link text-semibold" *ngIf="follow.Profileimg != null;else elseblock">
-                          <img src="http://203.154.83.62:1507/img/profile/{{follow.Profileimg}}" alt="Profile picture"
+                          <img src="http://203.154.83.62:1507/img/profile/{{follow.Profileimg}}" alt="Profile picture" (click)="GotoUser(follow.UserID)"
                             width="500"></a>
                         <ng-template #elseblock>
                           <a routerLink="/profile/{{follow.FollowerID}}" class="btn-link text-semibold">
-                            <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+                            <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png" (click)="GotoUser(follow.UserID)"
                               alt="Profile picture" width="500"></a>
                         </ng-template>
                       </div>
                       <span>{{follow.Firstname}} {{follow.Lastname}}</span>
                     </div>
                   </p-dialog>
+                  <p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
+                    <div class="right">
+                      <div *ngFor="let comments of allcomment; let j = index;">
+                        <h5>{{this.comments.Firstname}} {{this.comments.Lastname}}
+                          {{this.comments.CommentTime}}</h5>
+                        <div class="timeline-icon"> <a routerLink="/profile/{{comments.UserID}}"
+                            class="btn-link text-semibold" *ngIf="comments.Profileimg != null;else elseblock">
+                            <img src="http://203.154.83.62:1507/img/profile/{{comments.Profileimg}}"
+                              alt="Profile picture" width="500"></a>
+                          <ng-template #elseblock>
+                            <a routerLink="/profile/{{comments.UserID}}" class="btn-link text-semibold">
+                              <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+                                alt="Profile picture" width="500"></a>
+                          </ng-template>
 
+                        </div>
+                        <p>{{this.comments.CommentDes}}
+                        </p>
+                        <hr><br>
+                      </div>
+                      <div class="col-md-7 col-md-offset-2">
+                        <input id="text" class="form-control" name="comment" placeholder="new comment"
+                          [(ngModel)]="this.commenttext"><br>
+                        <button class="btn-primary" (click)="AddComment()">Send</button>
+                      </div>
+                    </div>
+                    <br><br>
+                    <ng-template pTemplate="footer">
+                    </ng-template>
+                  </p-dialog>
+                  <p-dialog header="ไม่สามารถแสดงความคิดเห็นได้" [(visible)]="displayCantComment"
+                    [style]="{width: '20vw'}" [baseZIndex]="10000">
+                    <p>คุณต้องติดตามผู้ใช้ท่านนี้ก่อน</p>
+                  </p-dialog>
                   <!-- <div class="d-flex align-items-start profile-feed-item">
                         <img src="https://www.posttoday.com/media/content/2016/12/28/BB5B5C39B42749668D77807DB9821F75.jpg" alt="profile" class="img-xs rounded-circle" width="100">
                       <div class="ml-4">

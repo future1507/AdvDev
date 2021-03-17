@@ -110,8 +110,47 @@ export class HomeComponent implements OnInit {
       return data;
     }
   }
-  showDialog() {
-    this.display = true;
+  commenttext = '';
+  displayCantComment = false;
+  allcomment : any;
+  async showCommentDialog(uid: any,storyid : any) {
+    this.commenttext = '';
+    this.storyid = storyid;
+    if (this.userid == uid) {
+      this.display = true;
+      let response = await this.http
+        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+      this.allcomment = response;
+    }
+    else {
+      let json = {
+        UserID: uid,
+        FollowerID: this.userid
+      }
+      let response = await this.http
+        .post('http://203.154.83.62:1507/followed', JSON.stringify(json), this.token).toPromise();
+      if (response.toString() == 'yes') {
+        this.display = true;
+        let response = await this.http
+        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+        this.allcomment = response;
+      }
+      else {
+        this.displayCantComment = true;
+        console.log('please follow this user before')
+      }
+    }
+  }
+  async AddComment(){
+    let json = {
+      PostID : this.storyid,
+      UserID : this.userid,
+      CommentDes : this.commenttext
+    }
+    console.log(json)
+    let response = await this.http
+        .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
+    this.showCommentDialog(this.userid,this.storyid)
   }
   showBasicDialog() {
     this.displayBasic = true;
@@ -123,15 +162,6 @@ export class HomeComponent implements OnInit {
     //this.storyid = storyid;
   }
   allpost: any;
-  Storyname = [];
-  StoryDesc = [];
-  StoryID = [];
-  UserID = [];
-  FirstName = [];
-  LastName = [];
-  Profileime = [];
-  Coverphoto = [];
-
 
   async ShowPost() {
     this.allpost = undefined;
@@ -248,19 +278,19 @@ export class HomeComponent implements OnInit {
   amountlike = 1
   numamountlike = 0;
   length = 0
-  islike : any
-  iconstyles : any
+  islike: any
+  iconstyles: any
   SetisLike() {
     this.iconstyles = new Array(this.length).fill("width: 20px;")
     this.islike = new Array(this.length).fill(false)
-    for (let i = 0;i < this.length;i++) {
+    for (let i = 0; i < this.length; i++) {
       //console.log(this.allpost[i].Islike)
       if (this.allpost[i].Islike == 1) {
         this.iconstyles[i] = "width: 20px;color: dodgerblue;";
         this.islike[i] = true;
         this.allpost[i].Islike == 'YES'
       }
-      else{
+      else {
         this.allpost[i].Islike == 'NO'
       }
     }
