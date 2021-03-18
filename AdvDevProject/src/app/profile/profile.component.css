@@ -63,3 +63,7 @@ body {
   margin-top: 20px;
   background-color: #a4b4c7
 }
+p.title{
+  width: 33em; 
+  word-wrap: break-word
+}

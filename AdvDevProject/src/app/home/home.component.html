@@ -67,7 +67,7 @@
 					</div>
 					<br><br>
 					<div class="panel-body" type="button">
-						<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+						<textarea class="form-control" rows="5" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
 							[(ngModel)]="this.storydesc"></textarea>
 						<div class="mar-top clearfix">
 							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="CreatePost()"><i
@@ -148,9 +148,11 @@
 							<div class="timeline-time">{{post.StoryTime}}</div>
 						</div>
 						<div class="timeline-label">
-							<p class="mar-no pad-btm"><a routerLink="/profile/{{post.UserID}}"
+							<p class="mar-no pad-btm">
+								<a routerLink="/profile/{{post.UserID}}"
 									class="btn-link text-semibold">{{post.Firstname}} {{post.Lastname}}</a> posted
-								{{post.Storyname}}</p>
+								<a routerLink="/story/{{post.UserID}}/{{post.StoryID}}">{{post.Storyname}}</a>
+							</p>
 							<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
 								*ngIf="this.userid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์"
 								[showClear]="true"
@@ -158,7 +160,7 @@
 								<br>
 							</p-dropdown>
 							<!-- <p-dropdown [options]="dates" [(ngModel)]="Day" placeholder="{{Day}}" [virtualScroll]="true" [itemSize]="31" [filter]="false"></p-dropdown> -->
-							<p>
+							<p class="title">
 								{{post.StoryDesc}}
 							</p>
 							<div class="img-holder" *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">

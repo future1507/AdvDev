@@ -201,13 +201,13 @@ export class HomeComponent implements OnInit {
     let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json), this.token).toPromise();
     this.displayBasic = false;
     console.log(response);
-    this.formData.append('storyid', "" + response);
     if (this.uploadedFiles[0] != null) {
+      this.formData.append('storyid', "" + response);
       this.http.post("http://203.154.83.62:1507/upload", this.formData)
         .subscribe(response => {
           this.uploadedFiles = [];
-          //this.upload_img = (response).toString();
-          window.location.reload();
+          this.displayBasic2 = false;
+          this.ShowPost();
         }, err => {
           //handle error
         });

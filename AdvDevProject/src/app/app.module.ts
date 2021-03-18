@@ -24,6 +24,7 @@ import {DialogModule} from 'primeng/dialog';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import {ButtonModule} from 'primeng/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { StoryComponent } from './story/story.component';
 
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
@@ -33,7 +34,7 @@ const appRoutes: Routes = [
   {path:'header',component: HeaderComponent},
   {path:'selectTag/:id',component: SelectTagComponent},
   {path:'info',component:InfoComponent},
-
+  {path:'story/:userid/:storyid',component: StoryComponent},
   {path:'profile/:id',component: ProfileComponent}
 
 ];
@@ -48,6 +49,7 @@ const appRoutes: Routes = [
     SelectTagComponent,
     ProfileComponent,
     InfoComponent,
+    StoryComponent,
     
   ],
   imports: [

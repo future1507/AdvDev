@@ -279,7 +279,7 @@ def Followed():
 
 
 @app.route('/newstory', methods=['POST'], endpoint='addstory')
-@token_required
+#@token_required
 def AddnewStory():
     coverphoto = None
     desc = None
@@ -304,6 +304,17 @@ def AddnewStory():
         "values(%s,%s,%s,%s,%s,%s,%s,%s)", (postid, postname, str(result['UserID']),
                                             date, result['Tag'], str(result['Targetgroup']), desc, coverphoto))
     conn.commit()
+    path = 'img/'+str(result['UserID'])+'/'+postid
+    try:
+        os.makedirs(path)
+    except OSError:
+        if os.path.exists(path):
+            pass
+        print("Creation of the directory %s failed" % path)
+    else:
+        #raise
+        print ("Successfully created the directory %s " % path)
+
     return jsonify(postid)
 
 
@@ -527,16 +538,17 @@ def Like():
 def ShowComment(storyid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute("SELECT Comment.CommentID, Comment.PostID, Comment.UserID, Comment.CommentTime, Comment.CommentDes, User.Firstname, User.Lastname, User.Profileimg "+
-                "from Comment, User "+
-                "WHERE Comment.UserID=User.UserID "+
-                "AND Comment.PostID= %s "+
+    cur.execute("SELECT Comment.CommentID, Comment.PostID, Comment.UserID, Comment.CommentTime, Comment.CommentDes, User.Firstname, User.Lastname, User.Profileimg " +
+                "from Comment, User " +
+                "WHERE Comment.UserID=User.UserID " +
+                "AND Comment.PostID= %s " +
                 "ORDER BY Comment.CommentTime ", (str(storyid)))
     data = cur.fetchall()
     return jsonify(data)
 
+
 @app.route('/addcomment', methods=['POST'], endpoint='addcomments')
-#@token_required
+@token_required
 def AddComment():
     date = datetime.datetime.now()
     conn = mysql.connect()
@@ -545,9 +557,67 @@ def AddComment():
     cur.execute(
         "Insert INTO Comment" +
         "(PostID,UserID,CommentTime,CommentDes)" +
-        "values(%s,%s,%s,%s)", (result['PostID'],result['UserID'],date,result['CommentDes']))
+        "values(%s,%s,%s,%s)", (result['PostID'], result['UserID'], date, result['CommentDes']))
     conn.commit()
     return jsonify('Record Insert Successfully')
+
+
+@app.route('/swapcontent', methods=['POST'], endpoint='swapcontents')
+@token_required
+def SwapContent():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    # cur.execute(
+    #     "UPDATE Content SET ContentOrder=%s WHERE PostID=%s and ContentOrder=%s", (result['Source'],result['PostID'],result['Dest']))
+    # conn.commit()
+    # cur.execute(
+    #     "UPDATE Content SET ContentOrder=%s WHERE PostID=%s and ContentOrder=%s", (result['Dest'],result['PostID'],result['Source']))
+    # conn.commit()
+    cur.execute("UPDATE Content t1 JOIN Content t2 "+
+                "ON t1.ContentID=%s AND t2.ContentID=%s "+
+                "SET t1.ContentOrder=%s, "+
+                "t2.ContentOrder=%s ",
+                (result['SourceID'], result['DestID'], result['DestOrder'], result['SourceOrder']))
+    conn.commit()
+    return jsonify('Record Swap Successfully')
+
+
+@app.route('/showcontent/<storyid>', methods=['GET'], endpoint='showcontents')
+@token_required
+def ShowContent(storyid):
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("SELECT ContentID, Content.PostID, Story.Storyname, ContentOrder, ContentTime, ContentType, ContentDesc " +
+                "FROM Content, Story " +
+                "WHERE Story.StoryID=Content.PostID " +
+                "AND Content.PostID=%s " +
+                "ORDER BY Content.ContentOrder", (str(storyid)))
+    data = cur.fetchall()
+    return jsonify(data)
+
+
+@app.route('/addcontent', methods=['POST'], endpoint='addcontents')
+@token_required
+def AddContent():
+    date = datetime.datetime.now()
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+        "SELECT max(ContentOrder) FROM Content " +
+        "WHERE PostID = %s", (result['PostID']))
+    conn.commit()
+    data = cur.fetchall()
+    order = data[0]['max(ContentOrder)']
+    if order == None:
+        order = '0'
+    cur.execute(
+        "Insert into Content(PostID,ContentOrder,ContentTime,ContentType,ContentDesc) " +
+        " VALUES (%s,%s,%s,%s,%s)", (result['PostID'], int(order)+1, date, 'text', result['ContentDesc']))
+    conn.commit()
+    return jsonify('Record Insert Successfully')
+
 
 folder = ''
 
@@ -595,6 +665,27 @@ def upload_file():
                 cur.execute(
                     "UPDATE Story SET Coverphoto = %s where StoryID = %s", (number, storyid))
                 conn.commit()
+            if len(folder) == 50:
+                userid = request.form['userid']
+                date = datetime.datetime.now()
+                file.save(os.path.join(
+                    app.config['UPLOAD_FOLDER']+"/"+userid+"/"+folder, number+".jpg"))
+                conn = mysql.connect()
+                cur = conn.cursor(pymysql.cursors.DictCursor)
+                cur.execute(
+                    "SELECT max(ContentOrder) FROM Content " +
+                    "WHERE PostID = %s", (folder))
+                conn.commit()
+                data = cur.fetchall()
+                order = data[0]['max(ContentOrder)']
+                if order == None:
+                    order = '0'
+                print(order)
+                cur.execute(
+                    "Insert into Content(PostID,ContentOrder,ContentTime,ContentType,ContentDesc) " +
+                    " VALUES (%s,%s,%s,%s,%s)", (folder, int(order)+1, date, 'image', number))
+                conn.commit()
+
             # else:
             #     file.save(os.path.join(
             #         app.config['UPLOAD_FOLDER']+userid, number+".jpg"))
@@ -622,6 +713,11 @@ def photoProfile(filename):
 @app.route('/img/coverphoto/<filename>', methods=['GET'])
 def photoCover(filename):
     return send_file("img/coverphoto/"+filename+".jpg")
+
+
+@app.route('/img/<userid>/<storyid>/<filename>', methods=['GET'])
+def photoContent(userid, storyid, filename):
+    return send_file("img/"+userid+"/"+storyid+"/"+filename+".jpg")
 
 
 if __name__ == "__main__":

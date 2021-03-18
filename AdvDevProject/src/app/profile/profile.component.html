@@ -166,7 +166,7 @@
                     <img src="{{this.profile}}" alt="profile" class="img-xs rounded-circle" width="100">
                     <div class="ml-4">
                       <h6>
-                        {{this.name}} posted {{post.Storyname}}
+                        {{this.name}} posted <a routerLink="/story/{{post.UserID}}/{{post.StoryID}}">{{post.Storyname}}</a>
                         <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small>
                         &nbsp;&nbsp;
                         <p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
@@ -175,7 +175,7 @@
                           <br>
                         </p-dropdown>
                       </h6>
-                      <p>
+                      <p class="title">
                         {{post.StoryDesc}}
                       </p>
                       <div *ngIf="post.Coverphoto!='' && post.Coverphoto!= null">
