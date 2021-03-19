@@ -25,6 +25,9 @@
 
 <body>
     <h1>{{this.storyname}}</h1>
+    <p-toggleButton [(ngModel)]="checkeditmode" onLabel="Editmode : on" offLabel="Editmode : off" onIcon="pi pi-check"
+        offIcon="pi pi-times" [style]="{'width': '10em'}" *ngIf="ownid==userid">
+    </p-toggleButton>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <div class="form-group">
         <div class="col-sm-3">
@@ -44,15 +47,17 @@
             <div class="panel">
 
                 <p-fileUpload name="upload[]" mode="basic" [auto]="setButTrue" chooseLabel=" "
-                    *ngIf="this.ownid==this.userid" [customUpload]="setButTrue" multiple="multiple" accept="image/*"
-                    (uploadHandler)="myUploader($event)">
+                    *ngIf="this.ownid==this.userid && checkeditmode==true" [customUpload]="setButTrue"
+                    multiple="multiple" accept="image/*" (uploadHandler)="myUploader($event)">
                 </p-fileUpload>
-                <button class="btn-primary" (click)="showaddTextDialog()" *ngIf="this.ownid==this.userid">Add
-                    Text</button>
+                <button class="btn-primary" (click)="showaddTextDialog()"
+                    *ngIf="this.ownid==this.userid && checkeditmode==true">
+                    Add Text
+                </button>
             </div>
             <div class="panel panel-body">
                 <div *ngFor="let content of allcontent; let i = index;">
-                    <div class="col-sm-12" *ngIf="i>0 && this.ownid==this.userid">
+                    <div class="col-sm-12" *ngIf="i>0 && this.ownid==this.userid && checkeditmode==true">
                         <p-button class="btn-primary" icon="pi pi-arrow-up" (onClick)="SwapContent(i,i-1)"></p-button>
                     </div>
 
@@ -64,7 +69,7 @@
                         <img src="http://203.154.83.62:1507/img/{{this.ownid}}/{{content.PostID}}/{{content.ContentDesc}}"
                             alt="Profile picture" width="500">
                     </div>
-                    <div class="col-sm-12" *ngIf="i<this.length-1 && this.ownid==this.userid">
+                    <div class="col-sm-12" *ngIf="i<this.length-1 && this.ownid==this.userid && checkeditmode==true">
                         <p-button class="btn-primary" icon="pi pi-arrow-down" (onClick)="SwapContent(i,i+1)"></p-button>
                     </div>
                     <br><br>
@@ -81,21 +86,23 @@
         </p-dialog>
         <p-dialog header="เพิ่มเรื่องก่อนหน้า" [(visible)]="displayshowPrevStory" [style]="{width: '50vw'}"
             [baseZIndex]="10000">
-            <p-dropdown [options]="prevstory" [(ngModel)]="previd" [itemSize]="7" placeholder="Select PrevStory"
-                [showClear]="true" >
+            <p-dropdown [options]="prevstory" [(ngModel)]="previd" [itemSize]="lenprev" placeholder="Select PrevStory"
+                [showClear]="true">
             </p-dropdown><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
             <ng-template pTemplate="footer">
-                <p-button icon="pi pi-check" (click)="displayshowPrevStory=false" label="Ok" styleClass="p-button-text">
+                <p-button icon="pi pi-check" (click)="SetPrevNextStory(previd,'prev')" label="Save"
+                    styleClass="p-button-text">
                 </p-button>
             </ng-template>
         </p-dialog>
         <p-dialog header="เพิ่มเรื่องถัดมา" [(visible)]="displayshowNextStory" [style]="{width: '50vw'}"
             [baseZIndex]="10000">
-            <p-dropdown [options]="nextstory" [(ngModel)]="nextid" [itemSize]="7" placeholder="Select NextStory"
-                [showClear]="true" >
+            <p-dropdown [options]="nextstory" [(ngModel)]="nextid" [itemSize]="lennext" placeholder="Select NextStory"
+                [showClear]="true">
             </p-dropdown><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
             <ng-template pTemplate="footer">
-                <p-button icon="pi pi-check" (click)="displayshowNextStory=false" label="Ok" styleClass="p-button-text">
+                <p-button icon="pi pi-check" (click)="SetPrevNextStory(nextid,'next')" label="Save"
+                    styleClass="p-button-text">
                 </p-button>
             </ng-template>
         </p-dialog>

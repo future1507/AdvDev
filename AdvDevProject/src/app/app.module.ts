@@ -25,6 +25,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import {ButtonModule} from 'primeng/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { StoryComponent } from './story/story.component';
+import {ToggleButtonModule} from 'primeng/togglebutton';
 
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
@@ -68,6 +69,7 @@ const appRoutes: Routes = [
     DialogModule,
     ButtonModule,
     FontAwesomeModule,
+    ToggleButtonModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],

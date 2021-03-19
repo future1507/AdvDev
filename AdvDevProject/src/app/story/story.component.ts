@@ -10,7 +10,7 @@ import { SelectItem } from 'primeng/api/selectitem';
   styleUrls: ['./story.component.css']
 })
 export class StoryComponent implements OnInit {
-
+  checkeditmode = false;
   prevstory: SelectItem[];
   nextstory: SelectItem[];
 
@@ -19,8 +19,8 @@ export class StoryComponent implements OnInit {
   storyname: any;
   previd: any;
   nextid: any;
-  lenprev : any;
-  lennext : any;
+  lenprev: any;
+  lennext: any;
 
   constructor(private http: HttpClient, private router: Router,
     private route: ActivatedRoute) {
@@ -33,8 +33,6 @@ export class StoryComponent implements OnInit {
 
     this.prevstory = [];
     this.nextstory = [];
-
-
   }
   ShowDetailStory() {
     this.http.get('http://203.154.83.62:1507/showdetailpost/' + this.storyid, this.token).subscribe(response => {
@@ -43,73 +41,59 @@ export class StoryComponent implements OnInit {
       this.storyname = array[0]['Storyname']
       this.previd = array[0]['PrevID']
       this.nextid = array[0]['NextID']
-      /* Prev */
-      let json1 = {
-        UserID: this.userid,
-        StoryID: this.storyid,
-        ConnectID: ""+this.previd
-      }
-      console.log(json1)
-      this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json1), this.token).subscribe(response => {
-        console.log(response)
-        var array = Object.values(response);
-        this.lenprev = array.length;
-        for (let i = 0; i < array.length; i++) {
-          this.prevstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
-        }
-      }, error => {
-        // console.log(error);
-        // this.router.navigateByUrl('/login');
-        // localStorage.clear();
-      });
-      /* Prev */
 
-      /* Next */
-      let json2 = {
-        UserID: this.userid,
-        StoryID: this.storyid,
-        ConnectID: ""+this.nextid
+      if (this.ownid == this.userid) {
+        this.ShowPrevNextStory()
       }
-      console.log(json1)
-      this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json2), this.token).subscribe(response => {
-        console.log(response)
-        var array = Object.values(response);
-        this.lennext = array.length;
-        for (let i = 0; i < array.length; i++) {
-          this.nextstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
-        }
-      }, error => {
-        // console.log(error);
-        // this.router.navigateByUrl('/login');
-        // localStorage.clear();
-      });
-      /* Next */
     }, error => {
       console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
   }
-  // ShowPrevNextStory(connectid: any) {
-  //   let connectstory: SelectItem[];
-  //   let json = {
-  //     UserID: this.userid,
-  //     StoryID: this.storyid,
-  //     ConnectID: connectid
-  //   }
-  //   this.http.post('http://203.154.83.62:1507/showprevnextpost/', JSON.stringify(json), this.token).subscribe(response => {
-  //     console.log(response)
-  //     var array = Object.values(response);
-  //     for (let i = 0; i < array.length; i++) {
-  //       connectstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
-  //     }
-  //     return connectstory
-  //   }, error => {
-  //     console.log(error);
-  //     this.router.navigateByUrl('/login');
-  //     localStorage.clear();
-  //   });
-  // }
+  ShowPrevNextStory() {
+    /* Prev */
+    let json1 = {
+      UserID: this.userid,
+      StoryID: this.storyid,
+      ConnectID: "" + this.nextid
+    }
+    console.log(json1)
+    this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json1), this.token).subscribe(response => {
+      console.log(response)
+      var array = Object.values(response);
+      this.lenprev = array.length;
+      for (let i = 0; i < array.length; i++) {
+        this.prevstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
+      }
+    }, error => {
+      // console.log(error);
+      // this.router.navigateByUrl('/login');
+      // localStorage.clear();
+    });
+    /* Prev */
+
+    /* Next */
+    let json2 = {
+      UserID: this.userid,
+      StoryID: this.storyid,
+      ConnectID: "" + this.previd
+    }
+    console.log(json1)
+    this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json2), this.token).subscribe(response => {
+      console.log(response)
+      var array = Object.values(response);
+      this.lennext = array.length;
+      for (let i = 0; i < array.length; i++) {
+        this.nextstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
+      }
+    }, error => {
+      // console.log(error);
+      // this.router.navigateByUrl('/login');
+      // localStorage.clear();
+    });
+    /* Next */
+  }
 
   ngOnInit(): void {
   }
@@ -132,17 +116,35 @@ export class StoryComponent implements OnInit {
 
   displayshowPrevStory = false
   showPrevStoryDialog() {
-    if(this.ownid == this.userid){
-      this.displayshowPrevStory = true
+    if (this.checkeditmode == true) {
+      if (this.ownid == this.userid) {
+        this.displayshowPrevStory = true
+      }
     }
-    
+    else {
+      if (this.previd != null) {
+        //this.router.navigateByUrl('/home/'+this.userid);
+        //this.router.navigateByUrl('/story/' + this.ownid + '/' + this.previd);
+        //this.router.navigateByUrl('./'+this.previd);
+      }
+    }
   }
 
   displayshowNextStory = false
   showNextStoryDialog() {
-    if(this.ownid == this.userid){
-      this.displayshowNextStory = true
+    if (this.checkeditmode == true) {
+      if (this.ownid == this.userid) {
+        this.displayshowNextStory = true
+      }
     }
+    else {
+      if (this.nextid != null) {
+        //this.router.navigateByUrl('/home/'+this.userid);
+        //this.router.navigateByUrl('/story/'+this.ownid+'/'+this.nextid);
+        //this.router.navigateByUrl('./'+this.nextid);
+      }
+    }
+
   }
 
   setButTrue = true;
@@ -211,6 +213,22 @@ export class StoryComponent implements OnInit {
     let response = await this.http
       .post('http://203.154.83.62:1507/swapcontent', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
+  }
+  async SetPrevNextStory(storyid: any, type: any) {
+    this.displayshowPrevStory = false
+    this.displayshowNextStory = false
+    console.log(storyid + " to " + type)
+    let json = {
+      StoryID: this.storyid,
+      ConnectID: storyid,
+      Type: type,
+    }
+    let response = await this.http
+      .post('http://203.154.83.62:1507/setprevnextpost', JSON.stringify(json), this.token).toPromise();
+    console.log(response)
+    this.prevstory = [];
+    this.nextstory = [];
+    this.ShowDetailStory()
   }
 
 }
