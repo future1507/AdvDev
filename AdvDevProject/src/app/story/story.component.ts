@@ -19,6 +19,8 @@ export class StoryComponent implements OnInit {
   storyname: any;
   previd: any;
   nextid: any;
+  lenprev : any;
+  lennext : any;
 
   constructor(private http: HttpClient, private router: Router,
     private route: ActivatedRoute) {
@@ -51,6 +53,7 @@ export class StoryComponent implements OnInit {
       this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json1), this.token).subscribe(response => {
         console.log(response)
         var array = Object.values(response);
+        this.lenprev = array.length;
         for (let i = 0; i < array.length; i++) {
           this.prevstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
         }
@@ -71,6 +74,7 @@ export class StoryComponent implements OnInit {
       this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json2), this.token).subscribe(response => {
         console.log(response)
         var array = Object.values(response);
+        this.lennext = array.length;
         for (let i = 0; i < array.length; i++) {
           this.nextstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
         }
@@ -128,12 +132,17 @@ export class StoryComponent implements OnInit {
 
   displayshowPrevStory = false
   showPrevStoryDialog() {
-    this.displayshowPrevStory = true
+    if(this.ownid == this.userid){
+      this.displayshowPrevStory = true
+    }
+    
   }
 
   displayshowNextStory = false
   showNextStoryDialog() {
-    this.displayshowNextStory = true
+    if(this.ownid == this.userid){
+      this.displayshowNextStory = true
+    }
   }
 
   setButTrue = true;
