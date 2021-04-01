@@ -337,6 +337,20 @@ def EditStory():
     conn.commit()
     return jsonify('Record Update Successfully')
 
+@app.route('/editstoryname', methods=['POST'], endpoint='editstorynames')
+@token_required
+def EditStoryName():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+
+    storyname = None
+    storyname = checkNone(result['Storyname'])
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute("UPDATE Story SET Storyname=%s " +
+                "WHERE StoryID =%s",
+                (storyname, result['StoryID']))
+    conn.commit()
+    return jsonify('Record Update Successfully')
 
 @app.route('/deletestory/<storyid>', methods=['get'], endpoint='deletepost')
 @token_required
@@ -387,7 +401,7 @@ def ContinueStory():
 
 
 @app.route('/showpost', methods=['POST'], endpoint='showallposts')
-@token_required
+#@token_required
 def ShowallPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -395,6 +409,7 @@ def ShowallPost():
     cur.execute("SELECT a.* " +
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",Tag.Tagname " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes  ," +
                 "Likes.PostID IN( " +
                 "    SELECT Likes.PostID FROM Likes " +
@@ -403,15 +418,19 @@ def ShowallPost():
                 "FROM Story " +
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
+                ",Tag " +
                 "WHERE Tag in (%s,%s,%s,%s,%s)  " +
                 "AND Story.Targetgroup = 'public' " +
+                "AND Story.Tag = Tag.ID "+
                 "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
+                "LIMIT 5 "+
                 ") a " +
                 "UNION  " +
                 "SELECT b.* " +
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",Tag.Tagname " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes  ," +
                 "Likes.PostID IN( " +
                 "    SELECT Likes.PostID FROM Likes " +
@@ -420,7 +439,9 @@ def ShowallPost():
                 "FROM Story " +
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 "INNER JOIN User ON User.UserID=Story.UserID " +
+                ",Tag " +
                 "WHERE User.UserID= %s " +
+                "AND Story.Tag = Tag.ID "+
                 "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") b " +
@@ -428,6 +449,7 @@ def ShowallPost():
                 "SELECT c.* " +
                 "FROM( " +
                 "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Subscribe.UserID, User.Firstname, User.Lastname, User.Profileimg " +
+                ",Tag.Tagname " +
                 ",COUNT(Likes.PostID) AS AmountOfLikes  ," +
                 "Likes.PostID IN( " +
                 "    SELECT Likes.PostID FROM Likes " +
@@ -436,11 +458,13 @@ def ShowallPost():
                 "FROM Story " +
                 "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
                 ", User, Subscribe " +
+                ",Tag " +
                 "WHERE User.UserID=Story.UserID " +
                 "and Story.UserID=Subscribe.UserID " +
                 "and User.UserID=Subscribe.UserID " +
                 "and Subscribe.FollowerID=%s" +
                 "and Story.Targetgroup != 'private' " +
+                "AND Story.Tag = Tag.ID "+
                 "GROUP BY Story.StoryID " +
                 "ORDER BY Story.StoryTime DESC " +
                 ") c ORDER BY StoryTime DESC ",
@@ -450,13 +474,14 @@ def ShowallPost():
 
 
 @app.route('/showselfpost/<userid>', methods=['GET'], endpoint='showselfposts')
-# @token_required
+@token_required
 def ShowSelfPost(userid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
         "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
-        ",COUNT(Likes.PostID) AS AmountOfLikes " +
+        ",Tag.Tagname " +
+        ",COUNT(Likes.PostID) AS AmountOfLikes ," +
         "Likes.PostID IN( " +
         "    SELECT Likes.PostID FROM Likes " +
         "    WHERE Likes.PostID=Story.StoryID " +
@@ -464,7 +489,9 @@ def ShowSelfPost(userid):
         "FROM Story " +
         "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
         "INNER JOIN User ON User.UserID=Story.UserID " +
+        ",Tag " +
         "WHERE User.UserID= %s " +
+        "AND Story.Tag = Tag.ID "+
         "GROUP BY Story.StoryID " +
         "ORDER BY Story.StoryTime DESC ", (str(userid), str(userid)))
     data = cur.fetchall()
@@ -472,12 +499,13 @@ def ShowSelfPost(userid):
 
 
 @app.route('/showdetailpost/<storyid>', methods=['GET'], endpoint='showdetailposts')
-# @token_required
+@token_required
 def ShowDetailPost(storyid):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute(
-        "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, PrevID, NextID " +
+        "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, PrevID, NextID , User.Firstname, User.Lastname " +
+        ",Tag.Tagname " +
         ",COUNT(Likes.PostID) AS AmountOfLikes " +
         # "Likes.PostID IN( " +
         # "    SELECT Likes.PostID FROM Likes " +
@@ -485,13 +513,17 @@ def ShowDetailPost(storyid):
         # "    AND Likes.UserID=%s) as Islike " +
         "FROM Story " +
         "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
-        "where StoryID = %s", (str(storyid)))
+        ", User "+
+        ",Tag " +
+        "where Story.UserID = User.UserID "+
+        "AND Story.Tag = Tag.ID "+
+        "and StoryID = %s", (str(storyid)))
     data = cur.fetchall()
     return jsonify(data)
 
 
 @ app.route('/showprevnextpost', methods=['Post'], endpoint='showprevnextposts')
-# @token_required
+@token_required
 def ShowPrevNextPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
@@ -505,18 +537,34 @@ def ShowPrevNextPost():
 
 
 @ app.route('/setprevnextpost', methods=['Post'], endpoint='setprevnextposts')
-# @token_required
+#@token_required
 def SetPrevNextPost():
     conn = mysql.connect()
     result = request.get_json(force=True)
     cur = conn.cursor(pymysql.cursors.DictCursor)
     if result['Type'] == 'prev': 
         cur.execute(
-            "UPDATE Story SET PrevID = %s where StoryID = %s", (result['ConnectID'], result['StoryID']))
+            "UPDATE Story SET NextID = %s where StoryID = %s", (None, result['OldConnectID']))
+        conn.commit()
+
+        cur.execute("UPDATE Story t1 JOIN Story t2 " +
+                "ON t1.StoryID=%s AND t2.StoryID=%s " +
+                "SET t1.PrevID=%s, " +
+                "t2.NextID=%s ",
+                (result['StoryID'], result['ConnectID'], result['ConnectID'], result['StoryID']))    
+        conn.commit()
     elif result['Type'] == 'next': 
         cur.execute(
-            "UPDATE Story SET NextID = %s where StoryID = %s", (result['ConnectID'], result['StoryID']))
-    conn.commit()
+            "UPDATE Story SET PrevID = %s where StoryID = %s", (None, result['OldConnectID']))
+        conn.commit()
+
+        cur.execute("UPDATE Story t1 JOIN Story t2 " +
+                "ON t1.StoryID=%s AND t2.StoryID=%s " +
+                "SET t1.NextID=%s, " +
+                "t2.PrevID=%s ",
+                (result['StoryID'], result['ConnectID'], result['ConnectID'], result['StoryID']))
+        conn.commit()
+    # conn.commit()
     return jsonify('Record Update Successfully')
 
 
@@ -529,7 +577,8 @@ def ShowSomeonePost():
     if result['IsFollow'] == 'Followed':
         cur.execute(
             "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
-            ",COUNT(Likes.PostID) AS AmountOfLikes " +
+            ",Tag.Tagname " +
+            ",COUNT(Likes.PostID) AS AmountOfLikes, " +
             "Likes.PostID IN( " +
             "    SELECT Likes.PostID FROM Likes " +
             "    WHERE Likes.PostID=Story.StoryID " +
@@ -537,14 +586,17 @@ def ShowSomeonePost():
             "FROM Story " +
             "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
             "INNER JOIN User ON User.UserID=Story.UserID " +
+            ",Tag " +
             "WHERE User.UserID= %s " +
-            "AND Targetgroup != 'private' "
+            "AND Targetgroup != 'private' "+
+            "AND Story.Tag = Tag.ID "+
             "GROUP BY Story.StoryID " +
             "ORDER BY Story.StoryTime DESC ", (result['SelfID'], result['UserID']))
     elif result['IsFollow'] == 'Follow':
         cur.execute(
             "SELECT Story.StoryID, Storyname, StoryTime, Tag, Targetgroup, StoryDesc, Coverphoto, Story.UserID, User.Firstname, User.Lastname, User.Profileimg " +
-            ",COUNT(Likes.PostID) AS AmountOfLikes " +
+            ",Tag.Tagname " +
+            ",COUNT(Likes.PostID) AS AmountOfLikes, " +
             "Likes.PostID IN( " +
             "    SELECT Likes.PostID FROM Likes " +
             "    WHERE Likes.PostID=Story.StoryID " +
@@ -552,8 +604,10 @@ def ShowSomeonePost():
             "FROM Story " +
             "LEFT JOIN Likes ON Story.StoryID = Likes.PostID " +
             "INNER JOIN User ON User.UserID=Story.UserID " +
+            ",Tag " +
             "WHERE User.UserID= %s " +
-            "AND Targetgroup = 'public' "
+            "AND Targetgroup = 'public' "+
+            "AND Story.Tag = Tag.ID "+
             "GROUP BY Story.StoryID " +
             "ORDER BY Story.StoryTime DESC ", (result['SelfID'], result['UserID']))
     data = cur.fetchall()
@@ -606,6 +660,7 @@ def AddComment():
         "values(%s,%s,%s,%s)", (result['PostID'], result['UserID'], date, result['CommentDes']))
     conn.commit()
     return jsonify('Record Insert Successfully')
+
 
 
 @ app.route('/swapcontent', methods=['POST'], endpoint='swapcontents')
@@ -664,6 +719,27 @@ def AddContent():
     conn.commit()
     return jsonify('Record Insert Successfully')
 
+@ app.route('/editcontent', methods=['POST'], endpoint='editcontents')
+@ token_required
+def EditContent():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+        "UPDATE Content SET ContentDesc=%s WHERE PostID=%s and ContentOrder=%s", (result['ContentDesc'],result['PostID'],result['ContentOrder']))
+    conn.commit()
+    return jsonify('Record Update Successfully')
+
+@ app.route('/deletecontent', methods=['POST'], endpoint='deletecontents')
+@ token_required
+def DeleteContent():
+    conn = mysql.connect()
+    result = request.get_json(force=True)
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute(
+        "DELETE from Content WHERE PostID=%s and ContentOrder=%s", (result['PostID'],result['ContentOrder']))
+    conn.commit()
+    return jsonify('Record Update Successfully')
 
 folder = ''
 

@@ -15,7 +15,9 @@ export class LoginComponent implements OnInit {
   userid = "abc123";
   password = "1234";
   constructor(private http : HttpClient,private router : Router,
-    public data: DatapassService,private route : ActivatedRoute) { }
+    public data: DatapassService,private route : ActivatedRoute) {
+      localStorage.clear();
+     }
     
   ngOnInit(): void {
   }

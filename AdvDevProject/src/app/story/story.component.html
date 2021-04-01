@@ -24,14 +24,23 @@
 </head>
 
 <body>
-    <h1>{{this.storyname}}</h1>
+    <h1 *ngIf="checkeditmode==false">&nbsp;{{this.storyname}}</h1>
+    <div *ngIf="checkeditmode==true">
+        <input type="text" name="" id="" [(ngModel)]="this.storyname">
+            <button class="btn-primary" type="submit" (click)="editStoryname()">Save</button>
+            <button pButton pRipple type="button" label="Delete" icon="pi pi-trash" class="p-button-danger bt-right" (click)="DeletePost(this.storyid)"></button>
+    </div>
+    &nbsp;<p-tag styleClass="p-mr-2" value="{{this.storytag}}" [rounded]="true"></p-tag>
+
+
+    <h3>&nbsp;&nbsp;ผู้เขียน : <a routerLink="/profile/{{this.ownid}}">{{this.ownname}}</a></h3>
     <p-toggleButton [(ngModel)]="checkeditmode" onLabel="Editmode : on" offLabel="Editmode : off" onIcon="pi pi-check"
         offIcon="pi pi-times" [style]="{'width': '10em'}" *ngIf="ownid==userid">
     </p-toggleButton>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <div class="form-group">
         <div class="col-sm-3">
-            <p-button class="btn-primary" icon="pi pi-arrow-left" (onClick)="showPrevStoryDialog()"></p-button>
+            <p-button class="btn-primary bt-left" icon="pi pi-arrow-left" (onClick)="showPrevStoryDialog()"></p-button>
         </div>
         <div class="col-sm-3">
         </div>
@@ -40,6 +49,7 @@
         <div class="col-sm-3">
             <p-button class="btn-primary" icon="pi pi-arrow-right" (onClick)="showNextStoryDialog()"></p-button>
         </div>
+
     </div>
     <div class="container bootstrap snippets bootdeys">
         <div class="col-md-7 col-md-offset-2">
@@ -54,33 +64,88 @@
                     *ngIf="this.ownid==this.userid && checkeditmode==true">
                     Add Text
                 </button>
+
             </div>
             <div class="panel panel-body">
                 <div *ngFor="let content of allcontent; let i = index;">
-                    <div class="col-sm-12" *ngIf="i>0 && this.ownid==this.userid && checkeditmode==true">
-                        <p-button class="btn-primary" icon="pi pi-arrow-up" (onClick)="SwapContent(i,i-1)"></p-button>
-                    </div>
-
+                    <hr *ngIf="checkeditmode==true">
+                    <button pButton pRipple type="button" icon="pi pi-arrow-up"
+                        class="p-button-rounded p-button-secondary bt-topleft bt-center" (click)="SwapContent(i-1,i)"
+                        *ngIf="i>0 && this.ownid==this.userid && checkeditmode==true"></button>
                     <p class="title" *ngIf="content.ContentType == 'text'">
                         <br><br>
                         {{content.ContentDesc}}
+
+                        <!-- <p-button class="btn-primary" icon="pi pi-ellipsis-h" (click)="menu.toggle($event)"></p-button>
+                        <p-menu #menu id="config_menu" [model]="items" [popup]="true"></p-menu> -->
+                        <button pButton pRipple type="button" icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text p-button-plain bt-topleft"
+                            (click)="showeditTextDialog(content.ContentDesc,content.ContentOrder)"
+                            *ngIf="checkeditmode==true"></button>
+                        <button pButton pRipple type="button" icon="pi pi-times" (click)="confirm(content.ContentOrder)"
+                            class="p-button-rounded p-button-text p-button-plain bt-topleft"
+                            *ngIf="checkeditmode==true"></button>
                     </p>
                     <div *ngIf="content.ContentType == 'image'">
                         <img src="http://203.154.83.62:1507/img/{{this.ownid}}/{{content.PostID}}/{{content.ContentDesc}}"
                             alt="Profile picture" width="500">
+                        <button pButton pRipple type="button" icon="pi pi-times" (click)="confirm(content.ContentOrder)"
+                            class="p-button-rounded p-button-text p-button-plain bt-topleft"
+                            *ngIf="checkeditmode==true"></button>
                     </div>
-                    <div class="col-sm-12" *ngIf="i<this.length-1 && this.ownid==this.userid && checkeditmode==true">
-                        <p-button class="btn-primary" icon="pi pi-arrow-down" (onClick)="SwapContent(i,i+1)"></p-button>
-                    </div>
+                    <button pButton pRipple type="button" icon="pi pi-arrow-down"
+                        class="p-button-rounded p-button-secondary bt-topleft bt-center" (click)="SwapContent(i+1,i)"
+                        *ngIf="i<this.length-1 && this.ownid==this.userid && checkeditmode==true"></button>
                     <br><br>
                 </div>
             </div>
+            <div class="panel panel-body">
+                <h2>Comment</h2>
+                <textarea class="form-control" rows="2" placeholder="แสดงความคิดเห็น"
+                    [(ngModel)]="this.commenttext"></textarea>
+                <button class="btn btn-sm btn-primary pull-right" type="submit" (click)="AddComment()"><i
+                        class="fa fa-pencil fa-fw"></i> Comment</button>
+                <br><br>
+                <div *ngFor="let comments of allcomment; let j = index;">
+                    <div class="timeline-icon">
+                        <a routerLink="/profile/{{comments.UserID}}" class="btn-link text-semibold"
+                            *ngIf="comments.Profileimg != null;else elseblock">
+                            <img src="http://203.154.83.62:1507/img/profile/{{comments.Profileimg}}"
+                                alt="Profile picture" width="500"></a>
+                        <ng-template #elseblock>
+                            <a routerLink="/profile/{{comments.UserID}}" class="btn-link text-semibold">
+                                <img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
+                                    alt="Profile picture" width="500"></a>
+                        </ng-template>
+                    </div>
+                    <h3>&nbsp;&nbsp;{{comments.Firstname}} {{comments.Lastname}} commented at {{comments.CommentTime}}
+                    </h3>
+                    <p class="title">{{comments.CommentDes}}</p>
+                    <hr>
+                </div>
+                <br>
+            </div>
         </div>
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+        <p-dialog header="ไม่สามารถแสดงความคิดเห็นได้" [(visible)]="displayCantComment" [style]="{width: '20vw'}"
+            [baseZIndex]="10000">
+            <a routerLink="/profile/{{this.ownid}}">
+                <p>คุณต้องติดตามผู้ใช้ท่านนี้ก่อน</p>
+            </a>
+        </p-dialog>
         <p-dialog header="เพิ่มข้อความ" [(visible)]="displayaddText" [style]="{width: '50vw'}" [baseZIndex]="10000">
             <textarea class="form-control" rows="7" placeholder="เพิ่มคำบรรยายเรื่องราวของคุณ..."
                 [(ngModel)]="this.text"></textarea>
             <ng-template pTemplate="footer">
                 <p-button icon="pi pi-check" (click)="addContent()" label="Save" styleClass="p-button-text">
+                </p-button>
+            </ng-template>
+        </p-dialog>
+        <p-dialog header="แก้ไชข้อความ" [(visible)]="displayeditText" [style]="{width: '50vw'}" [baseZIndex]="10000">
+            <textarea class="form-control" rows="7" placeholder="เพิ่มคำบรรยายเรื่องราวของคุณ..."
+                [(ngModel)]="this.edittext"></textarea>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-check" (click)="editContent()" label="Save" styleClass="p-button-text">
                 </p-button>
             </ng-template>
         </p-dialog>

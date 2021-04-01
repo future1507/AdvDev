@@ -20,6 +20,7 @@ export class InfoComponent implements OnInit {
   mail = localStorage.getItem('Mail');
   fb = localStorage.getItem('Facebook');
   twitter = localStorage.getItem('Twitter');
+  password = ""
 
   token : any;
   constructor(private http : HttpClient,private router : Router,
@@ -33,39 +34,46 @@ export class InfoComponent implements OnInit {
   ngOnInit(): void {
     
   }
+  display1 = false;
   Edit(){
-    let json = {
-      UserID : localStorage.getItem('UserID'),
-      Firstname : this.fname,
-      Lastname : this.lname,
-      Birthday : this.bday,  
-      UserDesc : this.udesc,
-      Country : this.country,
-      Skills : this.skills,
-      Phone : this.phone,
-      Mail : this.mail,
-      Facebook : this.fb,
-      Twitter : this.twitter
-    };
-    // console.log(this.Birthday);
-    console.log(JSON.stringify(json));
-    this.http.post('http://203.154.83.62:1507/editprofile',JSON.stringify(json),this.token)
-    .subscribe(response =>{
-      console.log(response);
-      localStorage.setItem('Firstname',""+this.fname);
-      localStorage.setItem('Lastname',""+this.lname);
-      localStorage.setItem('Birthday',""+this.bday);
-      localStorage.setItem('UserDesc',""+this.udesc);
-      localStorage.setItem('Country',""+this.country);
-      localStorage.setItem('Skills',""+this.skills);
-      localStorage.setItem('Phone',""+this.phone);
-      localStorage.setItem('Mail',""+this.mail);
-      localStorage.setItem('Facebook',""+this.fb);
-      localStorage.setItem('Twitter',""+this.twitter);
-      this.router.navigateByUrl('/profile/'+localStorage.getItem('UserID'));
-    }, error => {
-      console.log(error);
-    });
+    if(this.password != ""){
+      let json = {
+        UserID : localStorage.getItem('UserID'),
+        Firstname : this.fname,
+        Lastname : this.lname,
+        Birthday : this.bday,  
+        UserDesc : this.udesc,
+        Country : this.country,
+        Skills : this.skills,
+        Phone : this.phone,
+        Mail : this.mail,
+        Facebook : this.fb,
+        Twitter : this.twitter
+      };
+      // console.log(this.Birthday);
+      console.log(JSON.stringify(json));
+      this.http.post('http://203.154.83.62:1507/editprofile',JSON.stringify(json),this.token)
+      .subscribe(response =>{
+        console.log(response);
+        localStorage.setItem('Firstname',""+this.fname);
+        localStorage.setItem('Lastname',""+this.lname);
+        localStorage.setItem('Birthday',""+this.bday);
+        localStorage.setItem('UserDesc',""+this.udesc);
+        localStorage.setItem('Country',""+this.country);
+        localStorage.setItem('Skills',""+this.skills);
+        localStorage.setItem('Phone',""+this.phone);
+        localStorage.setItem('Mail',""+this.mail);
+        localStorage.setItem('Facebook',""+this.fb);
+        localStorage.setItem('Twitter',""+this.twitter);
+        this.router.navigateByUrl('/profile/'+localStorage.getItem('UserID'));
+      }, error => {
+        console.log(error);
+      });
+    }
+    else{
+      this.display1 = true
+    }
+    
   }
   TokenUser(token:any){
     const headerDict = {

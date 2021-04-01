@@ -5,11 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { HttpHeaders } from '@angular/common/http';
 import { faComment, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { SelectItem } from 'primeng/api/selectitem';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class ProfileComponent implements OnInit {
   iconlike = faThumbsUp;
@@ -22,10 +24,11 @@ export class ProfileComponent implements OnInit {
   privacy: SelectItem[];
   manage: SelectItem[];
   constructor(private http: HttpClient, private router: Router,
-    public data: DatapassService, private route: ActivatedRoute) {
+    public data: DatapassService, private route: ActivatedRoute
+    , private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.manage = [
-      { label: 'ลบ', value: 'del' },
       { label: 'แก้ไข', value: 'edit' },
+      { label: 'ลบ', value: 'del' },
     ];
     this.tags = [
       { label: 'ศิลปะ', value: '1' },
@@ -53,6 +56,24 @@ export class ProfileComponent implements OnInit {
       this.ShowPost();
       this.AmontFollow();
     }
+  }
+  confirm(storyid: any) {
+    // this.order = order
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this story?',
+      header: 'Delete Confirmation',
+      accept: () => {
+        this.DeletePost(storyid)
+        console.log('Yes Delete Order '+storyid)
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});
+        
+      },
+      reject: () => {
+        console.log('No Delete Order '+storyid)
+        this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
+      }
+    });
+    this.slmanage = '';
   }
   profile = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
   fname = localStorage.getItem('Firstname');
@@ -161,11 +182,13 @@ export class ProfileComponent implements OnInit {
   GotoUser(userid : any){
     console.log('Go to '+userid)
     this.displayFollowing = false;
-    this.router.navigateByUrl('/home/'+this.selfid);
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
     //this.router.navigateByUrl('/profile/'+userid);
     //window.location.reload();
   }
-  allpost: any;
+  allpost: any;                                  
   // Storyname = [];
   // StoryDesc = [];
   // UserID = [];
@@ -363,10 +386,7 @@ export class ProfileComponent implements OnInit {
   displayBasic2: boolean = false;
   async ManagePost(storyid: any, storyname: any, tag: any, target: any, storydesc: any, coverphoto: any) {
     if (this.slmanage == 'del') {
-      let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
-      console.log(response);
-      this.ShowPost();
-      this.slmanage = '';
+      this.confirm(storyid);
     }
     else if (this.slmanage == 'edit') {
       this.displayBasic2 = true;
@@ -390,6 +410,11 @@ export class ProfileComponent implements OnInit {
     const file = this.uploadedCoverFiles[0];
     this.formData.append('file', file, file.name);
     this.formData.append('folder', 'coverphoto');
+  }
+  async DeletePost(storyid: any){
+    let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
+      console.log(response);
+    this.ShowPost();
   }
   async EditPost() {
     let json = {

@@ -6,6 +6,7 @@
 <div style="text-align: left;">
   <nav class="navbar navbar-dark bg-primary" >
     
-      <a routerLink="/login"><img src="../../assets/logopage.png" alt="" width="100px" (click)="Logout()"></a>
+      <a routerLink="/home/{{this.userid}}" class="navbar-brand"><img src="http://203.154.83.62:1507/img/profile/logopage" alt="" width="100px" ></a>
+      <button class="btn btn-danger my-2 my-sm-0" (click)="Logout()" *ngIf="this.token != null">Log out</button>
   </nav>
 </div>

@@ -125,14 +125,37 @@ body{
     height: 46px;
     line-height: 46px;
     text-align: center;
-    width: 46px
+    width: 46px;
+    float: left;
 }
 
 .timeline-icon img {
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    vertical-align: top
+    vertical-align: top;
+    float: left;
+}
+
+.bt-topleft{
+    float: top;
+    vertical-align: top;
+}
+
+.bt-left{
+    float: left;
+    margin-left: 222px;
+}
+
+.bt-right{
+    float: right;
+    
+}
+
+.bt-center{
+    float: right;
+    margin-right: 300px;
+    vertical-align: center;
 }
 
 .timeline-icon:empty {

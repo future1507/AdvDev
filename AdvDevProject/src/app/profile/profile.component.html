@@ -152,12 +152,12 @@
                         Feed
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                       <a class="nav-link" routerLink="/calendar">
                         <i class="mdi mdi-calendar"></i>
                         Calendar
                       </a>
-                    </li>
+                    </li> -->
                   </ul>
                 </div>
                 <div class="profile-feed">
@@ -168,6 +168,7 @@
                       <h6>
                         {{this.name}} posted <a routerLink="/story/{{post.UserID}}/{{post.StoryID}}">{{post.Storyname}}</a>
                         <small class="ml-4 text-muted"><i class="mdi mdi-clock mr-1"></i>{{post.StoryTime}}</small>
+                        &nbsp;<p-tag styleClass="p-mr-2" value="{{post.Tagname}}" [rounded]="true"></p-tag>
                         &nbsp;&nbsp;
                         <p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
                           *ngIf="this.selfid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์" [showClear]="true"
@@ -247,7 +248,8 @@
                               alt="Profile picture" width="500"></a>
                         </ng-template>
                       </div>
-                      <span>{{follow.Firstname}} {{follow.Lastname}}</span>
+                      <span>&nbsp;&nbsp;&nbsp;&nbsp;{{follow.Firstname}} {{follow.Lastname}}</span>
+                      <br><br><hr>
                       <!-- <button class='btn btn-primary'>Followed</button> -->
                     </div>
                   </p-dialog>
@@ -264,7 +266,8 @@
                               alt="Profile picture" width="500"></a>
                         </ng-template>
                       </div>
-                      <span>{{follow.Firstname}} {{follow.Lastname}}</span>
+                      <span>&nbsp;&nbsp;&nbsp;&nbsp;{{follow.Firstname}} {{follow.Lastname}}</span>
+                      <br><br><hr>
                     </div>
                   </p-dialog>
                   <p-dialog header="comment" [(visible)]="display" [style]="{width: '50vw'}" [baseZIndex]="10000">
@@ -333,6 +336,7 @@
       </div>
     </div>
   </div>
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script type="text/javascript">

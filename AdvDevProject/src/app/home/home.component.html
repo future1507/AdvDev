@@ -31,7 +31,7 @@
 	<div class="form-group">
 		<div class="col-md-7 col-md-offset-2">
 			<br>
-			<input id="login" class="form-control" name="login" placeholder="Search"><br>
+			<input id="login" class="form-control" name="login" placeholder="Search(ยังไม่ได้ทำเสร็จ)"><br>
 		</div>
 	</div>
 	<div class="container bootstrap snippets bootdeys">
@@ -152,6 +152,7 @@
 								<a routerLink="/profile/{{post.UserID}}"
 									class="btn-link text-semibold">{{post.Firstname}} {{post.Lastname}}</a> posted
 								<a routerLink="/story/{{post.UserID}}/{{post.StoryID}}">{{post.Storyname}}</a>
+								&nbsp;<p-tag styleClass="p-mr-2" value="{{post.Tagname}}" [rounded]="true"></p-tag>
 							</p>
 							<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
 								*ngIf="this.userid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์"
@@ -184,9 +185,8 @@
 									[baseZIndex]="10000">
 									<div class="right">
 										<div *ngFor="let comments of allcomment; let j = index;">
-											<h5>{{this.comments.Firstname}} {{this.comments.Lastname}}
-												{{this.comments.CommentTime}}</h5>
-											<div class="timeline-icon"> <a routerLink="/profile/{{comments.UserID}}"
+											
+											<div class="profile-comment"> <a routerLink="/profile/{{comments.UserID}}"
 													class="btn-link text-semibold"
 													*ngIf="comments.Profileimg != null;else elseblock">
 													<img src="http://203.154.83.62:1507/img/profile/{{comments.Profileimg}}"
@@ -197,9 +197,10 @@
 														<img src="https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png"
 															alt="Profile picture" width="500"></a>
 												</ng-template>
-
+												
 											</div>
-											<p>{{this.comments.CommentDes}}
+											<h5>&nbsp;&nbsp;{{this.comments.Firstname}} {{this.comments.Lastname}} commented at {{this.comments.CommentTime}}</h5>
+											<p>&nbsp;&nbsp;&nbsp;{{this.comments.CommentDes}}
 											</p>
 											<hr><br>
 										</div>
@@ -217,9 +218,13 @@
 									[style]="{width: '20vw'}" [baseZIndex]="10000">
 									<p>คุณต้องติดตามผู้ใช้ท่านนี้ก่อน</p>
 								</p-dialog>
+								
 							</div>
+							
 						</div>
+						
 					</div>
+					<p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
 					<!-- <div class="timeline-entry">
     				<div class="timeline-stat">
     					<div class="timeline-icon bg-danger"><i class="fa fa-building fa-lg"></i>

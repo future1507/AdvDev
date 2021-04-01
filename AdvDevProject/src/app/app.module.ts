@@ -26,6 +26,10 @@ import {ButtonModule} from 'primeng/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { StoryComponent } from './story/story.component';
 import {ToggleButtonModule} from 'primeng/togglebutton';
+import {MenuModule} from 'primeng/menu';
+import { TagModule } from 'primeng/tag';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService} from 'primeng/api';
 
 const appRoutes: Routes = [
   {path:'',component: LoginComponent},
@@ -70,6 +74,9 @@ const appRoutes: Routes = [
     ButtonModule,
     FontAwesomeModule,
     ToggleButtonModule,
+    MenuModule,
+    TagModule,
+    ConfirmDialogModule,
     RouterModule.forRoot(appRoutes)
   ],
   providers: [{provide: LocationStrategy, useClass: HashLocationStrategy}],

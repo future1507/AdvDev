@@ -15,11 +15,11 @@
         <div class="form-group" >
           <div class="container">
         
-            <input id="login" class="form-control" name="username" placeholder="username"  [(ngModel)]="this.userid" ><br>
-            <input type="password" id="password" class="form-control" name="password" placeholder="password"  [(ngModel)]="this.password"><br>
-            <input id="login" class="form-control" name="firstname" placeholder="firstname"  [(ngModel)]="this.fname"><br>
-            <input id="login" class="form-control" name="lastname" placeholder="lastname"  [(ngModel)]="this.lname"> <br>
-            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday"  [(ngModel)]="this.birthday">
+            <input id="login" class="form-control" name="username" placeholder="username"  [(ngModel)]="this.userid" required><br>
+            <input type="password" id="password" class="form-control" name="password" placeholder="password"  [(ngModel)]="this.password" required><br>
+            <input id="login" class="form-control" name="firstname" placeholder="firstname"  [(ngModel)]="this.fname" required><br>
+            <input id="login" class="form-control" name="lastname" placeholder="lastname"  [(ngModel)]="this.lname" required> <br>
+            <input type="date" id="birthday" class="form-control" name="birthday" placeholder="birthday"  [(ngModel)]="this.birthday" required>
           </div>
         </div>
       <!-- <div class="p-fluid p-grid p-formgrid" >
@@ -40,7 +40,12 @@
        </div>
       
     </form>
-
+    <p-dialog header="ผิดพลาด" [(visible)]="display1" [style]="{width: '20vw'}" [baseZIndex]="10000">
+      <p>กรุณากรอกข้อมูลให้ครบ</p></p-dialog>
+    <p-dialog header="ผิดพลาด" [(visible)]="display2" [style]="{width: '20vw'}" [baseZIndex]="10000">
+      <p>กรุณาทำ reCAPTCHA ก่อน</p></p-dialog>
+    <p-dialog header="ผิดพลาด" [(visible)]="display3" [style]="{width: '20vw'}" [baseZIndex]="10000">
+      <p>Username นี้มีคนใช้แล้วกรุณากรอกใหม่</p></p-dialog>
     <!-- Remind Passowrd -->
     <div id="formFooter">
       <a class="underlineHover" href="#">Forgot Password?</a>

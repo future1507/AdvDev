@@ -6,12 +6,14 @@ import { HttpHeaders } from '@angular/common/http';
 //import { faCog, faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faImage, faThumbsDown, faThumbsUp } from '@fortawesome/free-regular-svg-icons';
 import { SelectItem } from 'primeng/api/selectitem';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class HomeComponent implements OnInit {
   iconimg = faImage;
@@ -22,7 +24,8 @@ export class HomeComponent implements OnInit {
   manage: SelectItem[];
   token: any;
   constructor(private http: HttpClient, private router: Router,
-    public data: DatapassService, private route: ActivatedRoute,) {
+    public data: DatapassService, private route: ActivatedRoute
+    , private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
     this.User();
     console.log(localStorage.getItem('TOKEN'));
@@ -41,11 +44,27 @@ export class HomeComponent implements OnInit {
       { label: 'private', value: 'private' }
     ];
     this.manage = [
-      { label: 'ลบ', value: 'del' },
       { label: 'แก้ไข', value: 'edit' },
+      { label: 'ลบ', value: 'del' },
     ];
   }
-
+  confirm(storyid: any) {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to delete this story?',
+      header: 'Delete Confirmation',
+      accept: () => {
+        this.DeletePost(storyid)
+        console.log('Yes Delete Order '+storyid)
+        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});
+        
+      },
+      reject: () => {
+        console.log('No Delete Order '+storyid)
+        this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
+      }
+    });
+    this.slmanage = '';
+  }
   ngOnInit(): void {
   }
 
@@ -212,6 +231,9 @@ export class HomeComponent implements OnInit {
           //handle error
         });
     }
+    else{
+      this.ShowPost();
+    }
   }
   async EditPost() {
     let json = {
@@ -247,10 +269,7 @@ export class HomeComponent implements OnInit {
   // Estoryid :any;
   async ManagePost(storyid: any, storyname: any, tag: any, target: any, storydesc: any, coverphoto: any) {
     if (this.slmanage == 'del') {
-      let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
-      console.log(response);
-      this.ShowPost();
-      this.slmanage = '';
+      this.confirm(storyid);
     }
     else if (this.slmanage == 'edit') {
       this.displayBasic2 = true;
@@ -262,6 +281,11 @@ export class HomeComponent implements OnInit {
       this.storyid = storyid;
       this.slmanage = '';
     }
+  }
+  async DeletePost(storyid: any){
+    let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
+      console.log(response);
+    this.ShowPost();
   }
   uploadedFiles: any[] = [];
   setButTrue = true;

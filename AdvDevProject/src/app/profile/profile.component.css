@@ -47,7 +47,8 @@ body {
   height: 46px;
   line-height: 46px;
   text-align: center;
-  width: 46px
+  width: 46px;
+  float: left;
 }
 
 .timeline-icon img {
