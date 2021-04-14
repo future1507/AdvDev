@@ -12,8 +12,8 @@ import { ObjectUnsubscribedError } from 'rxjs';
 })
 export class LoginComponent implements OnInit {
   
-  userid = "abc123";
-  password = "1234";
+  userid = "";
+  password = "";
   constructor(private http : HttpClient,private router : Router,
     public data: DatapassService,private route : ActivatedRoute) {
       localStorage.clear();
@@ -23,24 +23,24 @@ export class LoginComponent implements OnInit {
   }
   display: boolean = false;
   Login(){
-    //console.log('hee');
-    console.log(this.userid)
-    console.log(this.password)
+    ////console.log('hee');
+    //console.log(this.userid)
+    //console.log(this.password)
     let json = {
       UserID : this.userid,
       Password : this.password     
     };
-    console.log(JSON.stringify(json))
+    //console.log(JSON.stringify(json))
     this.http.post('http://203.154.83.62:1507/login',JSON.stringify(json))
     .subscribe(response =>{
       
-      //console.log(response);
-      //console.log(JSON.stringify(response))
+      ////console.log(response);
+      ////console.log(JSON.stringify(response))
       if(response != 'Login Fail'){
         //this.data.userid = this.userid;
         localStorage.setItem('UserID',this.userid);
         var array = Object.values(response);
-        console.log(array[3]);
+        //console.log(array[3]);
         //this.data.token = array[3];
         localStorage.setItem('TOKEN',array[3]);
         this.data.token = array[3];
@@ -49,15 +49,15 @@ export class LoginComponent implements OnInit {
         
       }
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.showDialog()
     });
 
     // let request = this.http.get('http://203.154.83.62:1507/abc123')
     // .subscribe(response =>{
-    //   console.log(response);
+    //   //console.log(response);
     // }, error => {
-    //   console.log(error);
+    //   //console.log(error);
     // });
   }
   showDialog() {

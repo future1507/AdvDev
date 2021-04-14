@@ -55,12 +55,12 @@ export class StoryComponent implements OnInit {
       header: 'Delete Confirmation',
       accept: () => {
         this.deleteContent()
-        console.log('Yes Delete Order '+order)
+        //console.log('Yes Delete Order '+order)
         this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});
         
       },
       reject: () => {
-        console.log('No Delete Order '+order)
+        //console.log('No Delete Order '+order)
         this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
       }
     });
@@ -75,11 +75,11 @@ export class StoryComponent implements OnInit {
         this.router.navigateByUrl('/home/'+this.userid);
         //this.router.navigateByUrl('/login');
         // this.DeletePost(this.storyid)
-        // console.log('Yes Delete Story '+this.storyid)
+        // //console.log('Yes Delete Story '+this.storyid)
         // this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});   
       },
       reject: () => {
-        console.log('No Delete Story '+this.storyid)
+        //console.log('No Delete Story '+this.storyid)
         this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
       }
     });
@@ -89,7 +89,7 @@ export class StoryComponent implements OnInit {
   oldnext : any
   ShowDetailStory() {
     this.http.get('http://203.154.83.62:1507/showdetailpost/' + this.storyid, this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       var array = Object.values(response);
       this.storyname = array[0]['Storyname']
       this.storytag = array[0]['Tagname']
@@ -103,7 +103,7 @@ export class StoryComponent implements OnInit {
         this.ShowPrevNextStory()
       }
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
@@ -115,16 +115,16 @@ export class StoryComponent implements OnInit {
       StoryID: this.storyid,
       ConnectID: "" + this.nextid
     }
-    console.log(json1)
+    //console.log(json1)
     this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json1), this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       var array = Object.values(response);
       this.lenprev = array.length;
       for (let i = 0; i < array.length; i++) {
         this.prevstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
       }
     }, error => {
-      // console.log(error);
+      // //console.log(error);
       // this.router.navigateByUrl('/login');
       // localStorage.clear();
     });
@@ -136,16 +136,16 @@ export class StoryComponent implements OnInit {
       StoryID: this.storyid,
       ConnectID: "" + this.previd
     }
-    console.log(json1)
+    //console.log(json1)
     this.http.post('http://203.154.83.62:1507/showprevnextpost', JSON.stringify(json2), this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       var array = Object.values(response);
       this.lennext = array.length;
       for (let i = 0; i < array.length; i++) {
         this.nextstory.push({ label: array[i]['Storyname'], value: array[i]['StoryID'] });
       }
     }, error => {
-      // console.log(error);
+      // //console.log(error);
       // this.router.navigateByUrl('/login');
       // localStorage.clear();
     });
@@ -179,7 +179,7 @@ export class StoryComponent implements OnInit {
     this.edittext = text;
     this.order = order;
     this.displayeditText = true
-    console.log(order);
+    //console.log(order);
   }
 
 
@@ -225,7 +225,7 @@ export class StoryComponent implements OnInit {
     for (let files of event.files) {
       uploadedFiles.push(files);
     }
-    console.log(uploadedFiles.length)
+    //console.log(uploadedFiles.length)
     for (let i = 0; i < uploadedFiles.length; i++) {
       let file = uploadedFiles[i];
       let formData = new FormData();
@@ -236,7 +236,7 @@ export class StoryComponent implements OnInit {
       this.http.post("http://203.154.83.62:1507/upload", formData)
         .subscribe(response => {
         }, err => {
-          console.log(err)
+          //console.log(err)
         });
     }
     this.ShowContent();
@@ -246,11 +246,11 @@ export class StoryComponent implements OnInit {
   length = 0;
   ShowContent() {
     this.http.get('http://203.154.83.62:1507/showcontent/' + this.storyid, this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       this.allcontent = response;
       this.length = Object.keys(response).length;
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
@@ -262,7 +262,7 @@ export class StoryComponent implements OnInit {
       PostID: this.storyid,
       ContentDesc: this.text
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
       .post('http://203.154.83.62:1507/addcontent', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
@@ -275,7 +275,7 @@ export class StoryComponent implements OnInit {
       ContentDesc: this.edittext,
       ContentOrder: this.order
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
       .post('http://203.154.83.62:1507/editcontent', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
@@ -286,7 +286,7 @@ export class StoryComponent implements OnInit {
       PostID: this.storyid,
       ContentOrder: this.order
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
       .post('http://203.154.83.62:1507/deletecontent', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
@@ -297,7 +297,7 @@ export class StoryComponent implements OnInit {
       StoryID: this.storyid,
       Storyname: this.storyname
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
       .post('http://203.154.83.62:1507/editstoryname', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
@@ -305,7 +305,7 @@ export class StoryComponent implements OnInit {
 
   async DeletePost(storyid: any){
     let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
-      console.log(response);
+      //console.log(response);
     this.router.navigateByUrl('/home/'+this.userid);
     // this.ShowPost();
   }
@@ -315,15 +315,15 @@ export class StoryComponent implements OnInit {
     let after = this.allcontent[di].ContentID
     let source = this.allcontent[i].ContentOrder
     let dest = this.allcontent[di].ContentOrder
-    console.log("ContentID:" + before + ">>" + after);
-    console.log("ContentOrder:" + source + ">>" + dest);
+    //console.log("ContentID:" + before + ">>" + after);
+    //console.log("ContentOrder:" + source + ">>" + dest);
     let json = {
       SourceID: before,
       DestID: after,
       SourceOrder: source,
       DestOrder: dest
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
       .post('http://203.154.83.62:1507/swapcontent', JSON.stringify(json), this.token).toPromise();
     this.ShowContent()
@@ -331,7 +331,7 @@ export class StoryComponent implements OnInit {
   async SetPrevNextStory(storyid: any, type: any) {
     this.displayshowPrevStory = false
     this.displayshowNextStory = false
-    console.log(storyid + " to " + type)
+    //console.log(storyid + " to " + type)
     let oldid = null;
     if(type = "prev"){
       oldid = this.oldprev
@@ -347,7 +347,7 @@ export class StoryComponent implements OnInit {
     }
     let response = await this.http
       .post('http://203.154.83.62:1507/setprevnextpost', JSON.stringify(json), this.token).toPromise();
-    console.log(response)
+    //console.log(response)
     this.prevstory = [];
     this.nextstory = [];
     this.ShowDetailStory()
@@ -368,7 +368,7 @@ export class StoryComponent implements OnInit {
       UserID: this.userid,
       CommentDes: this.commenttext
     }
-    console.log(json)
+    //console.log(json)
     if (this.userid == this.ownid) {
       let response = await this.http
         .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
@@ -388,7 +388,7 @@ export class StoryComponent implements OnInit {
       }
       else {
         this.displayCantComment = true;
-        console.log('please follow this user before')
+        //console.log('please follow this user before')
       }
     }
   }

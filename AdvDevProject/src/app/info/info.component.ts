@@ -35,8 +35,9 @@ export class InfoComponent implements OnInit {
     
   }
   display1 = false;
-  Edit(){
-    if(this.password != ""){
+  async Edit(){
+  let verify = await this.VeriflyPassword()
+    if(verify == 'Correct Password'){
       let json = {
         UserID : localStorage.getItem('UserID'),
         Firstname : this.fname,
@@ -50,11 +51,11 @@ export class InfoComponent implements OnInit {
         Facebook : this.fb,
         Twitter : this.twitter
       };
-      // console.log(this.Birthday);
-      console.log(JSON.stringify(json));
+      // //console.log(this.Birthday);
+      //console.log(JSON.stringify(json));
       this.http.post('http://203.154.83.62:1507/editprofile',JSON.stringify(json),this.token)
       .subscribe(response =>{
-        console.log(response);
+        //console.log(response);
         localStorage.setItem('Firstname',""+this.fname);
         localStorage.setItem('Lastname',""+this.lname);
         localStorage.setItem('Birthday',""+this.bday);
@@ -67,13 +68,21 @@ export class InfoComponent implements OnInit {
         localStorage.setItem('Twitter',""+this.twitter);
         this.router.navigateByUrl('/profile/'+localStorage.getItem('UserID'));
       }, error => {
-        console.log(error);
+        //console.log(error);
       });
     }
     else{
       this.display1 = true
     }
-    
+  }
+  async VeriflyPassword(){
+    let json = {
+      UserID :  localStorage.getItem('UserID'),
+      Password : this.password
+    }
+    let response = await this.http.post('http://203.154.83.62:1507/verifypassword', JSON.stringify(json), this.token).toPromise();
+    //console.log(response); 
+    return response.toString()
   }
   TokenUser(token:any){
     const headerDict = {

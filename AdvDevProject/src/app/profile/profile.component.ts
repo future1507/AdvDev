@@ -46,7 +46,7 @@ export class ProfileComponent implements OnInit {
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
     this.selfid = localStorage.getItem('UserID');
     this.uid = this.route.snapshot.params['id'];
-    console.log(this.selfid + "  " + this.uid)
+    //console.log(this.selfid + "  " + this.uid)
     if (this.selfid != this.uid) {
       this.User();
       this.Followed();
@@ -64,12 +64,12 @@ export class ProfileComponent implements OnInit {
       header: 'Delete Confirmation',
       accept: () => {
         this.DeletePost(storyid)
-        console.log('Yes Delete Order '+storyid)
+        //console.log('Yes Delete Order '+storyid)
         this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});
         
       },
       reject: () => {
-        console.log('No Delete Order '+storyid)
+        //console.log('No Delete Order '+storyid)
         this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
       }
     });
@@ -92,14 +92,14 @@ export class ProfileComponent implements OnInit {
 
 
   User() {
-    console.log(localStorage.getItem('TOKEN'));
-    //console.log(localStorage.getItem('UserID'));
+    //console.log(localStorage.getItem('TOKEN'));
+    ////console.log(localStorage.getItem('UserID'));
 
     this.http.get('http://203.154.83.62:1507/' + this.route.snapshot.params['id'], this.token).subscribe(response => {
-      console.log(response);
+      //console.log(response);
       var array = Object.values(response);
-      console.log(array[0]['Firstname']);
-      console.log(array[0]['Lastname']);
+      //console.log(array[0]['Firstname']);
+      //console.log(array[0]['Lastname']);
       this.name = array[0]['Firstname'] + "   " + array[0]['Lastname']
       if(array[0]['Profileimg'] != null){
         this.profile = 'http://203.154.83.62:1507/img/profile/' + array[0]['Profileimg']
@@ -117,7 +117,7 @@ export class ProfileComponent implements OnInit {
       this.fb = array[0]['Facebook'];
       this.twitter = array[0]['Twitter'];
     }, error => {
-      console.log(error);
+      //console.log(error);
     });
   }
   TokenUser(token: any) {
@@ -142,12 +142,12 @@ export class ProfileComponent implements OnInit {
     this.http.post("http://203.154.83.62:1507/upload", formData)
       .subscribe(response => {
         this.uploadedFiles = [];
-        console.log(response)
+        //console.log(response)
         localStorage.setItem('Profileimg', (response).toString());
         this.profile = 'http://203.154.83.62:1507/img/profile/' + localStorage.getItem('Profileimg')
         window.location.reload();
       }, err => {
-        console.log(err)
+        //console.log(err)
       });
   }
   followbtcolor = 'btn btn-outline-primary';
@@ -174,13 +174,13 @@ export class ProfileComponent implements OnInit {
       choice: this.followtext
     }
     this.http.post('http://203.154.83.62:1507/follow', JSON.stringify(json), this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
     }, error => {
-      console.log(error);
+      //console.log(error);
     });
   }
   GotoUser(userid : any){
-    console.log('Go to '+userid)
+    //console.log('Go to '+userid)
     this.displayFollowing = false;
     this.router.routeReuseStrategy.shouldReuseRoute = function () {
       return false;
@@ -195,12 +195,12 @@ export class ProfileComponent implements OnInit {
   ShowPost() {
     if (this.selfid == this.uid) {
       this.http.get('http://203.154.83.62:1507/showselfpost/' + this.selfid, this.token).subscribe(response => {
-        console.log(response)
+        //console.log(response)
         this.allpost = response;
         this.length = Object.keys(response).length;
         this.SetisLike();
       }, error => {
-        console.log(error);
+        //console.log(error);
         this.router.navigateByUrl('/login');
         localStorage.clear();
       });
@@ -211,14 +211,14 @@ export class ProfileComponent implements OnInit {
         UserID: this.uid,
         IsFollow: this.followtext
       }
-      console.log(this.followtext)
+      //console.log(this.followtext)
       this.http.post('http://203.154.83.62:1507/showsomeonepost', JSON.stringify(json), this.token).subscribe(response => {
-        console.log(response)
+        //console.log(response)
         this.allpost = response;
         this.length = Object.keys(response).length;
         this.SetisLike();
       }, error => {
-        console.log(error);
+        //console.log(error);
         this.router.navigateByUrl('/login');
         localStorage.clear();
       });
@@ -241,13 +241,13 @@ export class ProfileComponent implements OnInit {
       this.followtext = 'Follow';
       this.isfollow = false;
     }
-    console.log('follow : ' + response)
+    //console.log('follow : ' + response)
     this.ShowPost();
   }
   async AmontFollow() {
     let response = await this.http
       .get('http://203.154.83.62:1507/follow/' + this.uid, this.token).toPromise();
-    console.log(response);
+    //console.log(response);
     var array = Object.values(response);
     this.follower = +array[0];
     this.following = +array[1];
@@ -259,11 +259,11 @@ export class ProfileComponent implements OnInit {
   showFollowerDialog() {
     this.displayFollower = true;
     this.http.get('http://203.154.83.62:1507/follower/' + this.uid, this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       this.allfollower = response;
 
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
@@ -271,11 +271,11 @@ export class ProfileComponent implements OnInit {
   showFollowingDialog() {
     this.displayFollowing = true;
     this.http.get('http://203.154.83.62:1507/following/' + this.uid, this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
       this.allfollowing = response;
 
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.router.navigateByUrl('/login');
       localStorage.clear();
     });
@@ -289,7 +289,7 @@ export class ProfileComponent implements OnInit {
     this.iconstyles = new Array(this.length).fill("width: 20px;")
     this.islike = new Array(this.length).fill(false)
     for (let i = 0; i < this.length; i++) {
-      //console.log(this.allpost[i].Islike)
+      ////console.log(this.allpost[i].Islike)
       if (this.allpost[i].Islike == 1) {
         this.iconstyles[i] = "width: 20px;color: dodgerblue;";
         this.islike[i] = true;
@@ -310,7 +310,7 @@ export class ProfileComponent implements OnInit {
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;";
       this.allpost[i].Islike = 'NO'
-      console.log('unlike');
+      //console.log('unlike');
     }
     else {
       this.numamountlike = parseInt(amountlike);
@@ -318,20 +318,20 @@ export class ProfileComponent implements OnInit {
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;color: dodgerblue;";
       this.allpost[i].Islike = 'YES'
-      console.log('like');
+      //console.log('like');
     }
     let json = {
       UserID: localStorage.getItem('UserID'),
       PostID: storyid,
       choice: this.allpost[i].Islike
     }
-    console.log(json);
+    //console.log(json);
     this.http.post('http://203.154.83.62:1507/like', JSON.stringify(json), this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
     }, error => {
-      console.log(error);
+      //console.log(error);
     });
-    //console.log(i + " " + this.iconstyles)
+    ////console.log(i + " " + this.iconstyles)
   }
   commenttext = '';
   displayCantComment = false;
@@ -361,7 +361,7 @@ export class ProfileComponent implements OnInit {
       }
       else {
         this.displayCantComment = true;
-        console.log('please follow this user before')
+        //console.log('please follow this user before')
       }
     }
   }
@@ -371,7 +371,7 @@ export class ProfileComponent implements OnInit {
       UserID : this.selfid,
       CommentDes : this.commenttext
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
         .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
     this.showCommentDialog(this.selfid,this.storyid)
@@ -401,19 +401,21 @@ export class ProfileComponent implements OnInit {
   }
   uploadedCoverFiles: any[] = [];
   setButCoverTrue = true;
-  formData = new FormData();
+  formData2 = new FormData();
   UploadCoverPhoto(event: any) {
-    console.log('upload');
+    //console.log('upload');
+    this.formData2 = new FormData();
     for (let files of event.files) {
       this.uploadedCoverFiles.push(files);
     }
-    const file = this.uploadedCoverFiles[0];
-    this.formData.append('file', file, file.name);
-    this.formData.append('folder', 'coverphoto');
+    //console.log(this.uploadedCoverFiles.length)
+    let file = this.uploadedCoverFiles[this.uploadedCoverFiles.length - 1];
+    this.formData2.append('file', file, file.name);
+    this.formData2.append('folder', 'coverphoto');
   }
   async DeletePost(storyid: any){
     let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
-      console.log(response);
+      //console.log(response);
     this.ShowPost();
   }
   async EditPost() {
@@ -424,21 +426,22 @@ export class ProfileComponent implements OnInit {
       StoryDesc: this.storydesc,
       StoryID: this.storyid
     };
-    console.log(json);
+    //console.log(json);
     let response = await this.http.post('http://203.154.83.62:1507/editstory', JSON.stringify(json), this.token).toPromise();
     this.displayBasic2 = false;
     this.ShowPost();
-    console.log(response);
-    if (this.uploadedCoverFiles[0] != null) {
-      this.formData.append('storyid', "" + this.storyid);
-      this.http.post("http://203.154.83.62:1507/upload", this.formData)
+    //console.log(response);
+    if (this.uploadedCoverFiles[this.uploadedCoverFiles.length - 1] != null) {
+      this.formData2.append('storyid', "" + this.storyid);
+      this.http.post("http://203.154.83.62:1507/upload", this.formData2)
         .subscribe(response => {
-          this.uploadedCoverFiles = [];
+          //this.uploadedFiles = [];
+          this.formData2 = new FormData();
           this.displayBasic2 = false;
+          window.location.reload()
           this.ShowPost();
-          //window.location.reload();
         }, err => {
-      });
+        });
     }
   }
 }

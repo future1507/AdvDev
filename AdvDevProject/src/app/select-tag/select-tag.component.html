@@ -13,7 +13,7 @@
                     <div class="text-center pb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" (click)="ChooseTag(!this.clicktag[0],1)">
                         <label class="form-check-label" for="flexCheckDefault">
-                        <img src="../../assets/art.jpg" alt="profile" class="img-xs rounded-circle" width="200" >
+                        <img src="http://203.154.83.62:1507/img/profile/art" alt="profile" class="img-xs rounded-circle" width="200" >
                             <div class="mb-3">
                                 ศิลปะ
                             </div>
@@ -27,7 +27,7 @@
                     <div class="text-center pb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" (click)="ChooseTag(!this.clicktag[1],2)">
                         <label class="form-check-label" for="flexCheckDefault">
-                        <img src="../../assets/design.jpg" alt="profile" class="img-xs rounded-circle" width="200" >
+                        <img src="http://203.154.83.62:1507/img/profile/design" alt="profile" class="img-xs rounded-circle" width="200" >
                             <div class="mb-3">
                                 ออกแบบ
                             </div>
@@ -40,7 +40,7 @@
                     <div class="text-center pb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" (click)="ChooseTag(!this.clicktag[2],3)">
                         <label class="form-check-label" for="flexCheckDefault">
-                        <img src="../../assets/Fiction.jpg" alt="profile" class="img-xs rounded-circle" width="200" >
+                        <img src="http://203.154.83.62:1507/img/profile/Fiction" alt="profile" class="img-xs rounded-circle" width="200" >
                             <div class="mb-3">
                                 นิยาย
                             </div>
@@ -53,7 +53,7 @@
                     <div class="text-center pb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" (click)="ChooseTag(!this.clicktag[3],4)">
                         <label class="form-check-label" for="flexCheckDefault">
-                        <img src="../../assets/music.png" alt="profile" class="img-xs rounded-circle" width="200" >
+                        <img src="http://203.154.83.62:1507/img/profile/music" alt="profile" class="img-xs rounded-circle" width="200" >
                             <div class="mb-3">
                                 ดนตรี
                             </div>
@@ -66,7 +66,7 @@
                     <div class="text-center pb-4">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" (click)="ChooseTag(!this.clicktag[4],5)">
                         <label class="form-check-label" for="flexCheckDefault">
-                        <img src="../../assets/travel.jpg" alt="profile" class="img-xs rounded-circle" width="200" >
+                        <img src="http://203.154.83.62:1507/img/profile/travel" alt="profile" class="img-xs rounded-circle" width="200" >
                             <div class="mb-3">
                                 ท่องเที่ยว
                             </div>
@@ -76,6 +76,11 @@
             </td>
             
         </table>
-        <button  (click)="SaveTag()">บันทีก</button>
+        <div class="a">
+            <button pButton type="button" label="Save" (click)="SaveTag()"></button>
+        </div>
+        
+        <p-dialog header="ผิดพลาด" [(visible)]="display" [style]="{width: '20vw'}" [baseZIndex]="10000">
+            <p>กรุณาเลือกอย่างน้อย 1 แท็ก</p></p-dialog>
     </body>
 </html>

@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
     , private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.token = this.TokenUser(localStorage.getItem('TOKEN'));
     this.User();
-    console.log(localStorage.getItem('TOKEN'));
+    //console.log(localStorage.getItem('TOKEN'));
 
     this.tags = [
       { label: 'ศิลปะ', value: '1' },
@@ -54,13 +54,13 @@ export class HomeComponent implements OnInit {
       header: 'Delete Confirmation',
       accept: () => {
         this.DeletePost(storyid)
-        console.log('Yes Delete Order '+storyid)
-        this.messageService.add({severity:'info', summary:'Confirmed', detail:'Record deleted'});
-        
+        //console.log('Yes Delete Order ' + storyid)
+        this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted' });
+
       },
       reject: () => {
-        console.log('No Delete Order '+storyid)
-        this.messageService.add({severity:'error', summary:'Rejected', detail:'You have rejected'});
+        //console.log('No Delete Order ' + storyid)
+        this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected' });
       }
     });
     this.slmanage = '';
@@ -76,10 +76,15 @@ export class HomeComponent implements OnInit {
   name: any;
   userid: any;
   profileimg = 'https://tcc-chaokoh.com/themes/default/asset/images/icon-user-default.png'
+  tag1: any;
+  tag2: any;
+  tag3: any;
+  tag4: any;
+  tag5: any;
   User() {
     this.userid = localStorage.getItem('UserID');
     this.http.get('http://203.154.83.62:1507/' + localStorage.getItem('UserID'), this.token).subscribe(response => {
-      console.log(response);
+      //console.log(response);
       var array = Object.values(response);
       var bday = new Date(array[0]['Birthday']);
       localStorage.setItem('Profileimg', this.CheckNull(array[0]['Profileimg']));
@@ -98,17 +103,22 @@ export class HomeComponent implements OnInit {
       localStorage.setItem('Tag3', (array[0]['Tag3']));
       localStorage.setItem('Tag4', (array[0]['Tag4']));
       localStorage.setItem('Tag5', (array[0]['Tag5']));
+      this.tag1 = (array[0]['Tag1']);
+      this.tag2 = (array[0]['Tag2']);
+      this.tag3 = (array[0]['Tag3']);
+      this.tag4 = (array[0]['Tag4']);
+      this.tag5 = (array[0]['Tag5']);
       this.name = array[0]['Firstname'] + "   " + array[0]['Lastname']
-      console.log('profileid = ' + array[0]['Profileimg']);
+      //console.log('profileid = ' + array[0]['Profileimg']);
       if (array[0]['Profileimg'] != null && array[0]['Profileimg'] != '' && array[0]['Profileimg'] != 'null') {
         this.profileimg = 'http://203.154.83.62:1507/img/profile/' + array[0]['Profileimg'];
       }
       else {
-        console.log('profile=null');
+        //console.log('profile=null');
       }
       this.ShowPost();
     }, error => {
-      console.log(error);
+      //console.log(error);
       this.router.navigateByUrl('/login');
     });
   }
@@ -131,14 +141,14 @@ export class HomeComponent implements OnInit {
   }
   commenttext = '';
   displayCantComment = false;
-  allcomment : any;
-  async showCommentDialog(uid: any,storyid : any) {
+  allcomment: any;
+  async showCommentDialog(uid: any, storyid: any) {
     this.commenttext = '';
     this.storyid = storyid;
     if (this.userid == uid) {
       this.display = true;
       let response = await this.http
-        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+        .get('http://203.154.83.62:1507/showcomment/' + storyid, this.token).toPromise();
       this.allcomment = response;
     }
     else {
@@ -151,28 +161,29 @@ export class HomeComponent implements OnInit {
       if (response.toString() == 'yes') {
         this.display = true;
         let response = await this.http
-        .get('http://203.154.83.62:1507/showcomment/'+storyid, this.token).toPromise();
+          .get('http://203.154.83.62:1507/showcomment/' + storyid, this.token).toPromise();
         this.allcomment = response;
       }
       else {
         this.displayCantComment = true;
-        console.log('please follow this user before')
+        //console.log('please follow this user before')
       }
     }
   }
-  async AddComment(){
+  async AddComment() {
     let json = {
-      PostID : this.storyid,
-      UserID : this.userid,
-      CommentDes : this.commenttext
+      PostID: this.storyid,
+      UserID: this.userid,
+      CommentDes: this.commenttext
     }
-    console.log(json)
+    //console.log(json)
     let response = await this.http
-        .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
-    this.showCommentDialog(this.userid,this.storyid)
+      .post('http://203.154.83.62:1507/addcomment', JSON.stringify(json), this.token).toPromise();
+    this.showCommentDialog(this.userid, this.storyid)
   }
   showBasicDialog() {
     this.displayBasic = true;
+    this.uploadedFiles.pop;
     this.storyname = "";
     this.tag = "";
     this.target = "";
@@ -192,48 +203,57 @@ export class HomeComponent implements OnInit {
       Tag4: localStorage.getItem('Tag4'),
       Tag5: localStorage.getItem('Tag5')
     };
-    console.log(json);
+    //console.log(json);
     let response = await this.http
       .post('http://203.154.83.62:1507/showpost', JSON.stringify(json), this.token).toPromise();
-    console.log(response);
+    //console.log(response);
     this.allpost = response;
     this.length = Object.keys(response).length;
     this.SetisLike();
     return response;
   }
-  storyname: any
+  storyname = '';
   tag = '';
   target = '';
   storydesc: any
   coverphoto: any
   storyid: any
+  displaynewpost = false
   async CreatePost() {
-    let json = {
-      Storyname: this.storyname,
-      UserID: this.userid,
-      Tag: this.tag,
-      Targetgroup: this.target,
-      StoryDesc: this.storydesc,
-      Coverphoto: null
-    };
-    console.log(json)
-    let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json), this.token).toPromise();
-    this.displayBasic = false;
-    console.log(response);
-    if (this.uploadedFiles[0] != null) {
-      this.formData.append('storyid', "" + response);
-      this.http.post("http://203.154.83.62:1507/upload", this.formData)
-        .subscribe(response => {
-          this.uploadedFiles = [];
-          this.displayBasic2 = false;
-          this.ShowPost();
-        }, err => {
-          //handle error
-        });
+    if (this.storyname == '' || this.tag == '' || this.target == '') {
+      this.displaynewpost = true
     }
-    else{
-      this.ShowPost();
+    else {
+      let json = {
+        Storyname: this.storyname,
+        UserID: this.userid,
+        Tag: this.tag,
+        Targetgroup: this.target,
+        StoryDesc: this.storydesc,
+        Coverphoto: null
+      };
+      //console.log(json)
+      let response = await this.http.post('http://203.154.83.62:1507/newstory', JSON.stringify(json), this.token).toPromise();
+      this.displayBasic = false;
+      //console.log(response);
+      if (this.uploadedFiles[this.uploadedFiles.length - 1] != null) {
+        this.formData.append('storyid', "" + response);
+        this.http.post("http://203.154.83.62:1507/upload", this.formData)
+          .subscribe(response => {
+            this.uploadedFiles = [];
+            this.formData = new FormData();
+            this.displayBasic2 = false;
+            window.location.reload()
+            this.ShowPost();
+          }, err => {
+            //handle error
+          });
+      }
+      else {
+        this.ShowPost();
+      }
     }
+
   }
   async EditPost() {
     let json = {
@@ -243,19 +263,20 @@ export class HomeComponent implements OnInit {
       StoryDesc: this.storydesc,
       StoryID: this.storyid
     };
-    console.log(json);
+    //console.log(json);
     let response = await this.http.post('http://203.154.83.62:1507/editstory', JSON.stringify(json), this.token).toPromise();
     this.displayBasic2 = false;
     this.ShowPost();
-    console.log(response);
-    if (this.uploadedFiles[0] != null) {
-      this.formData.append('storyid', "" + this.storyid);
-      this.http.post("http://203.154.83.62:1507/upload", this.formData)
+    //console.log(response);
+    if (this.uploadedFiles2[this.uploadedFiles2.length - 1] != null) {
+      this.formData2.append('storyid', "" + this.storyid);
+      this.http.post("http://203.154.83.62:1507/upload", this.formData2)
         .subscribe(response => {
-          this.uploadedFiles = [];
+          //this.uploadedFiles = [];
+          this.formData2 = new FormData();
           this.displayBasic2 = false;
+          window.location.reload()
           this.ShowPost();
-          //window.location.reload();
         }, err => {
         });
     }
@@ -282,23 +303,41 @@ export class HomeComponent implements OnInit {
       this.slmanage = '';
     }
   }
-  async DeletePost(storyid: any){
+  async DeletePost(storyid: any) {
     let response = await this.http.get('http://203.154.83.62:1507/deletestory/' + storyid, this.token).toPromise();
-      console.log(response);
+    //console.log(response);
     this.ShowPost();
   }
   uploadedFiles: any[] = [];
   setButTrue = true;
   formData = new FormData();
   UploadCoverPhoto(event: any) {
-    console.log('upload');
+    //console.log('upload');
+    this.formData = new FormData();
     for (let files of event.files) {
       this.uploadedFiles.push(files);
     }
-    const file = this.uploadedFiles[0];
+    //console.log(this.uploadedFiles.length)
+    let file = this.uploadedFiles[this.uploadedFiles.length - 1];
     this.formData.append('file', file, file.name);
     this.formData.append('folder', 'coverphoto');
   }
+
+  uploadedFiles2: any[] = [];
+  setButTrue2 = true;
+  formData2 = new FormData();
+  UploadEditCoverPhoto(event: any) {
+    //console.log('upload');
+    this.formData2 = new FormData();
+    for (let files of event.files) {
+      this.uploadedFiles2.push(files);
+    }
+    //console.log(this.uploadedFiles2.length)
+    let file = this.uploadedFiles2[this.uploadedFiles2.length - 1];
+    this.formData2.append('file', file, file.name);
+    this.formData2.append('folder', 'coverphoto');
+  }
+
   amountlike = 1
   numamountlike = 0;
   length = 0
@@ -308,7 +347,7 @@ export class HomeComponent implements OnInit {
     this.iconstyles = new Array(this.length).fill("width: 20px;")
     this.islike = new Array(this.length).fill(false)
     for (let i = 0; i < this.length; i++) {
-      //console.log(this.allpost[i].Islike)
+      ////console.log(this.allpost[i].Islike)
       if (this.allpost[i].Islike == 1) {
         this.iconstyles[i] = "width: 20px;color: dodgerblue;";
         this.islike[i] = true;
@@ -329,7 +368,7 @@ export class HomeComponent implements OnInit {
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;";
       this.allpost[i].Islike = 'NO'
-      console.log('unlike');
+      //console.log('unlike');
     }
     else {
       this.numamountlike = parseInt(amountlike);
@@ -337,20 +376,34 @@ export class HomeComponent implements OnInit {
       this.allpost[i].AmountOfLikes = this.numamountlike;
       this.iconstyles[i] = "width: 20px;color: dodgerblue;";
       this.allpost[i].Islike = 'YES'
-      console.log('like');
+      //console.log('like');
     }
     let json = {
       UserID: localStorage.getItem('UserID'),
       PostID: storyid,
       choice: this.allpost[i].Islike
     }
-    console.log(json);
+    //console.log(json);
     this.http.post('http://203.154.83.62:1507/like', JSON.stringify(json), this.token).subscribe(response => {
-      console.log(response)
+      //console.log(response)
     }, error => {
-      console.log(error);
+      //console.log(error);
     });
-    //console.log(i + " " + this.iconstyles)
+    ////console.log(i + " " + this.iconstyles)
+  }
+  searchtext = '';
+  async Search(){
+    let json = {
+      UserID : this.userid,
+      Search : this.searchtext
+    }
+    //console.log(json);
+    let response = await this.http
+      .post('http://203.154.83.62:1507/search', JSON.stringify(json), this.token).toPromise();
+    //console.log(response);
+    this.allpost = response;
+    this.length = Object.keys(response).length;
+    this.SetisLike();
   }
 }
 

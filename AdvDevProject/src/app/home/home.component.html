@@ -28,12 +28,19 @@
 
 <body>
 	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-	<div class="form-group">
-		<div class="col-md-7 col-md-offset-2">
+	<!-- <div class="form-group">
+		<div class="col-md-6 col-md-offset-2">
 			<br>
-			<input id="login" class="form-control" name="login" placeholder="Search(ยังไม่ได้ทำเสร็จ)"><br>
+			<input id="search" class="form-control" name="search" placeholder="Search" [(ngModel)]="searchtext">
+			<button class="btn-primary" type="submit" (click)="Search()">Search</button>
+			<br>
 		</div>
+	</div> -->
+	<div class="right">
+		<input type="text" name="" id="" [(ngModel)]="this.searchtext">
+        <button pButton pRipple type="button" icon="pi pi-search" class="p-button-success" (click)="Search()"></button>
 	</div>
+	<br><br>
 	<div class="container bootstrap snippets bootdeys">
 		<div class="col-md-7 col-md-offset-2">
 			<div class="panel">
@@ -52,8 +59,8 @@
 						<fa-icon [icon]="iconimg" style="width: 20px;"></fa-icon>
 					</div>
 				</div>
-				<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '50vw'}" [baseZIndex]="10000">
-					<div class="right">
+				<p-dialog header="New Post" [(visible)]="displayBasic" [style]="{width: '60vw'}" [baseZIndex]="10000">
+					<div >
 						<div class="col-md-7 col-md-offset-2">
 							<input id="login" class="form-control" name="login" placeholder="Storyname"
 								[(ngModel)]="this.storyname"><br>
@@ -74,11 +81,11 @@
 									class="fa fa-pencil fa-fw"></i> Share</button>
 							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
 							<p-fileUpload [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
-								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
-								<ng-template pTemplate="content">
-									<ul *ngIf="uploadedFiles.length">
+								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)" >
+								<ng-template pTemplate="content" >
+									<!-- <ul *ngIf="uploadedFiles.length">
 										<li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-									</ul>
+									</ul> -->
 								</ng-template>
 							</p-fileUpload>
 							<!-- <i class="" (click)="showBasicDialog() "></i> -->
@@ -87,8 +94,8 @@
 					<ng-template pTemplate="footer">
 					</ng-template>
 				</p-dialog>
-				<p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '50vw'}" [baseZIndex]="10000">
-					<div class="right">
+				<p-dialog header="Edit Post" [(visible)]="displayBasic2" [style]="{width: '60vw'}" [baseZIndex]="10000">
+					<div >
 						<div class="col-md-7 col-md-offset-2">
 							<input id="login" class="form-control" name="login" placeholder="Storyname"
 								[(ngModel)]="this.storyname"><br>
@@ -102,17 +109,17 @@
 					</div>
 					<br><br>
 					<div class="panel-body" type="button">
-						<textarea class="form-control" rows="2" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
+						<textarea class="form-control" rows="5" placeholder="มีเรื่องราวใหม่ๆมาแชร์ไหม??"
 							[(ngModel)]="this.storydesc"></textarea>
 						<div class="mar-top clearfix">
 							<button class="btn btn-sm btn-primary pull-right" type="submit" (click)="EditPost()"><i
 									class="fa fa-pencil fa-fw"></i> Save</button>
 							<!-- <fa-icon [icon]="iconimg" style="width: 20px;" ></fa-icon> -->
-							<p-fileUpload [auto]="setButTrue" chooseLabel=" " [customUpload]="setButTrue"
-								accept="image/*" (uploadHandler)="UploadCoverPhoto($event)">
+							<p-fileUpload [auto]="setButTrue2" chooseLabel=" " [customUpload]="setButTrue2"
+								accept="image/*" (uploadHandler)="UploadEditCoverPhoto($event)">
 								<ng-template pTemplate="content">
 									<ul *ngIf="uploadedFiles.length">
-										<li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+										<!-- <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li> -->
 									</ul>
 								</ng-template>
 							</p-fileUpload>
@@ -124,6 +131,8 @@
 				</p-dialog>
 			</div>
 			<div class="panel panel-body">
+				<p *ngIf="this.tag1==null&&this.tag2==null&&this.tag3==null&&this.tag4==null&&this.tag5==null"
+				>คุณยังไม่ได้ทำการเลือกแท็ก <a routerLink="/selectTag/{{this.userid}}">โปรดคลิกที่นี่</a></p>
 				<!-- Timeline -->
 				<!--===================================================-->
 				<div class="timeline">
@@ -153,6 +162,9 @@
 									class="btn-link text-semibold">{{post.Firstname}} {{post.Lastname}}</a> posted
 								<a routerLink="/story/{{post.UserID}}/{{post.StoryID}}">{{post.Storyname}}</a>
 								&nbsp;<p-tag styleClass="p-mr-2" value="{{post.Tagname}}" [rounded]="true"></p-tag>
+								&nbsp;<p-tag styleClass="p-mr-2" severity="success" value="{{post.Targetgroup}}" icon="pi pi-globe" *ngIf="post.Targetgroup=='public'"></p-tag>
+								<p-tag styleClass="p-mr-2" severity="success" value="{{post.Targetgroup}}" icon="pi pi-user" *ngIf="post.Targetgroup=='private'"></p-tag>
+								<p-tag styleClass="p-mr-2" severity="success" value="{{post.Targetgroup}}" icon="pi pi-users" *ngIf="post.Targetgroup=='follower'"></p-tag>
 							</p>
 							<p-dropdown class="align-right" [options]="manage" [(ngModel)]="slmanage"
 								*ngIf="this.userid==post.UserID" [itemSize]="3" placeholder="จัดการโพสต์"
@@ -218,7 +230,9 @@
 									[style]="{width: '20vw'}" [baseZIndex]="10000">
 									<p>คุณต้องติดตามผู้ใช้ท่านนี้ก่อน</p>
 								</p-dialog>
-								
+								<p-dialog header="ผิดพลาด" [(visible)]="displaynewpost" [style]="{width: '20vw'}" [baseZIndex]="10000">
+									<p>กรุณากรอกชื่อเรื่อง เลือกแท็กและความเป็นส่วนตัวให้เสร็จสิ้นก่อน</p>
+								</p-dialog>
 							</div>
 							
 						</div>

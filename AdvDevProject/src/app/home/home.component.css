@@ -302,3 +302,6 @@ p.title{
     width: 33em; 
     word-wrap: break-word
 }
+.right{
+    float: right;
+}
